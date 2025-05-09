@@ -21,8 +21,12 @@ function App() {
 
   return (
     <div className="flex bg-black text-white">
-      {/* Sidebar */}
-      <Sidebar isScrolled={isScrolled} />
+      {/* Sidebar only renders if open */}
+      <Sidebar
+        isScrolled={isScrolled}
+        isOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+      />
 
       {/* Main Content */}
       <div
@@ -30,7 +34,7 @@ function App() {
           sidebarOpen ? "ml-[250px]" : "ml-0"
         } transition-all duration-300`}
       >
-        {/* Top Bar */}
+        {/* Top Bar with toggle */}
         <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
         {/* Main Content */}

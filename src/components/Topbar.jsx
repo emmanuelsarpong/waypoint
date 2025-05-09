@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
 import Logo from "./Logo";
-import Button from "./Button"; 
+import Button from "./Button";
+import showIcon from "../assets/show.svg";
+import closeIcon from "../assets/close.svg";
+
 function Topbar({ toggleSidebar }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20); 
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+    toggleSidebar();
+  };
 
   return (
     <header
@@ -31,33 +40,29 @@ function Topbar({ toggleSidebar }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        {/* Use the Logo component */}
         <Logo isScrolled={isScrolled} />
-        {/* Toggle Sidebar Button */}
         <button
-          onClick={toggleSidebar}
-          className="p-2 rounded-md focus:outline-none"
+          onClick={handleToggle}
+          className="focus:outline-none group"
           aria-label="Toggle Sidebar"
+          style={{
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6 text-neutral-400 hover:text-white transition-colors duration-200"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
+          <img
+            src={isSidebarOpen ? closeIcon : showIcon}
+            alt="Toggle Sidebar"
+            className="w-6 h-6 group-hover:filter group-hover:brightness-0 group-hover:invert"
+          />
         </button>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        {/* Login Button */}
         <Button
           onClick={() => console.log("Login clicked")}
           className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
