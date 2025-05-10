@@ -20,26 +20,28 @@ function App() {
   }, []);
 
   return (
-    <div className="flex bg-black text-white">
-      {/* Sidebar only renders if open */}
-      <Sidebar
-        isScrolled={isScrolled}
-        isOpen={sidebarOpen}
-        toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-      />
+    <div>
+      <div className="flex bg-black text-white">
+        <Sidebar
+          isScrolled={isScrolled}
+          isOpen={sidebarOpen}
+          toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+        />
 
-      {/* Main Content */}
-      <div
-        className={`flex flex-col flex-1 ${
-          sidebarOpen ? "ml-[250px]" : "ml-0"
-        } transition-all duration-300`}
-      >
-        {/* Top Bar with toggle */}
-        <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+        <div
+          className={`flex flex-col flex-1 ${
+            sidebarOpen ? "ml-[250px]" : "ml-0"
+          } transition-all duration-300`}
+        >
+          <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
-        {/* Main Content */}
-        <main className="mt-[70px] w-full max-w-[1200px] mx-auto px-6">
-          <div className="mr-20">
+          <main
+            className="mt-[70px] w-full max-w-[1200px] mx-auto px-6"
+            style={{
+              paddingLeft: "25px",
+              paddingRight: "25px",
+            }}
+          >
             <Routes>
               <Route path="/" element={<Homepage />} />
               <Route path="/about" element={<About />} />
@@ -48,8 +50,8 @@ function App() {
               <Route path="/product" element={<Product />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );

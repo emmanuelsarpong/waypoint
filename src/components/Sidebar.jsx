@@ -16,21 +16,17 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{
-        paddingTop: "200px", 
+        paddingTop: "200px",
+        borderRight: "0.5px solid #3F3F3F", // Add border-right
       }}
     >
-      {/* Logo or Title */}
-      <div
-        className="flex flex-col gap-8"
-        style={{ display: "none" }} 
-      >
+      <div className="flex flex-col gap-8" style={{ display: "none" }}>
         <div className="mb-5 flex items-center justify-between">
           {isScrolled ? (
             <Logo size="h-8" />
           ) : (
             <h1 className="text-2xl font-extrabold tracking-tight">Waypoint</h1>
           )}
-          {/* Toggle Button */}
           <button
             onClick={toggleSidebar}
             className="text-white bg-neutral-700 p-2 rounded-md"
@@ -40,7 +36,6 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
         </div>
       </div>
 
-      {/* Navigation Links */}
       <nav className="flex flex-col gap-6">
         {navItems.map((item) => (
           <NavLink
@@ -69,7 +64,6 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
         ))}
       </nav>
 
-      {/* Footer */}
       <footer
         className="text-base text-neutral-400 px-5 py-3 mt-5"
         style={{

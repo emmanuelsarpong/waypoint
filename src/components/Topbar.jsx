@@ -37,6 +37,7 @@ function Topbar({ toggleSidebar }) {
         justifyContent: "space-between",
         background: "black",
         color: "white",
+        borderBottom: "0.5px solid #3F3F3F", // Add border-bottom
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
