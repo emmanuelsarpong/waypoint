@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Logo from "./Logo";
 import Button from "./Button";
 import showIcon from "../assets/show.svg";
-import closeIcon from "../assets/close.svg";
+import closeIcon from "../assets/hide.svg";
 
 function Topbar({ toggleSidebar }) {
   const [isScrolled, setIsScrolled] = useState(false);

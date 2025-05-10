@@ -2,9 +2,33 @@ import heroImage from "../assets/AdobeStock_466481959.jpeg";
 import howItWorksImage from "../assets/AdobeStock_495398738.jpeg";
 import dashboardPreview from "../assets/dashboard-preview.jpeg";
 import Button from "../components/Button";
-import CardLayout from "../components/CardLayout";
+import Card from "../components/Card";
 
 function Homepage() {
+  const bottomCards = [
+    {
+      id: 1,
+      title: "Explore New Trails",
+      image: heroImage,
+      excerpt:
+        "Discover the best trails near you for running, hiking, and biking.",
+    },
+    {
+      id: 2,
+      title: "Track Your Progress",
+      image: dashboardPreview,
+      excerpt:
+        "Monitor your performance and stay motivated with detailed analytics.",
+    },
+    {
+      id: 3,
+      title: "Set Your Goals",
+      image: howItWorksImage,
+      excerpt:
+        "Achieve your fitness milestones with personalized goal tracking.",
+    },
+  ];
+
   return (
     <div className="text-white">
       {/* Hero Section */}
@@ -91,7 +115,7 @@ function Homepage() {
       </section>
 
       {/* Card Layout */}
-      <CardLayout />
+      <Card cards={bottomCards} />
     </div>
   );
 }

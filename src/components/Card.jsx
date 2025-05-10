@@ -1,4 +1,6 @@
-function CardLayout() {
+import React from "react";
+
+function Card() {
   const cards = [
     {
       id: 1,
@@ -8,6 +10,7 @@ function CardLayout() {
         "Discover the top-rated running and hiking paths in your area, perfect for early mornings or sunset strolls.",
       author: "Waypoint Team",
       date: "May 5, 2025",
+      link: "/trails",
     },
     {
       id: 2,
@@ -17,6 +20,7 @@ function CardLayout() {
         "Learn how to create realistic fitness goals that sync with your GPS route tracking on Waypoint.",
       author: "Sarah Ekow",
       date: "May 3, 2025",
+      link: "/gps-goals",
     },
     {
       id: 3,
@@ -26,16 +30,18 @@ function CardLayout() {
         "Your movement patterns reveal more than steps—they reflect stress, recovery, and rhythm. Here's how to read them.",
       author: "Dr. Kwame Opoku",
       date: "April 29, 2025",
+      link: "/movement-analysis",
     },
   ];
 
   return (
     <section className="w-full bg-black py-20">
-      <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto px-6">
+      <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto px-6 pb-12">
         {cards.map((card) => (
-          <div
+          <a
             key={card.id}
-            className="flex-1 min-w-[300px] max-w-[400px] bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg flex flex-col"
+            href={card.link}
+            className="relative flex-1 min-w-[300px] max-w-[400px] bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg flex flex-col transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl will-change-transform no-underline"
           >
             <img
               src={card.image}
@@ -49,11 +55,11 @@ function CardLayout() {
                 {card.author} • {card.date} • 3 min read
               </p>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>
   );
 }
 
-export default CardLayout;
+export default Card;

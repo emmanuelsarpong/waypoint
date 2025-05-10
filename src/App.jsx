@@ -7,6 +7,9 @@ import Pricing from "./pages/Pricing";
 import Product from "./pages/Product";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
+import TrailsPage from "./pages/TrailsPage";
+import GPSGoalsPage from "./pages/GPSGoalsPage";
+import MovementAnalysisPage from "./pages/MovementAnalysisPage";
 import Topbar from "./components/Topbar";
 
 function App() {
@@ -48,6 +51,12 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/product" element={<Product />} />
+              <Route path="/trails" element={<TrailsPage />} />
+              <Route path="/gps-goals" element={<GPSGoalsPage />} />
+              <Route
+                path="/movement-analysis"
+                element={<MovementAnalysisPage />}
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
