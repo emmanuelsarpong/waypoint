@@ -11,6 +11,7 @@ import TrailsPage from "./pages/TrailsPage";
 import GPSGoalsPage from "./pages/GPSGoalsPage";
 import MovementAnalysisPage from "./pages/MovementAnalysisPage";
 import Topbar from "./components/Topbar";
+import SocialMediaBar from "./components/SocialMediaBar";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,6 +60,11 @@ function App() {
               />
               <Route path="*" element={<NotFound />} />
             </Routes>
+
+            {/* Social Media Bar */}
+            <div style={{ marginTop: "150px" }}>
+              <SocialMediaBar />
+            </div>
           </main>
         </div>
       </div>

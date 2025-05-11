@@ -5,7 +5,7 @@ function Card() {
     {
       id: 1,
       title: "Best Trails Near You",
-      image: "/src/assets/AdobeStock_291368008.jpeg",
+      image: "/src/assets/AdobeStock_466481959.jpeg",
       excerpt:
         "Discover the top-rated running and hiking paths in your area, perfect for early mornings or sunset strolls.",
       author: "Waypoint Team",
@@ -15,7 +15,7 @@ function Card() {
     {
       id: 2,
       title: "How to Set GPS-Based Goals",
-      image: "/src/assets/AdobeStock_466481959.jpeg",
+      image: "/src/assets/pexels-kamaji-ogino-5064610.jpg",
       excerpt:
         "Learn how to create realistic fitness goals that sync with your GPS route tracking on Waypoint.",
       author: "Sarah Ekow",
@@ -25,7 +25,7 @@ function Card() {
     {
       id: 3,
       title: "What Your Movement Says About You",
-      image: "/src/assets/AdobeStock_495398738.jpeg",
+      image: "/src/assets/AdobeStock_291368008.jpeg",
       excerpt:
         "Your movement patterns reveal more than steps—they reflect stress, recovery, and rhythm. Here's how to read them.",
       author: "Dr. Kwame Opoku",
