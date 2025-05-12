@@ -17,7 +17,7 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
       }`}
       style={{
         paddingTop: "200px",
-        borderRight: "0.5px solid #3F3F3F", // Add border-right
+        borderRight: "0.5px solid #3F3F3F", 
       }}
     >
       <div className="flex flex-col gap-8" style={{ display: "none" }}>

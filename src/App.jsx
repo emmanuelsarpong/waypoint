@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Homepage from "./pages/Homepage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -16,6 +18,7 @@ import SocialMediaBar from "./components/SocialMediaBar";
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -23,51 +26,69 @@ function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Check if the current route is login or signup
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
+
   return (
-    <div>
-      <div className="flex bg-black text-white">
-        <Sidebar
-          isScrolled={isScrolled}
-          isOpen={sidebarOpen}
-          toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-        />
+    <div
+      className={`min-h-screen ${isAuthPage ? "bg-white" : "bg-black text-white"}`}
+    >
+      {!isAuthPage && (
+        <div className="flex">
+          <Sidebar
+            isScrolled={isScrolled}
+            isOpen={sidebarOpen}
+            toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+          />
 
-        <div
-          className={`flex flex-col flex-1 ${
-            sidebarOpen ? "ml-[250px]" : "ml-0"
-          } transition-all duration-300`}
-        >
-          <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
-
-          <main
-            className="mt-[70px] w-full max-w-[1200px] mx-auto px-6"
-            style={{
-              paddingLeft: "25px",
-              paddingRight: "25px",
-            }}
+          <div
+            className={`flex flex-col flex-1 ${
+              sidebarOpen ? "ml-[250px]" : "ml-0"
+            } transition-all duration-300`}
           >
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/product" element={<Product />} />
-              <Route path="/trails" element={<TrailsPage />} />
-              <Route path="/gps-goals" element={<GPSGoalsPage />} />
-              <Route
-                path="/movement-analysis"
-                element={<MovementAnalysisPage />}
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
-            {/* Social Media Bar */}
-            <div style={{ marginTop: "150px" }}>
-              <SocialMediaBar />
-            </div>
-          </main>
+            <main
+              className="mt-[70px] w-full max-w-[1200px] mx-auto px-6"
+              style={{
+                paddingLeft: "25px",
+                paddingRight: "25px",
+              }}
+            >
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/product" element={<Product />} />
+                <Route path="/trails" element={<TrailsPage />} />
+                <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                <Route
+                  path="/movement-analysis"
+                  element={<MovementAnalysisPage />}
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+
+              {/* Social Media Bar */}
+              <div style={{ marginTop: "150px" }}>
+                <SocialMediaBar />
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
+      )}
+
+      {isAuthPage && (
+        <main className="w-full h-screen flex items-center justify-center">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </main>
+      )}
     </div>
   );
 }

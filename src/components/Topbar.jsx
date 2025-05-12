@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import Logo from "./Logo";
 import Button from "./Button";
 import showIcon from "../assets/show.svg";
@@ -7,6 +8,7 @@ import closeIcon from "../assets/hide.svg";
 function Topbar({ toggleSidebar }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,7 +39,7 @@ function Topbar({ toggleSidebar }) {
         justifyContent: "space-between",
         background: "black",
         color: "white",
-        borderBottom: "0.5px solid #3F3F3F", // Add border-bottom
+        borderBottom: "0.5px solid #3F3F3F",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -53,6 +55,7 @@ function Topbar({ toggleSidebar }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            cursor: "pointer",
           }}
         >
           <img
@@ -65,7 +68,7 @@ function Topbar({ toggleSidebar }) {
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <Button
-          onClick={() => console.log("Login clicked")}
+          onClick={() => navigate("/login")} // Navigate to the login page
           className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
         >
           Login
