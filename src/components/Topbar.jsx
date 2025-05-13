@@ -68,7 +68,7 @@ function Topbar({ toggleSidebar }) {
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <Button
-          onClick={() => navigate("/login")} // Navigate to the login page
+          onClick={() => navigate("/login")} 
           className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
         >
           Login

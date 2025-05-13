@@ -1,0 +1,168 @@
+html,
+body .auth {
+  margin: 0; /* Remove default margin */
+  height: 100%; /* Ensure it covers the full viewport */
+  font-family: "Inter", sans-serif;
+}
+
+.auth {
+  background: #f9f9f9 !important;
+  font-family: "Inter", sans-serif;
+  margin: 0; /* Remove default margin */
+  height: 100%; /* Ensure it covers the full viewport */
+}
+
+.html {
+  background: #f9f9f9 !important;
+  font-family: "Inter", sans-serif;
+}
+
+.wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 410px;
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 2.5rem;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.heading {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #000;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.button {
+  padding: 0.75rem 1rem;
+  background-color: #000;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.button:hover {
+  background-color: #333;
+}
+
+.subtext {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.subtext .link {
+  color: #2563eb !important; /* Blue color */
+  text-decoration: none;
+  font-weight: 500; /* Optional: Add weight for better visibility */
+}
+
+.subtext .link:hover {
+  text-decoration: underline;
+}
+
+.link {
+  color: #2563eb !important; /* Blue color */
+  text-decoration: none;
+  font-weight: 500; /* Optional: Add weight for better visibility */
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.dividerWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dividerLine {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.dividerText {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.oauthWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.oauthButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  background: white;
+  font-size: 1rem;
+  font-weight: 500;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  justify-content: flex-start;
+}
+
+.oauthButton:hover {
+  background-color: #f3f4f6;
+}
+
+.oauthIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 1.5rem;
+}
