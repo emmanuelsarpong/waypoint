@@ -26,6 +26,15 @@ function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === "/login" || path === "/signup") {
+      document.body.style.backgroundColor = "#f9f9f9";
+    } else {
+      document.body.style.backgroundColor = "#000000";
+    }
+  }, [location]);
+
   // Check if the current route is login or signup
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
