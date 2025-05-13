@@ -7,7 +7,6 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
     { name: "Pricing", path: "/pricing" },
-    { name: "Product", path: "/product" },
   ];
 
   return (

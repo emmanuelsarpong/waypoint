@@ -6,7 +6,6 @@ import Homepage from "./pages/Homepage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Pricing from "./pages/Pricing";
-import Product from "./pages/Product";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
 import TrailsPage from "./pages/TrailsPage";
@@ -78,7 +77,6 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/pricing" element={<Pricing />} />
-                <Route path="/product" element={<Product />} />
                 <Route path="/trails" element={<TrailsPage />} />
                 <Route path="/gps-goals" element={<GPSGoalsPage />} />
                 <Route

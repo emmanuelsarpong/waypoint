@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"; // Import Link from React Router
 import heroImage from "../assets/pexels-codioful-7135057.jpg";
 import howItWorksImage from "../assets/pexels-codioful-7130536.jpg";
 import dashboardPreview from "../assets/pexels-codioful-7130498.jpg";
@@ -205,9 +206,11 @@ function Homepage() {
             <p className="text-neutral-300 mb-6">
               Sign up and start tracking your movement today.
             </p>
-            <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
-              Create Account
-            </Button>
+            <Link to="/signup">
+              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+                Create Account
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
