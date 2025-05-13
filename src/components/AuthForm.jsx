@@ -6,6 +6,7 @@ import GoogleIcon from "../assets/google.svg";
 import MicrosoftIcon from "../assets/microsoft.svg";
 import AppleIcon from "../assets/apple.svg";
 import PhoneIcon from "../assets/phone.svg";
+import GlobeIcon from "../assets/globe-black.svg"; 
 
 export default function AuthForm({ mode = "login" }) {
   const [email, setEmail] = useState("");
@@ -17,6 +18,13 @@ export default function AuthForm({ mode = "login" }) {
 
   return (
     <div className={styles.container}>
+      {/* Fixed Header Section */}
+      <header className={styles.fixedHeader}>
+        <a href="/" className={styles.logo}>
+          <img src={GlobeIcon} alt="Waypoint" className={styles.icon} />
+        </a>
+      </header>
+
       <h2 className={styles.heading}>
         {mode === "login" ? "Welcome back" : "Create your account"}
       </h2>
@@ -39,20 +47,16 @@ export default function AuthForm({ mode = "login" }) {
       {mode === "login" ? (
         <p className="subtext">
           Don’t have an account?{" "}
-          <span>
-            <a href="/signup" className="link">
-              Sign up
-            </a>
-          </span>
+          <a href="/signup" className="link">
+            Sign up
+          </a>
         </p>
       ) : (
         <p className="subtext">
           Already have an account?{" "}
-          <span>
-            <a href="/login" className="link">
-              Sign in
-            </a>
-          </span>
+          <a href="/login" className="link">
+            Login
+          </a>
         </p>
       )}
 
@@ -73,9 +77,9 @@ export default function AuthForm({ mode = "login" }) {
       </div>
 
       <div className={styles.footerLinks}>
-        <a href="#">Terms of Use</a>
+        <a href="#" className="link">Terms of Use</a>
         <span>|</span>
-        <a href="#">Privacy Policy</a>
+        <a href="#" className="link">Privacy Policy</a>
       </div>
     </div>
   );

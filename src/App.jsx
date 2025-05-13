@@ -28,19 +28,26 @@ function App() {
 
   useEffect(() => {
     const path = location.pathname;
+
+    // Set background and text color dynamically
     if (path === "/login" || path === "/signup") {
       document.body.style.backgroundColor = "#f9f9f9";
+      document.body.style.color = "#000000"; // Black text for login/signup pages
     } else {
       document.body.style.backgroundColor = "#000000";
+      document.body.style.color = "#ffffff"; // White text for other pages
     }
   }, [location]);
 
   // Check if the current route is login or signup
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <div
-      className={`min-h-screen ${isAuthPage ? "bg-white" : "bg-black text-white"}`}
+      className={`min-h-screen ${
+        isAuthPage ? "bg-white text-black" : "bg-black text-white"
+      }`}
     >
       {!isAuthPage && (
         <div className="flex">

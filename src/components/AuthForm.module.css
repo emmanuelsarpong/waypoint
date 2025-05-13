@@ -1,15 +1,15 @@
 html,
 body .auth {
-  margin: 0; /* Remove default margin */
-  height: 100%; /* Ensure it covers the full viewport */
+  margin: 0;
+  height: 100%;
   font-family: "Inter", sans-serif;
 }
 
 .auth {
   background: #f9f9f9 !important;
   font-family: "Inter", sans-serif;
-  margin: 0; /* Remove default margin */
-  height: 100%; /* Ensure it covers the full viewport */
+  margin: 0;
+  height: 100%;
 }
 
 .html {
@@ -29,7 +29,7 @@ body .auth {
 .container {
   width: 100%;
   max-width: 410px;
-  margin: 0 auto; /* Center the container horizontally */
+  margin: 0 auto;
   padding: 2.5rem;
   background: #f9f9f9;
   display: flex;
@@ -91,9 +91,9 @@ body .auth {
 }
 
 .subtext .link {
-  color: #2563eb !important; /* Blue color */
+  color: #2563eb !important;
   text-decoration: none;
-  font-weight: 500; /* Optional: Add weight for better visibility */
+  font-weight: 500;
 }
 
 .subtext .link:hover {
@@ -101,9 +101,9 @@ body .auth {
 }
 
 .link {
-  color: #2563eb !important; /* Blue color */
+  color: #2563eb !important;
   text-decoration: none;
-  font-weight: 500; /* Optional: Add weight for better visibility */
+  font-weight: 500;
 }
 
 .link:hover {
@@ -165,4 +165,34 @@ body .auth {
   font-size: 0.75rem;
   color: #9ca3af;
   margin-top: 1.5rem;
+}
+
+.header {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.fixedHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 1rem;
+  z-index: 1000;
+  background: transparent;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.logo:hover {
+  text-decoration: none;
 }
