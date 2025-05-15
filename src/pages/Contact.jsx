@@ -1,58 +1,141 @@
-function About() {
+function Contact() {
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    gap: "24px",
+    maxWidth: "700px",
+    width: "100%",
+    margin: "0",
     padding: "40px 20px",
-    backgroundColor: "#000",
-    color: "#fff",
-    minHeight: "calc(100vh - 300px)", // Reduced height
-    textAlign: "center",
+    background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",
+    border: "1px solid #2a2a2a",
+    borderRadius: "12px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
   };
 
   const headingStyle = {
     fontSize: "2.5rem",
     fontWeight: "bold",
-    marginBottom: "20px",
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: "10px",
   };
 
-  const paragraphStyle = {
-    fontSize: "1.125rem",
-    lineHeight: "1.8",
-    maxWidth: "800px",
-    marginBottom: "20px",
+  const subtextStyle = {
     color: "#9ca3af",
+    fontSize: "1.125rem",
+    textAlign: "center",
+    marginBottom: "20px",
   };
 
-  const highlightStyle = {
-    background: "linear-gradient(90deg, #ff7eb3, #ff758c, #a29bfe)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
+  const inputStyle = {
+    padding: "12px",
+    border: "1px solid #3f3f3f",
+    borderRadius: "8px",
+    backgroundColor: "#1a1a1a",
+    color: "#fff",
+    fontSize: "1rem",
+    outline: "none",
+    transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+    width: "100%",
+  };
+
+  const inputHoverFocusStyle = {
+    borderImageSource: "linear-gradient(90deg, #ff7eb3, #ff758c, #a29bfe)",
+    borderImageSlice: 1,
+    borderWidth: "2px",
+    boxShadow: "0 0 0 2px rgba(255, 117, 140, 0.5)",
+  };
+
+  const buttonStyle = {
+    display: "block",
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#1a1a1a",
+    color: "#fff",
+    border: "1px solid #3f3f3f",
+    borderRadius: "8px",
+    fontSize: "1rem",
     fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease, transform 0.3s ease",
+  };
+
+  const buttonHoverStyle = {
+    backgroundColor: "#333",
+    transform: "scale(1.02)",
+  };
+
+  const handleMouseEnter = (e, style) => {
+    Object.assign(e.target.style, style);
+  };
+
+  const handleMouseLeave = (e, style) => {
+    Object.assign(e.target.style, style);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted");
   };
 
   return (
-    <div style={containerStyle}>
-      <h1 style={headingStyle}>About Us</h1>
-      <p style={paragraphStyle}>
-        Welcome to <span style={highlightStyle}>Waypoint</span>, your trusted
-        partner in navigating the digital landscape. Our mission is to empower
-        individuals and businesses with innovative solutions that drive growth
-        and success.
-      </p>
-      <p style={paragraphStyle}>
-        At <span style={highlightStyle}>Waypoint</span>, we believe in the power
-        of technology to transform lives. With a dedicated team of experts, we
-        strive to deliver exceptional services tailored to meet your unique
-        needs.
-      </p>
-      <p style={paragraphStyle}>
-        Join us on this journey as we explore new horizons and create
-        meaningful impact together.
-      </p>
+    <div
+      style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        height: "calc(100vh - 300px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+      }}
+    >
+      <form style={containerStyle} onSubmit={handleSubmit}>
+        <h1 style={headingStyle}>Contact Us</h1>
+        <p style={subtextStyle}>
+          We'd love to hear from you. Fill out the form below to get in touch.
+        </p>
+        <input
+          type="text"
+          placeholder="Your Name"
+          style={inputStyle}
+          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
+          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+        />
+        <input
+          type="email"
+          placeholder="Your Email"
+          style={inputStyle}
+          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
+          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+        />
+        <textarea
+          placeholder="Your Message"
+          rows="5"
+          style={{
+            ...inputStyle,
+            resize: "none",
+          }}
+          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
+          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+        />
+        <button
+          type="submit"
+          style={buttonStyle}
+          onMouseEnter={(e) => handleMouseEnter(e, buttonHoverStyle)}
+          onMouseLeave={(e) =>
+            handleMouseLeave(e, {
+              backgroundColor: "#1a1a1a",
+              transform: "scale(1)",
+            })
+          }
+        >
+          Send Message
+        </button>
+      </form>
     </div>
   );
 }
 
-export default About;
+export default Contact;
