@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 function Contact() {
   const containerStyle = {
     display: "flex",
@@ -35,16 +37,15 @@ function Contact() {
     backgroundColor: "#1a1a1a",
     color: "#fff",
     fontSize: "1rem",
+    fontFamily: "inherit",
     outline: "none",
-    transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+    transition: "all 0.3s ease",
     width: "100%",
   };
 
-  const inputHoverFocusStyle = {
-    borderImageSource: "linear-gradient(90deg, #ff7eb3, #ff758c, #a29bfe)",
-    borderImageSlice: 1,
-    borderWidth: "2px",
-    boxShadow: "0 0 0 2px rgba(255, 117, 140, 0.5)",
+  const focusGlowStyle = {
+    borderColor: "#ff7eb3",
+    boxShadow: "0 0 0 .5px rgba(255, 126, 179, 0.5)",
   };
 
   const buttonStyle = {
@@ -66,6 +67,9 @@ function Contact() {
     transform: "scale(1.02)",
   };
 
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState("");
+
   const handleMouseEnter = (e, style) => {
     Object.assign(e.target.style, style);
   };
@@ -74,9 +78,29 @@ function Contact() {
     Object.assign(e.target.style, style);
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
+    setStatus("Sending...");
+    try {
+      const res = await fetch("http://localhost:3000/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStatus("Message sent!");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus(data.error || "Failed to send.");
+      }
+    } catch {
+      setStatus("Failed to send.");
+    }
   };
 
   return (
@@ -98,27 +122,36 @@ function Contact() {
         </p>
         <input
           type="text"
+          name="name"
           placeholder="Your Name"
+          value={form.name}
+          onChange={handleChange}
           style={inputStyle}
-          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
-          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+          onFocus={(e) => handleMouseEnter(e, focusGlowStyle)}
+          onBlur={(e) => handleMouseLeave(e, inputStyle)}
         />
         <input
           type="email"
+          name="email"
           placeholder="Your Email"
+          value={form.email}
+          onChange={handleChange}
           style={inputStyle}
-          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
-          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+          onFocus={(e) => handleMouseEnter(e, focusGlowStyle)}
+          onBlur={(e) => handleMouseLeave(e, inputStyle)}
         />
         <textarea
+          name="message"
           placeholder="Your Message"
+          value={form.message}
+          onChange={handleChange}
           rows="5"
           style={{
             ...inputStyle,
             resize: "none",
           }}
-          onFocus={(e) => handleMouseEnter(e, inputHoverFocusStyle)}
-          onBlur={(e) => handleMouseLeave(e, { borderColor: "#3f3f3f" })}
+          onFocus={(e) => handleMouseEnter(e, focusGlowStyle)}
+          onBlur={(e) => handleMouseLeave(e, inputStyle)}
         />
         <button
           type="submit"
@@ -133,6 +166,16 @@ function Contact() {
         >
           Send Message
         </button>
+        {status && (
+          <p
+            style={{
+              color: status === "Message sent!" ? "#4ade80" : "#ff758c",
+              marginTop: 8,
+            }}
+          >
+            {status}
+          </p>
+        )}
       </form>
     </div>
   );
