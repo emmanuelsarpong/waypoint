@@ -72,6 +72,12 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   res.status(200).json({ message: "User logged in successfully", token });
 });
 
+// Reset password
+export const resetPassword = (req: Request, res: Response) => {
+  // Password logic here
+  res.json({ message: "Password reset endpoint" });
+};
+
 // Global error handler for uncaught errors
 export const errorHandler = (
   err: Error,
