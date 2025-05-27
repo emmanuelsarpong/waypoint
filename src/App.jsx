@@ -13,6 +13,8 @@ import GPSGoalsPage from "./pages/GPSGoalsPage";
 import MovementAnalysisPage from "./pages/MovementAnalysisPage";
 import Topbar from "./components/Topbar";
 import SocialMediaBar from "./components/SocialMediaBar";
+import CheckEmail from "./pages/CheckEmail";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,20 +29,28 @@ function App() {
 
   useEffect(() => {
     const path = location.pathname;
-
-    // Set background and text color dynamically
-    if (path === "/login" || path === "/signup") {
+    const isAuth =
+      path === "/login" ||
+      path === "/signup" ||
+      path === "/forgot-password" ||
+      path === "/check-email";
+    if (isAuth) {
       document.body.style.backgroundColor = "#f9f9f9";
-      document.body.style.color = "#000000"; // Black text for login/signup pages
+      document.body.style.color = "#000000";
+      document.body.classList.add("auth-page");
     } else {
       document.body.style.backgroundColor = "#000000";
-      document.body.style.color = "#ffffff"; // White text for other pages
+      document.body.style.color = "#ffffff";
+      document.body.classList.remove("auth-page");
     }
   }, [location]);
 
   // Check if the current route is login or signup
   const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/signup";
+    location.pathname === "/login" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname === "/check-email";
 
   return (
     <div
@@ -83,6 +93,8 @@ function App() {
                   path="/movement-analysis"
                   element={<MovementAnalysisPage />}
                 />
+                <Route path="/check-email" element={<CheckEmail />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
@@ -100,6 +112,8 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/check-email" element={<CheckEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </main>
       )}

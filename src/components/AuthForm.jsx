@@ -1,27 +1,28 @@
 import { useState } from "react";
 import styles from "./AuthForm.module.css";
 
-// Import the colored icons
+// Icons
 import GoogleIcon from "../assets/google.svg";
 import MicrosoftIcon from "../assets/microsoft.svg";
 import AppleIcon from "../assets/apple.svg";
 import PhoneIcon from "../assets/phone.svg";
 import GlobeIcon from "../assets/globe-black.svg";
 
-export default function AuthForm({ mode = "login" }) {
-  const [username, setUsername] = useState("");
+export default function AuthForm({ mode = "login", onSuccess }) {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let body;
-      if (mode === "signup") {
-        body = JSON.stringify({ username, password });
+      let endpoint, body;
+      if (mode === "forgot-password") {
+        endpoint = "/auth/forgot-password";
+        body = JSON.stringify({ email });
       } else {
-        body = JSON.stringify({ username, password });
+        endpoint = mode === "login" ? "/auth/login" : "/auth/signup";
+        body = JSON.stringify({ email, password });
       }
-      const endpoint = mode === "login" ? "/auth/login" : "/auth/signup";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,18 +30,22 @@ export default function AuthForm({ mode = "login" }) {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message || "Success!");
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          alert(data.message || "Success!");
+        }
       } else {
         alert(data.error || "Authentication failed.");
       }
-    } catch (err) {
+    } catch {
       alert("Network error.");
     }
   };
 
   return (
     <div className={styles.container}>
-      {/* Fixed Header Section */}
+      {/* Logo */}
       <header className={styles.fixedHeader}>
         <a href="/" className={styles.logo}>
           <img src={GlobeIcon} alt="Waypoint" className={styles.icon} />
@@ -48,87 +53,94 @@ export default function AuthForm({ mode = "login" }) {
       </header>
 
       <h2 className={styles.heading}>
-        {mode === "login" ? "Welcome back" : "Create your account"}
+        {mode === "login"
+          ? "Welcome back"
+          : mode === "signup"
+          ? "Create your account"
+          : "Forgot Password"}
       </h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        {mode === "signup" && (
-          <>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-              className={styles.input}
-              required
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className={styles.input}
-              required
-            />
-          </>
-        )}
-        {mode === "login" && (
-          <>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-              className={styles.input}
-              required
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className={styles.input}
-              required
-            />
-          </>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className={styles.input}
+          required
+        />
+        {mode !== "forgot-password" && (
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className={styles.input}
+            required
+          />
         )}
         <button type="submit" className={styles.button}>
-          Continue
+          {mode === "forgot-password" ? "Send Reset Link" : "Continue"}
         </button>
       </form>
 
+      {/* Navigation Links */}
       {mode === "login" ? (
-        <p className="subtext">
-          Don’t have an account?{" "}
-          <a href="/signup" className="link">
-            Sign up
-          </a>
-        </p>
+        <div className={styles.linksWrapper}>
+          <p className="subtext">
+            Don’t have an account?{" "}
+            <a href="/signup" className="link">
+              Sign up
+            </a>
+          </p>
+          <p className="subtext">
+            Forgot password?{" "}
+            <a href="/forgot-password" className="link">
+              Reset
+            </a>
+          </p>
+        </div>
+      ) : mode === "signup" ? (
+        <div className={styles.linksWrapper}>
+          <p className="subtext">
+            Already have an account?{" "}
+            <a href="/login" className="link">
+              Login
+            </a>
+          </p>
+        </div>
       ) : (
-        <p className="subtext">
-          Already have an account?{" "}
-          <a href="/login" className="link">
-            Login
-          </a>
-        </p>
+        <div className={styles.linksWrapper}>
+          <p className="subtext">
+            Remembered your password?{" "}
+            <a href="/login" className="link">
+              Login
+            </a>
+          </p>
+        </div>
       )}
 
-      <div className={styles.dividerWrapper}>
-        <div className={styles.dividerLine} />
-        <span className={styles.dividerText}>OR</span>
-        <div className={styles.dividerLine} />
-      </div>
+      {/* Divider and OAuth only for login/signup */}
+      {(mode === "login" || mode === "signup") && (
+        <>
+          <div className={styles.dividerWrapper}>
+            <div className={styles.dividerLine} />
+            <span className={styles.dividerText}>OR</span>
+            <div className={styles.dividerLine} />
+          </div>
+          <div className={styles.oauthWrapper}>
+            <OAuthButton icon={GoogleIcon} text="Continue with Google" />
+            <OAuthButton
+              icon={MicrosoftIcon}
+              text="Continue with Microsoft Account"
+            />
+            <OAuthButton icon={AppleIcon} text="Continue with Apple" />
+            <OAuthButton icon={PhoneIcon} text="Continue with phone" />
+          </div>
+        </>
+      )}
 
-      <div className={styles.oauthWrapper}>
-        <OAuthButton icon={GoogleIcon} text="Continue with Google" />
-        <OAuthButton
-          icon={MicrosoftIcon}
-          text="Continue with Microsoft Account"
-        />
-        <OAuthButton icon={AppleIcon} text="Continue with Apple" />
-        <OAuthButton icon={PhoneIcon} text="Continue with phone" />
-      </div>
-
+      {/* Footer Links */}
       <div className={styles.footerLinks}>
         <a href="#" className="link">
           Terms of Use

@@ -2,10 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-a:visited {
-  color: inherit;
-}
-
+/* Root color variables */
 :root {
   --bg-dark: #000000;
   --text-light: #ffffff;
@@ -14,17 +11,9 @@ a:visited {
   --hover-arrow: #ffffff;
 }
 
+/* Reset and universal styles */
 * {
   box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  margin: 0;
-  padding: 0;
-  color: var(--text-light);
-  height: 100%;
-  overflow-x: hidden;
 }
 
 html,
@@ -34,6 +23,16 @@ body,
   width: 100%;
 }
 
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-light);
+  background-color: var(--bg-dark);
+  overflow-x: hidden;
+}
+
+/* Heading styles */
 h1 {
   font-size: 3rem;
   font-weight: 400;
@@ -64,6 +63,22 @@ h6 {
   color: var(--text-light);
 }
 
+/* Anchor tag fixes to prevent blue text */
+a {
+  color: var(--text-light);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--text-light);
+}
+
+a:hover,
+a:focus {
+  color: var(--text-muted);
+}
+
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -72,10 +87,22 @@ h6 {
   border-radius: 4px;
 }
 
+/* Image styling */
 img {
   border-radius: 5px;
 }
 
 img.logo {
   border-radius: 0;
+}
+
+.auth-page a,
+.auth-page a:visited {
+  color: #2563eb !important; 
+  text-decoration: underline;
+}
+
+.auth-page a:hover,
+.auth-page a:focus {
+  color: #1d4ed8 !important; 
 }

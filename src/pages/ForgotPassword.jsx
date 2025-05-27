@@ -1,12 +1,9 @@
 import AuthForm from "../components/AuthForm";
-import { Link } from "react-router-dom";
 
-export default function Login() {
+export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div>
-        <AuthForm mode="login" />
-      </div>
+      <AuthForm mode="forgot-password" />
     </div>
   );
 }
