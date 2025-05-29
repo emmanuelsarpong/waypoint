@@ -6,7 +6,7 @@ export const updateProfile = async (req: Request, res: Response) => {
   const { username, password } = req.body;
   const update: any = {};
   if (username) update.username = username;
-  if (password) update.password = password; // Hash password in production
+  if (password) update.password = password; 
 
 
   const user = await User.findByIdAndUpdate(userId, update, { new: true });

@@ -15,6 +15,7 @@ import Topbar from "./components/Topbar";
 import SocialMediaBar from "./components/SocialMediaBar";
 import CheckEmail from "./pages/CheckEmail";
 import ForgotPassword from "./pages/ForgotPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,7 +34,8 @@ function App() {
       path === "/login" ||
       path === "/signup" ||
       path === "/forgot-password" ||
-      path === "/check-email";
+      path === "/check-email" ||
+      path === "/verify-email";
     if (isAuth) {
       document.body.style.backgroundColor = "#f9f9f9";
       document.body.style.color = "#000000";
@@ -45,12 +47,13 @@ function App() {
     }
   }, [location]);
 
-  // Check if the current route is login or signup
+  // Check if the current route is an auth-related page
   const isAuthPage =
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
     location.pathname === "/forgot-password" ||
-    location.pathname === "/check-email";
+    location.pathname === "/check-email" ||
+    location.pathname === "/verify-email";
 
   return (
     <div
@@ -95,6 +98,7 @@ function App() {
                 />
                 <Route path="/check-email" element={<CheckEmail />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
@@ -114,6 +118,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
           </Routes>
         </main>
       )}
