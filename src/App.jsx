@@ -16,6 +16,10 @@ import SocialMediaBar from "./components/SocialMediaBar";
 import CheckEmail from "./pages/CheckEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyEmail from "./pages/VerifyEmail";
+import PasswordEmailSent from "./pages/PasswordEmailSent";
+import ResetPassword from "./pages/ResetPassword";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,7 +57,9 @@ function App() {
     location.pathname === "/signup" ||
     location.pathname === "/forgot-password" ||
     location.pathname === "/check-email" ||
-    location.pathname === "/verify-email";
+    location.pathname === "/verify-email" ||
+    location.pathname === "/password-email-sent" ||
+    location.pathname === "/reset-password";
 
   return (
     <div
@@ -99,6 +105,19 @@ function App() {
                 <Route path="/check-email" element={<CheckEmail />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route
+                  path="/password-email-sent"
+                  element={<PasswordEmailSent />}
+                />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
@@ -119,6 +138,11 @@ function App() {
             <Route path="/check-email" element={<CheckEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route
+              path="/password-email-sent"
+              element={<PasswordEmailSent />}
+            />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </main>
       )}

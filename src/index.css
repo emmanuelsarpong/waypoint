@@ -32,6 +32,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Only apply this class to your auth page wrapper */
+.auth-bg {
+  background: #f9f9f9;
+  min-height: 100vh;
+}
+
 /* Heading styles */
 h1 {
   font-size: 3rem;

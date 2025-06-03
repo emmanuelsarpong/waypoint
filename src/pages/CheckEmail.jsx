@@ -1,12 +1,11 @@
 import React from "react";
-import AuthForm from "../components/AuthForm";
+import StatusNotice from "../components/StatusNotice";
 
 export default function CheckEmail() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div>
-        <AuthForm mode="check-email" />
-      </div>
-    </div>
+    <StatusNotice
+      title="Check your email"
+      message="We’ve sent a link to your email. Please check your inbox and follow the instructions."
+    />
   );
 }

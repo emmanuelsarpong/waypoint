@@ -96,11 +96,15 @@ export const verifyEmail = catchAsync(async (req: Request, res: Response) => {
   const { token } = req.query;
 
   if (!token || typeof token !== "string") {
-    return res.status(400).json({ status: "error", error: "Invalid or missing token." });
+    return res
+      .status(400)
+      .json({ status: "error", error: "Invalid or missing token." });
   }
 
   // Find user by token or by isVerified
-  const user = await User.findOne({ $or: [{ verificationToken: token }, { isVerified: true }] });
+  const user = await User.findOne({
+    $or: [{ verificationToken: token }, { isVerified: true }],
+  });
 
   // If user is already verified, return early
   if (user && user.isVerified) {
@@ -120,7 +124,10 @@ export const verifyEmail = catchAsync(async (req: Request, res: Response) => {
   }
 
   // Check if token is expired
-  if (!user.verificationTokenExpires || user.verificationTokenExpires < new Date()) {
+  if (
+    !user.verificationTokenExpires ||
+    user.verificationTokenExpires < new Date()
+  ) {
     return res.status(400).json({
       status: "error",
       error: "Token has expired. Please sign up again.",
@@ -167,27 +174,93 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     expiresIn: "1h",
   });
 
-  res.status(200).json({ message: "User logged in successfully", token });
+  res.json({ message: "You are logged in successfully.", token });
 });
 
-// Forgot Password (stub)
+// Forgot Password (real implementation)
 export const forgotPassword = catchAsync(
   async (req: Request, res: Response) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: "No user found with that email." });
+      return res.status(200).json({
+        userFound: false,
+        message: "We could not find an account with that email address.",
+      });
     }
 
-    const resetToken = "reset-token";
-    res.json({ message: "Password reset email sent (stub)." });
+    // Generate a secure reset token and expiry
+    const resetToken = crypto.randomBytes(32).toString("base64url");
+    const resetTokenExpires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordTokenExpires = resetTokenExpires;
+    await user.save();
+
+    // Build reset link
+    const resetLink = `http://localhost:5173/reset-password?token=${encodeURIComponent(
+      resetToken
+    )}`;
+
+    // Send email
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Reset your Waypoint password",
+        html:
+          forgotPasswordTemplate(email, resetLink) +
+          `<p style="margin-top:20px;"><a href="${resetLink}" style="background:#4f46e5;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Reset Password</a></p>`,
+      });
+    } catch (emailErr) {
+      logger.error("Password reset email failed:", emailErr);
+      // Optionally clear the token if email fails
+      user.resetPasswordToken = undefined;
+      user.resetPasswordTokenExpires = undefined;
+      await user.save();
+      return res
+        .status(500)
+        .json({ error: "Failed to send reset email. Please try again later." });
+    }
+
+    res.json({
+      userFound: true,
+      message:
+        "A password reset link has been sent to your email. Please check your inbox.",
+    });
   }
 );
 
 // Reset Password (stub)
-export const resetPassword = (req: Request, res: Response) => {
-  res.json({ message: "Password reset endpoint" });
-};
+export const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  console.log("RESET BODY:", req.body);
+
+  const { password, token } = req.body;
+  if (!password || !token) {
+    console.log("Missing password or token");
+    return res.status(400).json({ error: "Missing password or token." });
+  }
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordTokenExpires: { $gt: new Date() },
+  });
+
+  if (!user) {
+    console.log("No user found for token:", token);
+    return res.status(400).json({ error: "Invalid or expired token." });
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Update user password and clear reset token
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordTokenExpires = undefined;
+  await user.save();
+
+  res.json({ message: "Password has been reset successfully." });
+});
 
 // Error handler
 export const errorHandler = (

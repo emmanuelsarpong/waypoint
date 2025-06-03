@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./AuthForm.module.css";
 import ProgressBar from "./ProgressBar";
 import Spinner from "./Spinner";
+import StatusNotice from "./StatusNotice";
 
 // Icons
 import GoogleIcon from "../assets/google.svg";
@@ -119,24 +121,168 @@ function NavigationLinks({ mode }) {
   return <div className={styles.linksWrapper}>{links[mode]}</div>;
 }
 
-export default function AuthForm({ mode = "login", onSuccess }) {
+export default function AuthForm({ mode = "login", onSuccess, token }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const forgotResult = location.state?.forgotResult;
 
   // --- Special Mode UIs ---
   if (mode === "check-email") {
     return (
-      <div className={styles.container}>
-        <Header />
-        <div className="bg-white p-8 rounded shadow text-center max-w-md mx-auto mt-16">
-          <h2 className={styles.heading}>Check your email</h2>
-          <p className="text-black">
-            We’ve sent a link to your email. Please check your inbox and follow
-            the instructions.
-          </p>
+      <div className={styles.wrapper}>
+        <div className={styles.container}>
+          <Header />
+          <StatusNotice
+            title="Check your email"
+            message="We’ve sent a link to your email. Please check your inbox and follow the instructions."
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === "password-email-sent") {
+    // Use forgotResult if available, otherwise fallback to generic message
+    const title = forgotResult
+      ? forgotResult.userFound
+        ? "Password reset email sent"
+        : "No account found"
+      : "Password reset email sent";
+    const message = forgotResult
+      ? forgotResult.message
+      : "If an account exists for this email, a password reset link has been sent. Please check your inbox.";
+
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.container}>
+          <Header />
+          <StatusNotice title={title} message={message} />
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === "reset-password") {
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.container}>
+          <Header />
+          <h2 className={styles.heading}>Create a new password</h2>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setLoading(true);
+              setError("");
+              if (password !== confirmPassword) {
+                setError("Passwords do not match");
+                setLoading(false);
+                return;
+              }
+              console.log("RESET PASSWORD TOKEN:", token); // <-- Add this line
+              try {
+                const res = await fetch("/auth/reset-password", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ password, token }),
+                });
+                const data = await res.json();
+                setLoading(false);
+                if (res.ok) {
+                  setSuccess(true);
+                  setTimeout(() => {
+                    navigate("/login");
+                  }, 2000); // 2 seconds before redirect
+                  return;
+                }
+                setError(data.error || "Failed to reset password.");
+              } catch {
+                setLoading(false);
+                setError("Network error.");
+              }
+            }}
+            className={styles.form}
+          >
+            {success && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  color: "#065f46",
+                  marginBottom: "1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                <Spinner size={28} />
+                <span style={{ marginTop: 12 }}>
+                  Password successfully created! Redirecting to login...
+                </span>
+              </div>
+            )}
+            {error && (
+              <div
+                style={{
+                  color: "#b91c1c",
+                  marginBottom: "1rem",
+                  textAlign: "center",
+                }}
+              >
+                {error}
+              </div>
+            )}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="New Password"
+              className={styles.input}
+              required
+              disabled={success}
+            />
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm New Password"
+              className={styles.input}
+              required
+              disabled={success}
+            />
+            <button
+              type="submit"
+              className={styles.button}
+              disabled={loading || success}
+              style={{ position: "relative", overflow: "hidden" }}
+            >
+              <span style={{ visibility: loading ? "hidden" : "visible" }}>
+                Create Password
+              </span>
+              {loading && (
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 24,
+                    height: 24,
+                  }}
+                >
+                  <Spinner size={24} />
+                </span>
+              )}
+            </button>
+          </form>
         </div>
       </div>
     );
@@ -166,18 +312,28 @@ export default function AuthForm({ mode = "login", onSuccess }) {
         body = { email };
       }
 
+      console.log("Submitting login", { email, password });
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
+      console.log("Login response:", res);
       const data = await res.json();
+      console.log("Login data:", data);
+
       setLoading(false);
 
       if (res.ok) {
+        if (mode === "login" && data.token) {
+          localStorage.setItem("token", data.token);
+          navigate("/profile");
+          return;
+        }
         if (onSuccess) onSuccess();
-        else alert(data.message || "Success!");
+        if (mode === "forgot-password") {
+          navigate("/password-email-sent", { state: { forgotResult: data } });
+        }
       } else {
         setError(data.error || "Authentication failed.");
       }
@@ -187,84 +343,99 @@ export default function AuthForm({ mode = "login", onSuccess }) {
     }
   };
 
+  // --- Main Form ---
   return (
-    <div className={styles.container}>
-      <ProgressBar loading={loading} />
-      <Header />
-
-      <h2 className={styles.heading}>
-        {
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        <ProgressBar loading={loading} />
+        <Header />
+        <h2 className={styles.heading}>
           {
-            login: "Welcome back",
-            signup: "Create your account",
-            "forgot-password": "Forgot Password",
-          }[mode]
-        }
-      </h2>
-
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className={styles.input}
-          required
-        />
-        {mode !== "forgot-password" && (
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className={styles.input}
-            required
-          />
-        )}
-        {mode === "signup" && (
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm Password"
-            className={styles.input}
-            required
-          />
-        )}
-        <button
-          type="submit"
-          className={styles.button}
-          disabled={loading}
-          style={{ position: "relative", overflow: "hidden" }}
-        >
-          <span style={{ visibility: loading ? "hidden" : "visible" }}>
-            {mode === "forgot-password" ? "Send Reset Link" : "Continue"}
-          </span>
-          {loading && (
-            <span
+            {
+              login: "Welcome back",
+              signup: "Create your account",
+              "forgot-password": "Forgot Password",
+            }[mode]
+          }
+        </h2>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {error && (
+            <div
               style={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 24,
-                height: 24,
+                background: "#ffeded",
+                color: "#b91c1c",
+                border: "1px solid #b91c1c",
+                borderRadius: "6px",
+                padding: "12px",
+                marginBottom: "1rem",
+                fontWeight: "bold",
+                textAlign: "center",
               }}
             >
-              <Spinner size={24} />
-            </span>
+              {error}
+            </div>
           )}
-        </button>
-      </form>
 
-      <NavigationLinks mode={mode} />
-      {(mode === "login" || mode === "signup") && <DividerOAuth />}
-      <FooterLinks />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className={styles.input}
+            required
+          />
+          {mode !== "forgot-password" && (
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className={styles.input}
+              required
+            />
+          )}
+          {mode === "signup" && (
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className={styles.input}
+              required
+            />
+          )}
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={loading}
+            style={{ position: "relative", overflow: "hidden" }}
+          >
+            <span style={{ visibility: loading ? "hidden" : "visible" }}>
+              {mode === "forgot-password" ? "Send Reset Link" : "Continue"}
+            </span>
+            {loading && (
+              <span
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 24,
+                  height: 24,
+                }}
+              >
+                <Spinner size={24} />
+              </span>
+            )}
+          </button>
+        </form>
+        <NavigationLinks mode={mode} />
+        {(mode === "login" || mode === "signup") && <DividerOAuth />}
+        <FooterLinks />
+      </div>
     </div>
   );
 }

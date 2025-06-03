@@ -7,6 +7,7 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
     { name: "Pricing", path: "/pricing" },
+    { name: "Profile", path: "/profile" }, 
   ];
 
   return (
@@ -16,7 +17,7 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
       }`}
       style={{
         paddingTop: "200px",
-        borderRight: "0.5px solid #3F3F3F", 
+        borderRight: "0.5px solid #3F3F3F",
       }}
     >
       <div className="flex flex-col gap-8" style={{ display: "none" }}>
