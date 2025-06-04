@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "../components/Button";
+import StatWidget from "../components/StatWidget";
 import {
   LineChart,
   Line,
@@ -9,76 +10,169 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const Card = ({ children, className }) => (
-  <div
-    className={`rounded-xl shadow-md p-6 bg-white text-black ${
-      className || ""
-    }`}
-  >
-    {children}
-  </div>
-);
-const CardContent = ({ children, className }) => (
-  <div className={className}>{children}</div>
-);
-
-const data = [
-  { name: "Mon", distance: 2.3 },
-  { name: "Tue", distance: 3.1 },
-  { name: "Wed", distance: 4.0 },
-  { name: "Thu", distance: 3.7 },
-  { name: "Fri", distance: 5.2 },
-  { name: "Sat", distance: 6.1 },
-  { name: "Sun", distance: 4.9 },
+// Example data for each stat
+const moveData = [
+  { name: "12AM", value: 100 },
+  { name: "6AM", value: 300 },
+  { name: "12PM", value: 700 },
+  { name: "6PM", value: 1173 },
+];
+const exerciseData = [
+  { name: "12AM", value: 0 },
+  { name: "6AM", value: 10 },
+  { name: "12PM", value: 60 },
+  { name: "6PM", value: 101 },
+];
+const standData = [
+  { name: "12AM", value: 2 },
+  { name: "6AM", value: 5 },
+  { name: "12PM", value: 8 },
+  { name: "6PM", value: 10 },
+];
+const stepData = [
+  { name: "12AM", value: 0 },
+  { name: "6AM", value: 2000 },
+  { name: "12PM", value: 5000 },
+  { name: "6PM", value: 6829 },
+];
+const distanceData = [
+  { name: "12AM", value: 0 },
+  { name: "6AM", value: 1.2 },
+  { name: "12PM", value: 3.5 },
+  { name: "6PM", value: 4.84 },
 ];
 
 export default function Profile() {
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">Your Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-purple-400 via-pink-400 to-orange-300 text-black">
-          <CardContent>
-            <h2 className="text-xl font-semibold mb-2">This Week’s Distance</h2>
-            <p className="text-3xl font-bold">29.3 km</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-to-br from-pink-300 via-blue-300 to-purple-300 text-black">
-          <CardContent>
-            <h2 className="text-xl font-semibold mb-2">Your Longest Run</h2>
-            <p className="text-3xl font-bold">6.1 km</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-to-br from-green-300 via-cyan-300 to-blue-300 text-black">
-          <CardContent>
-            <h2 className="text-xl font-semibold mb-2">Active Days</h2>
-            <p className="text-3xl font-bold">6/7</p>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="mt-12 bg-zinc-900 p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Weekly Progress</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <XAxis dataKey="name" stroke="#fff" />
-            <YAxis stroke="#fff" />
-            <Tooltip
-              contentStyle={{ backgroundColor: "#333", color: "#fff" }}
-            />
-            <Line
-              type="monotone"
-              dataKey="distance"
-              stroke="#f472b6"
-              strokeWidth={3}
-              dot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="mt-8 text-center">
-        <Button className="bg-white text-black hover:bg-zinc-200">
-          Log New Activity
-        </Button>
+    <div className="min-h-screen bg-black text-white flex flex-col items-center p-6 xl:p-12">
+      <div className="w-full max-w-6xl">
+        <h1 className="text-4xl font-extrabold text-center mb-12">
+          Your Dashboard
+        </h1>
+
+        {/* Stat Widgets */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 360px)",
+            gap: "32px",
+            justifyContent: "center",
+            marginBottom: "48px",
+          }}
+        >
+          <StatWidget
+            title="Move"
+            value="1,173"
+            unit="CAL"
+            data={moveData}
+            color="#fb2576"
+            onClick={() => alert("Show Move details")}
+          />
+          <StatWidget
+            title="Exercise"
+            value="101"
+            unit="MIN"
+            data={exerciseData}
+            color="#caff70"
+            onClick={() => alert("Show Exercise details")}
+          />
+          <StatWidget
+            title="Stand"
+            value="10"
+            unit="HRS"
+            data={standData}
+            color="#00f0ff"
+            onClick={() => alert("Show Stand details")}
+          />
+          <StatWidget
+            title="Step Count"
+            value="6,829"
+            unit=""
+            data={stepData}
+            color="#b39ddb"
+            onClick={() => alert("Show Step Count details")}
+          />
+          <StatWidget
+            title="Step Distance"
+            value="4.84"
+            unit="KM"
+            data={distanceData}
+            color="#40c4ff"
+            onClick={() => alert("Show Step Distance details")}
+          />
+          <StatWidget
+            title="Sessions"
+            value="1.11"
+            unit="KM"
+            data={distanceData}
+            color="#76ff03"
+            onClick={() => alert("Show Sessions details")}
+          >
+            <div className="text-xs text-neutral-400 mt-2">Outdoor Walk</div>
+          </StatWidget>
+        </div>
+
+        {/* Weekly Progress Line Chart */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "64px",
+            marginBottom: "0",
+          }}
+        >
+          <div
+            style={{
+              background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",
+              border: "1px solid #2a2a2a",
+              borderRadius: "12px",
+              padding: "32px 24px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
+              width: 1144,
+              maxWidth: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                marginBottom: "24px",
+                color: "#fff",
+                textAlign: "center",
+              }}
+            >
+              Weekly Progress
+            </h2>
+            <div style={{ width: "100%", height: 300 }}>
+              <ResponsiveContainer>
+                <LineChart data={distanceData}>
+                  <XAxis dataKey="name" stroke="#fff" />
+                  <YAxis stroke="#fff" />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#333", color: "#fff" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#f472b6"
+                    strokeWidth={3}
+                    dot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        {/* <div className="mt-12 flex justify-center">
+          <Button className="bg-white text-black hover:bg-zinc-200 shadow-md px-6 py-3 rounded-xl">
+            Log New Activity
+          </Button>
+        </div> */}
       </div>
     </div>
   );
