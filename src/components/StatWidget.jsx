@@ -9,11 +9,12 @@ const cardStyle = {
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
   transition: "box-shadow 0.3s ease, transform 0.3s ease",
   cursor: "pointer",
-  width: 360,
+  width: "100%", // CHANGED from 360 to 100% → important!!
   minHeight: 260,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  boxSizing: "border-box", // added to ensure perfect fit
 };
 
 const cardHoverStyle = {

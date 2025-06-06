@@ -3,11 +3,12 @@ import Logo from "./Logo";
 
 function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
   const navItems = [
+    { name: "Settings", path: "/settings" },
+    { name: "Dashboard", path: "/dashboard" },
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
-    { name: "Pricing", path: "/pricing" },
-    { name: "Profile", path: "/profile" }, 
+    { name: "Billing", path: "/billing" },
   ];
 
   return (

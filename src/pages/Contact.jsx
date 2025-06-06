@@ -7,7 +7,6 @@ function Contact() {
     gap: "24px",
     maxWidth: "700px",
     width: "100%",
-    margin: "0",
     padding: "40px 20px",
     background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",
     border: "1px solid #2a2a2a",
@@ -106,13 +105,13 @@ function Contact() {
   return (
     <div
       style={{
-        backgroundColor: "#000",
-        color: "#fff",
-        height: "calc(100vh - 300px)",
+        flex: "1", // THIS is the key to make the page stretch → footer stays at bottom
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflow: "hidden",
+        padding: "60px 20px", // replaced margin 100px with padding
+        backgroundColor: "#000",
+        color: "#fff",
       }}
     >
       <form style={containerStyle} onSubmit={handleSubmit}>

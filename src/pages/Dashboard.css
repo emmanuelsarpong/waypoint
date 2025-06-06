@@ -1,0 +1,54 @@
+.profile-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 5rem;
+  width: 100%;
+  max-width: 1144px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 10px;
+  /* Remove any background or border here! */
+}
+
+@media (min-width: 640px) {
+  .profile-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .profile-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.profile-card {
+  background: #111;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 1px solid #2a2a2a;
+  padding: 1.25rem; /* Slightly less padding */
+  transition: box-shadow 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Remove margin or extra border here */
+}
+.profile-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* Toggle button styles */
+.profile-toggle-btn {
+  color: #fff !important;
+  background: #1a1a1a;
+  border: none;
+}
+.profile-toggle-btn.active {
+  background: linear-gradient(to bottom right, #fb2576, #8f4eea);
+  color: #fff !important;
+  box-shadow: 0 2px 8px #fb257644;
+  transform: scale(1.05);
+  border: 2px solid #fb2576;
+}
