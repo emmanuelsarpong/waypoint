@@ -5,8 +5,7 @@ import { catchAsync } from "../utils/catchAsync";
 import winston from "winston";
 import User from "../models/userModel";
 import { sendEmail } from "../services/emailService";
-import { signupTemplate } from "../templates/signupTemplate";
-import { forgotPasswordTemplate } from "../templates/forgotPasswordTemplate";
+import { emailTemplate } from "../templates/baseEmail"; 
 import crypto from "crypto";
 
 // Winston logger setup
@@ -24,12 +23,12 @@ const logger = winston.createLogger({
 
 // Signup a new user
 export const signup = catchAsync(async (req: Request, res: Response) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password, confirmPassword, firstName } = req.body;
 
-  if (!email || !password || !confirmPassword) {
-    return res
-      .status(400)
-      .json({ error: "Missing email, password, or confirm password" });
+  if (!email || !password || !confirmPassword || !firstName) {
+    return res.status(400).json({
+      error: "Missing email, password, confirm password, or first name",
+    });
   }
 
   if (password !== confirmPassword) {
@@ -47,7 +46,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
 
   // Generate a URL-safe, shorter verification token
   const verificationToken = crypto.randomBytes(16).toString("base64url");
-  const verificationTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 hours
+  const verificationTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24); 
 
   try {
     const newUser = await User.create({
@@ -56,6 +55,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
       isVerified: false,
       verificationToken,
       verificationTokenExpires,
+      firstName, 
     });
 
     const verificationLink = `http://localhost:5173/verify-email?token=${encodeURIComponent(
@@ -66,9 +66,12 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
       await sendEmail({
         to: email,
         subject: "Verify your Waypoint account",
-        html:
-          signupTemplate(email) +
-          `<p style="margin-top:20px;"><a href="${verificationLink}" style="background:#4f46e5;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Verify Account</a></p>`,
+        html: emailTemplate({
+          mode: "verify",
+          username: firstName, 
+          email,
+          actionUrl: verificationLink,
+        }),
       });
     } catch (emailErr) {
       logger.error("Email sending failed:", emailErr);
@@ -101,9 +104,10 @@ export const verifyEmail = catchAsync(async (req: Request, res: Response) => {
       .json({ status: "error", error: "Invalid or missing token." });
   }
 
-  // Find user by token or by isVerified
+  // Find user with matching token and not already verified
   const user = await User.findOne({
-    $or: [{ verificationToken: token }, { isVerified: true }],
+    verificationToken: token,
+    isVerified: false,
   });
 
   // If user is already verified, return early
@@ -207,9 +211,12 @@ export const forgotPassword = catchAsync(
       await sendEmail({
         to: email,
         subject: "Reset your Waypoint password",
-        html:
-          forgotPasswordTemplate(email, resetLink) +
-          `<p style="margin-top:20px;"><a href="${resetLink}" style="background:#4f46e5;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Reset Password</a></p>`,
+        html: emailTemplate({
+          mode: "forgot",
+          username: user.firstName,
+          email,
+          actionUrl: resetLink,
+        }),
       });
     } catch (emailErr) {
       logger.error("Password reset email failed:", emailErr);

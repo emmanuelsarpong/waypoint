@@ -122,6 +122,7 @@ function NavigationLinks({ mode }) {
 }
 
 export default function AuthForm({ mode = "login", onSuccess, token }) {
+  const [firstName, setFirstName] = useState(""); // <-- Add first name state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -184,7 +185,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
                 setLoading(false);
                 return;
               }
-              console.log("RESET PASSWORD TOKEN:", token); // <-- Add this line
+              console.log("RESET PASSWORD TOKEN:", token);
               try {
                 const res = await fetch("/auth/reset-password", {
                   method: "POST",
@@ -197,7 +198,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
                   setSuccess(true);
                   setTimeout(() => {
                     navigate("/login");
-                  }, 2000); // 2 seconds before redirect
+                  }, 2000);
                   return;
                 }
                 setError(data.error || "Failed to reset password.");
@@ -306,13 +307,13 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
 
       if (mode === "signup") {
         endpoint = "/auth/signup";
-        body = { email, password, confirmPassword };
+        body = { firstName, email, password, confirmPassword }; // <-- Include firstName
       } else if (mode === "forgot-password") {
         endpoint = "/auth/forgot-password";
         body = { email };
       }
 
-      console.log("Submitting login", { email, password });
+      console.log("Submitting login", { ...body });
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -327,7 +328,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       if (res.ok) {
         if (mode === "login" && data.token) {
           localStorage.setItem("token", data.token);
-          navigate("/profile");
+          navigate("/dashboard"); // <-- Make sure this is /dashboard, not /profile
           return;
         }
         if (onSuccess) onSuccess();
@@ -376,33 +377,93 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
             </div>
           )}
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className={styles.input}
-            required
-          />
-          {mode !== "forgot-password" && (
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className={styles.input}
-              required
-            />
-          )}
+          {/* First Name field only for signup */}
           {mode === "signup" && (
+            <div className={styles.inputGroup}>
+              <input
+                id="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className={`${styles.input} ${firstName ? styles.filled : ""}`}
+                autoComplete="given-name"
+              />
+              <label
+                htmlFor="firstName"
+                className={`${styles.floatingLabel} ${
+                  firstName ? styles.filled : ""
+                }`}
+              >
+                First Name
+              </label>
+            </div>
+          )}
+
+          <div className={styles.inputGroup}>
             <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm Password"
-              className={styles.input}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
+              className={`${styles.input} ${email ? styles.filled : ""}`}
+              autoComplete="email"
             />
+            <label
+              htmlFor="email"
+              className={`${styles.floatingLabel} ${
+                email ? styles.filled : ""
+              }`}
+            >
+              Email
+            </label>
+          </div>
+
+          {mode !== "forgot-password" && (
+            <div className={styles.inputGroup}>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={`${styles.input} ${password ? styles.filled : ""}`}
+                autoComplete="new-password"
+              />
+              <label
+                htmlFor="password"
+                className={`${styles.floatingLabel} ${
+                  password ? styles.filled : ""
+                }`}
+              >
+                Password
+              </label>
+            </div>
+          )}
+
+          {mode === "signup" && (
+            <div className={styles.inputGroup}>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className={`${styles.input} ${
+                  confirmPassword ? styles.filled : ""
+                }`}
+                autoComplete="new-password"
+              />
+              <label
+                htmlFor="confirmPassword"
+                className={`${styles.floatingLabel} ${
+                  confirmPassword ? styles.filled : ""
+                }`}
+              >
+                Confirm Password
+              </label>
+            </div>
           )}
           <button
             type="submit"

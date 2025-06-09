@@ -21,11 +21,27 @@ import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import Pricing from "./pages/Pricing";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
   const location = useLocation();
+
+  // Listen for login/logout changes
+  useEffect(() => {
+    const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, []);
+
+  // Also check on route change (for SPA navigation)
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem("token"));
+  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -40,7 +56,9 @@ function App() {
       path === "/signup" ||
       path === "/forgot-password" ||
       path === "/check-email" ||
-      path === "/verify-email";
+      path === "/verify-email" ||
+      path === "/password-email-sent" ||
+      path === "/reset-password";
     if (isAuth) {
       document.body.style.backgroundColor = "#f9f9f9";
       document.body.style.color = "#000000";
@@ -52,7 +70,6 @@ function App() {
     }
   }, [location]);
 
-  // Check if the current route is an auth-related page
   const isAuthPage =
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
@@ -74,6 +91,7 @@ function App() {
             isScrolled={isScrolled}
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+            isAuthenticated={isAuthenticated}
           />
 
           <div
@@ -81,7 +99,11 @@ function App() {
               sidebarOpen ? "ml-[250px]" : "ml-0"
             } transition-all duration-300`}
           >
-            <Topbar toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+            <Topbar
+              toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+              isAuthenticated={isAuthenticated}
+              onLogout={() => setIsAuthenticated(false)}
+            />
 
             <main
               className="mt-[70px] w-full max-w-[1200px] mx-auto px-6"
@@ -91,26 +113,13 @@ function App() {
               }}
             >
               <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                <Route
+                  path="/"
+                  element={isAuthenticated ? <Dashboard /> : <Homepage />}
+                />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/billing" element={<Billing />} />
-                <Route path="/trails" element={<TrailsPage />} />
-                <Route path="/gps-goals" element={<GPSGoalsPage />} />
-                <Route
-                  path="/movement-analysis"
-                  element={<MovementAnalysisPage />}
-                />
-                <Route path="/check-email" element={<CheckEmail />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/verify-email" element={<VerifyEmail />} />
-                <Route
-                  path="/password-email-sent"
-                  element={<PasswordEmailSent />}
-                />
-                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/pricing" element={<Pricing />} />
                 <Route
                   path="/dashboard"
                   element={
@@ -119,11 +128,31 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/settings" element={<Settings />} />
+                <Route
+                  path="/billing"
+                  element={
+                    <ProtectedRoute>
+                      <Billing />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/trails" element={<TrailsPage />} />
+                <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                <Route
+                  path="/movement-analysis"
+                  element={<MovementAnalysisPage />}
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
-              {/* Social Media Bar */}
               <div style={{ marginTop: "150px" }}>
                 <SocialMediaBar />
               </div>

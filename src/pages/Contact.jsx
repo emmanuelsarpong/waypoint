@@ -88,7 +88,12 @@ function Contact() {
       const res = await fetch("http://localhost:3000/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          mode: "contact_us",
+          firstName: form.name, // <-- this is the key change
+          email: form.email,
+          message: form.message,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -105,13 +110,14 @@ function Contact() {
   return (
     <div
       style={{
-        flex: "1", // THIS is the key to make the page stretch → footer stays at bottom
+        flex: "1",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "60px 20px", // replaced margin 100px with padding
+        padding: "60px 20px",
         backgroundColor: "#000",
         color: "#fff",
+        marginBottom: "455px", // <-- Add this line
       }}
     >
       <form style={containerStyle} onSubmit={handleSubmit}>

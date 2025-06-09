@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import nodemailer from "nodemailer";
-
-// Add these lines to check SMTP credentials
-console.log("SMTP_USER:", process.env.SMTP_USER);
-console.log("SMTP_PASS:", process.env.SMTP_PASS ? "Exists" : "Missing");
+import { emailTemplate } from "../templates/baseEmail";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -20,17 +17,59 @@ export const sendEmailHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, message } = req.body;
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: "All fields are required." });
+    const { mode, firstName, email, actionUrl, location, time, message } =
+      req.body;
+
+    if (!mode || !email || !firstName) {
+      return res
+        .status(400)
+        .json({ error: "Mode, first name, and email are required." });
     }
 
-    await transporter.sendMail({
-      from: `"${name}" <${email}>`,
-      to: process.env.SMTP_USER,
-      subject: "New Contact Form Submission",
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    const allowedModes = [
+      "signup",
+      "verify",
+      "reset",
+      "subscription_cancelled",
+      "payment_missed",
+      "login_alert",
+      "contact_us",
+    ];
+
+    if (!allowedModes.includes(mode)) {
+      return res.status(400).json({ error: "Invalid email mode." });
+    }
+
+    const subjectMap: { [key: string]: string } = {
+      signup: "Welcome to Waypoint 🎉",
+      verify: "Verify your Waypoint Account",
+      reset: "Reset Your Waypoint Password",
+      subscription_cancelled: "Your Waypoint Subscription Was Cancelled",
+      payment_missed: "Payment Issue with Your Waypoint Subscription",
+      login_alert: "New Login to Your Waypoint Account",
+      contact_us: "New Contact Us Message", 
+    };
+
+    const finalSubject = subjectMap[mode] || "Waypoint Notification";
+
+    const html = emailTemplate({
+      mode,
+      username: firstName, 
+      email,
+      actionUrl,
+      location,
+      time,
+      message,
     });
+
+    await transporter.sendMail({
+      from: `"Waypoint" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: finalSubject,
+      html,
+    });
+
+    console.log(`Email sent to ${email} with mode ${mode}`);
 
     res.status(200).json({ message: "Message sent!" });
   } catch (error) {

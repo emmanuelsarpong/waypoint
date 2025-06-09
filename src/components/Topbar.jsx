@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import Button from "./Button";
 import showIcon from "../assets/show.svg";
 import closeIcon from "../assets/hide.svg";
 
-function Topbar({ toggleSidebar }) {
+function Topbar({ toggleSidebar, isAuthenticated, onLogout }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +22,12 @@ function Topbar({ toggleSidebar }) {
   const handleToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
     toggleSidebar();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    if (onLogout) onLogout();
+    navigate("/login");
   };
 
   return (
@@ -67,12 +73,21 @@ function Topbar({ toggleSidebar }) {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <Button
-          onClick={() => navigate("/login")} 
-          className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
-        >
-          Login
-        </Button>
+        {isAuthenticated ? (
+          <Button
+            onClick={handleLogout}
+            className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
+          >
+            Logout
+          </Button>
+        ) : (
+          <Button
+            onClick={() => navigate("/login")}
+            className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"
+          >
+            Login
+          </Button>
+        )}
       </div>
     </header>
   );

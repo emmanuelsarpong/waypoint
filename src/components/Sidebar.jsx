@@ -1,14 +1,19 @@
 import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 
-function Sidebar({ isScrolled, isOpen, toggleSidebar }) {
+function Sidebar({ isScrolled, isOpen, toggleSidebar, isAuthenticated }) {
   const navItems = [
-    { name: "Settings", path: "/settings" },
-    { name: "Dashboard", path: "/dashboard" },
+    ...(isAuthenticated
+      ? [
+          { name: "Dashboard", path: "/dashboard" },
+          { name: "Settings", path: "/settings" },
+          { name: "Billing", path: "/billing" },
+        ]
+      : []),
     { name: "Home", path: "/" },
+    { name: "Pricing", path: "/pricing" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
-    { name: "Billing", path: "/billing" },
   ];
 
   return (
