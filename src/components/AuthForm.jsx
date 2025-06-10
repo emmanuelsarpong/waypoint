@@ -47,7 +47,10 @@ function FooterLinks() {
 
 function DividerOAuth() {
   const handleOAuth = (provider) => {
-    window.location.href = `/auth/${provider}`;
+    // Use backend URL for OAuth
+    const backendUrl =
+      import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    window.location.href = `${backendUrl}/auth/${provider}`;
   };
 
   return (

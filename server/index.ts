@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
@@ -9,6 +8,10 @@ import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import connectDB from "./config/db";
 import { errorHandler } from "./middleware/errorMiddleware";
+import session from "express-session";
+import passport from "passport";
+import "./config/passportSetup";
+import oauthRoutes from "./routes/oauthRoutes";
 
 connectDB();
 
@@ -17,11 +20,21 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(
+  session({
+    secret: "your-session-secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
 app.use("/email", emailRoutes);
 app.use("/protected", protectedRoutes);
 app.use("/auth", authRoutes);
+app.use("/auth", oauthRoutes);
 app.use("/user", userRoutes);
 
 // Add this before error handling middleware

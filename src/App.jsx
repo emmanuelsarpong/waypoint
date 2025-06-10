@@ -22,6 +22,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
+import { authFetch } from "./utils/authFetch";
+import OAuthCallback from "./pages/OAuthCallback";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -69,6 +71,18 @@ function App() {
       document.body.classList.remove("auth-page");
     }
   }, [location]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      authFetch("/user/profile").then((res) => {
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+        }
+      });
+    }
+  }, []);
 
   const isAuthPage =
     location.pathname === "/login" ||
@@ -151,6 +165,7 @@ function App() {
                   element={<MovementAnalysisPage />}
                 />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/oauth/callback" element={<OAuthCallback />} />
               </Routes>
 
               <div style={{ marginTop: "150px" }}>

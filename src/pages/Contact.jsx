@@ -90,7 +90,7 @@ function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "contact_us",
-          firstName: form.name, // <-- this is the key change
+          firstName: form.name, 
           email: form.email,
           message: form.message,
         }),
@@ -117,7 +117,7 @@ function Contact() {
         padding: "60px 20px",
         backgroundColor: "#000",
         color: "#fff",
-        marginBottom: "455px", // <-- Add this line
+        marginBottom: "455px", 
       }}
     >
       <form style={containerStyle} onSubmit={handleSubmit}>

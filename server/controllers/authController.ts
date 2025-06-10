@@ -5,7 +5,7 @@ import { catchAsync } from "../utils/catchAsync";
 import winston from "winston";
 import User from "../models/userModel";
 import { sendEmail } from "../services/emailService";
-import { emailTemplate } from "../templates/baseEmail"; 
+import { emailTemplate } from "../templates/baseEmail";
 import crypto from "crypto";
 
 // Winston logger setup
@@ -46,7 +46,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
 
   // Generate a URL-safe, shorter verification token
   const verificationToken = crypto.randomBytes(16).toString("base64url");
-  const verificationTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24); 
+  const verificationTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24);
 
   try {
     const newUser = await User.create({
@@ -55,7 +55,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
       isVerified: false,
       verificationToken,
       verificationTokenExpires,
-      firstName, 
+      firstName,
     });
 
     const verificationLink = `http://localhost:5173/verify-email?token=${encodeURIComponent(
@@ -68,7 +68,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
         subject: "Verify your Waypoint account",
         html: emailTemplate({
           mode: "verify",
-          username: firstName, 
+          username: firstName,
           email,
           actionUrl: verificationLink,
         }),
@@ -169,6 +169,10 @@ export const login = catchAsync(async (req: Request, res: Response) => {
       .json({ error: "Please verify your email before logging in." });
   }
 
+  if (!user.password) {
+    // Handle the case where the user does not have a password set
+    return res.status(400).json({ message: "No password set for this user." });
+  }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(401).json({ error: "Invalid email or password" });

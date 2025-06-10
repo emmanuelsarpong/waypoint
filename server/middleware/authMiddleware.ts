@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import User from "../models/userModel"; 
 
 // Extend the Request interface to include the 'user' property
 declare global {
@@ -10,11 +11,11 @@ declare global {
   }
 }
 
-export const protect = (
+export const protect = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ error: "Unauthorized: No token provided" });
@@ -24,8 +25,13 @@ export const protect = (
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    req.user = decoded;
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const user = await User.findById(decoded.id); 
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized: User not found" });
+      return;
+    }
+    req.user = user; 
     next();
     return;
   } catch (error) {

@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StatWidget from "../components/StatWidget";
+import { authFetch } from "../utils/authFetch";
+import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 import {
+  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
 
 const weeklyData = [
   { name: "Mon", value: 2.3 },
@@ -44,9 +45,10 @@ const yearlyData = [
   { name: "2024", value: 71 },
 ];
 
-export default function Profile() {
+export default function Dashboard() {
   const navigate = useNavigate();
   const [range, setRange] = useState("monthly");
+  const [user, setUser] = useState(null);
 
   const getChartData = () => {
     if (range === "weekly") return weeklyData;
@@ -100,11 +102,27 @@ export default function Profile() {
     },
   ];
 
+  useEffect(() => {
+    // Fetch user info
+    authFetch("/user/profile")
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+          return;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.firstName) setUser(data);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4">
       <div className="w-full max-w-screen-2xl mx-auto px-4">
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
-          Your Dashboard
+          {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
         </h1>
 
         {/* Responsive Card Grid */}
@@ -169,7 +187,7 @@ export default function Profile() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={getChartData()}
-                  margin={{ top: 10, right: 20, bottom: 10, left: 10 }} // fixed margin here
+                  margin={{ top: 10, right: 20, bottom: 10, left: 10 }}
                 >
                   <XAxis
                     dataKey="name"
