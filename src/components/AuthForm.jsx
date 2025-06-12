@@ -125,7 +125,7 @@ function NavigationLinks({ mode }) {
 }
 
 export default function AuthForm({ mode = "login", onSuccess, token }) {
-  const [firstName, setFirstName] = useState(""); // <-- Add first name state
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -310,7 +310,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
 
       if (mode === "signup") {
         endpoint = "/auth/signup";
-        body = { firstName, email, password, confirmPassword }; // <-- Include firstName
+        body = { firstName, email, password, confirmPassword };
       } else if (mode === "forgot-password") {
         endpoint = "/auth/forgot-password";
         body = { email };
@@ -331,7 +331,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       if (res.ok) {
         if (mode === "login" && data.token) {
           localStorage.setItem("token", data.token);
-          navigate("/dashboard"); // <-- Make sure this is /dashboard, not /profile
+          navigate("/dashboard");
           return;
         }
         if (onSuccess) onSuccess();

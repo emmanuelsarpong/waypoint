@@ -10,6 +10,7 @@ export interface IUser extends Document {
   resetPasswordToken?: string;
   resetPasswordTokenExpires?: Date;
   googleId?: string;
+  microsoftId?: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -22,6 +23,7 @@ const userSchema = new Schema<IUser>({
   firstName: { type: String, required: false },
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
+  microsoftId: { type: String },
 });
 
 export default mongoose.model<IUser>("User", userSchema);
