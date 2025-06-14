@@ -14,15 +14,16 @@ router.get(
   "/profile",
   protect,
   async (req: Request, res: Response): Promise<void> => {
-    // @ts-ignore
-    const user = req.user;
-    if (!user) {
-      res.status(401).json({ error: "Unauthorized" });
+    // req.user should be set by protect middleware
+    if (!req.user) {
+      res.status(401).json({ error: "Unauthorized: No user in request" });
       return;
     }
+    // Only return safe fields
     res.json({
-      firstName: user.firstName,
-      email: user.email,
+      firstName: req.user.firstName,
+      email: req.user.email,
+      stripeCustomerId: req.user.stripeCustomerId,
     });
   }
 );

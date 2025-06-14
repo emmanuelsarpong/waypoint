@@ -6,6 +6,7 @@ import emailRoutes from "./routes/emailRoutes";
 import protectedRoutes from "./routes/protectedRoutes";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import billingRoutes from "./routes/billingRoutes";
 import connectDB from "./config/db";
 import { errorHandler } from "./middleware/errorMiddleware";
 import session from "express-session";
@@ -18,11 +19,16 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(
   session({
-    secret: "your-session-secret",
+    secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
   })
@@ -36,6 +42,7 @@ app.use("/protected", protectedRoutes);
 app.use("/auth", authRoutes);
 app.use("/auth", oauthRoutes);
 app.use("/user", userRoutes);
+app.use("/api/billing", billingRoutes);
 
 // Add this before error handling middleware
 app.get("/", (req, res) => {
@@ -50,3 +57,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+console.log("JWT_SECRET at startup:", process.env.JWT_SECRET);

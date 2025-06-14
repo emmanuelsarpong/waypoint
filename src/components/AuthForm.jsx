@@ -71,7 +71,7 @@ function DividerOAuth() {
           text="Continue with Microsoft"
           onClick={() => handleOAuth("microsoft")}
         />
-        <OAuthButton
+        {/* <OAuthButton
           icon={AppleIcon}
           text="Continue with Apple"
           onClick={() => handleOAuth("apple")}
@@ -80,7 +80,7 @@ function DividerOAuth() {
           icon={PhoneIcon}
           text="Continue with Phone"
           onClick={() => handleOAuth("phone")}
-        />
+        /> */}
       </div>
     </>
   );

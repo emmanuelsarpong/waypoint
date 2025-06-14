@@ -69,8 +69,6 @@ export const sendEmailHandler = async (
       html,
     });
 
-    console.log(`Email sent to ${email} with mode ${mode}`);
-
     res.status(200).json({ message: "Message sent!" });
   } catch (error) {
     console.error("Nodemailer error:", error);

@@ -5,7 +5,6 @@ export default function Settings() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  // Styles (matching Contact page)
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
@@ -25,7 +24,7 @@ export default function Settings() {
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
-    marginBottom: "10px",
+    marginBottom: "0", // Remove gap below heading
   };
 
   const subtextStyle = {
@@ -33,6 +32,7 @@ export default function Settings() {
     fontSize: "1.125rem",
     textAlign: "center",
     marginBottom: "20px",
+    marginTop: "-30px", // Remove gap above paragraph
   };
 
   const inputStyle = {
@@ -94,14 +94,14 @@ export default function Settings() {
   return (
     <div
       style={{
-        backgroundColor: "#000",
-        color: "#fff",
-        minHeight: "100vh",
+        flex: "1",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflow: "hidden",
-        margin: "100px 0",
+        padding: "60px 20px",
+        backgroundColor: "#000",
+        color: "#fff",
+        marginBottom: "455px", // Match Contact.jsx
       }}
     >
       <form

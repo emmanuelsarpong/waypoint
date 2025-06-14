@@ -11,6 +11,7 @@ export interface IUser extends Document {
   resetPasswordTokenExpires?: Date;
   googleId?: string;
   microsoftId?: string;
+  stripeCustomerId?: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -24,6 +25,7 @@ const userSchema = new Schema<IUser>({
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
   microsoftId: { type: String },
+  stripeCustomerId: { type: String },
 });
 
 export default mongoose.model<IUser>("User", userSchema);

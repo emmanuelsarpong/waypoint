@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import StatWidget from "../components/StatWidget";
-import { authFetch } from "../utils/authFetch";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import {
@@ -45,10 +44,9 @@ const yearlyData = [
   { name: "2024", value: 71 },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ user }) {
   const navigate = useNavigate();
   const [range, setRange] = useState("monthly");
-  const [user, setUser] = useState(null);
 
   const getChartData = () => {
     if (range === "weekly") return weeklyData;
@@ -101,22 +99,6 @@ export default function Dashboard() {
       extra: <div className="text-xs text-neutral-400 mt-2">Outdoor Walk</div>,
     },
   ];
-
-  useEffect(() => {
-    // Fetch user info
-    authFetch("/user/profile")
-      .then((res) => {
-        if (res.status === 401) {
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data && data.firstName) setUser(data);
-      });
-  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4">

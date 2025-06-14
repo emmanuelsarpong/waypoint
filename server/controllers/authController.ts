@@ -7,6 +7,7 @@ import User from "../models/userModel";
 import { sendEmail } from "../services/emailService";
 import { emailTemplate } from "../templates/baseEmail";
 import crypto from "crypto";
+import Stripe from "stripe";
 
 // Winston logger setup
 const logger = winston.createLogger({
@@ -19,6 +20,10 @@ const logger = winston.createLogger({
     new winston.transports.Console(),
     new winston.transports.File({ filename: "error.log" }),
   ],
+});
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-05-28.basil",
 });
 
 // Signup a new user
@@ -57,6 +62,14 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
       verificationTokenExpires,
       firstName,
     });
+
+    // Create a new Stripe customer
+    const customer = await stripe.customers.create({
+      email,
+      name: firstName,
+    });
+    newUser.stripeCustomerId = customer.id;
+    await newUser.save();
 
     const verificationLink = `http://localhost:5173/verify-email?token=${encodeURIComponent(
       verificationToken
@@ -243,11 +256,8 @@ export const forgotPassword = catchAsync(
 
 // Reset Password (stub)
 export const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  console.log("RESET BODY:", req.body);
-
   const { password, token } = req.body;
   if (!password || !token) {
-    console.log("Missing password or token");
     return res.status(400).json({ error: "Missing password or token." });
   }
 
@@ -257,7 +267,6 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    console.log("No user found for token:", token);
     return res.status(400).json({ error: "Invalid or expired token." });
   }
 
@@ -287,6 +296,5 @@ export const errorHandler = (
 // Debugging: Log all users (temporary)
 export const logAllUsers = catchAsync(async (req: Request, res: Response) => {
   const users = await User.find({});
-  console.log("All users:", users);
   res.status(200).json({ users });
 });

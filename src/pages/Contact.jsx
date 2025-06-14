@@ -19,7 +19,7 @@ function Contact() {
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
-    marginBottom: "10px",
+    marginBottom: "0", 
   };
 
   const subtextStyle = {
@@ -27,6 +27,7 @@ function Contact() {
     fontSize: "1.125rem",
     textAlign: "center",
     marginBottom: "20px",
+    marginTop: "0", 
   };
 
   const inputStyle = {

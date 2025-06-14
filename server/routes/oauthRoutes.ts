@@ -63,7 +63,6 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    console.log("Google OAuth callback user:", req.user);
     const user = req.user as any;
     if (!user) {
       return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);

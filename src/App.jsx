@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Homepage from "./pages/Homepage";
@@ -22,28 +27,17 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
-import { authFetch } from "./utils/authFetch";
 import OAuthCallback from "./pages/OAuthCallback";
+import { authFetch } from "./utils/authFetch";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token")
-  );
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
   const location = useLocation();
-
-  // Listen for login/logout changes
-  useEffect(() => {
-    const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
-    window.addEventListener("storage", checkAuth);
-    return () => window.removeEventListener("storage", checkAuth);
-  }, []);
-
-  // Also check on route change (for SPA navigation)
-  useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem("token"));
-  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -73,16 +67,19 @@ function App() {
   }, [location]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      authFetch("/user/profile").then((res) => {
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          setIsAuthenticated(false);
-        }
-      });
-    }
-  }, []);
+    setLoadingUser(true);
+    authFetch(`${backendUrl}/user/profile`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        setUser(data);
+        setLoadingUser(false);
+      })
+      .catch(() => setLoadingUser(false));
+  }, [location]);
+
+  if (loadingUser) {
+    return <div style={{ color: "#fff", padding: 40 }}>Loading user...</div>;
+  }
 
   const isAuthPage =
     location.pathname === "/login" ||
@@ -105,7 +102,7 @@ function App() {
             isScrolled={isScrolled}
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-            isAuthenticated={isAuthenticated}
+            isAuthenticated={!!user}
           />
 
           <div
@@ -115,8 +112,8 @@ function App() {
           >
             <Topbar
               toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-              isAuthenticated={isAuthenticated}
-              onLogout={() => setIsAuthenticated(false)}
+              isAuthenticated={!!user}
+              onLogout={() => setUser(null)}
             />
 
             <main
@@ -127,29 +124,12 @@ function App() {
               }}
             >
               <Routes>
-                <Route
-                  path="/"
-                  element={isAuthenticated ? <Dashboard /> : <Homepage />}
-                />
+                <Route path="/" element={user ? <Dashboard user={user} /> : <Homepage />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/pricing" element={<Pricing />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/billing"
-                  element={
-                    <ProtectedRoute>
-                      <Billing />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/dashboard" element={<Dashboard user={user} />} />
+                <Route path="/billing" element={<Billing user={user} />} />
                 <Route
                   path="/settings"
                   element={

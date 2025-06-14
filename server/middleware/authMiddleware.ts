@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/userModel"; 
+import User from "../models/userModel";
 
 // Extend the Request interface to include the 'user' property
 declare global {
@@ -26,12 +26,14 @@ export const protect = async (
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    const user = await User.findById(decoded.id); 
+
+    const user = await User.findById(decoded.id);
+
     if (!user) {
       res.status(401).json({ error: "Unauthorized: User not found" });
       return;
     }
-    req.user = user; 
+    req.user = user;
     next();
     return;
   } catch (error) {
