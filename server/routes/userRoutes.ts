@@ -14,12 +14,10 @@ router.get(
   "/profile",
   protect,
   async (req: Request, res: Response): Promise<void> => {
-    // req.user should be set by protect middleware
     if (!req.user) {
-      res.status(401).json({ error: "Unauthorized: No user in request" });
+      res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    // Only return safe fields
     res.json({
       firstName: req.user.firstName,
       email: req.user.email,

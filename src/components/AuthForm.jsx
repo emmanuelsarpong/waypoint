@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./AuthForm.module.css";
 import ProgressBar from "./ProgressBar";
-import Spinner from "./Spinner";
+import Spinner from "./ButtonSpinner";
 import StatusNotice from "./StatusNotice";
 
 // Icons
@@ -316,8 +316,9 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
         body = { email };
       }
 
-      console.log("Submitting login", { ...body });
-      const res = await fetch(endpoint, {
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      const res = await fetch(`${backendUrl}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

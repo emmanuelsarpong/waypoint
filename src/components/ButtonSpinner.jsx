@@ -1,4 +1,4 @@
-export default function Spinner({ size = 24 }) {
+export default function ButtonSpinner({ size = 24 }) {
   return (
     <div
       style={{

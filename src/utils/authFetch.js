@@ -1,13 +1,13 @@
 const API_BASE = "http://localhost:3000";
-
-export function authFetch(url, options = {}) {
+export function authFetch(path, options = {}) {
   const token = localStorage.getItem("token");
-  return fetch(url, {
+  const headers = {
+    ...options.headers,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    "Content-Type": "application/json",
+  };
+  return fetch(`${API_BASE}${path}`, {
     ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+    headers,
   });
 }

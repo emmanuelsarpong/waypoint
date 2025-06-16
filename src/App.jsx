@@ -29,14 +29,13 @@ import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
 import { authFetch } from "./utils/authFetch";
+import PageSpinner from "./components/PageSpinner";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
   const location = useLocation();
 
   useEffect(() => {
@@ -68,7 +67,7 @@ function App() {
 
   useEffect(() => {
     setLoadingUser(true);
-    authFetch(`${backendUrl}/user/profile`)
+    authFetch("/user/profile")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         setUser(data);
@@ -78,7 +77,7 @@ function App() {
   }, [location]);
 
   if (loadingUser) {
-    return <div style={{ color: "#fff", padding: 40 }}>Loading user...</div>;
+    return <PageSpinner />;
   }
 
   const isAuthPage =
@@ -124,7 +123,10 @@ function App() {
               }}
             >
               <Routes>
-                <Route path="/" element={user ? <Dashboard user={user} /> : <Homepage />} />
+                <Route
+                  path="/"
+                  element={user ? <Dashboard user={user} /> : <Homepage />}
+                />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/pricing" element={<Pricing />} />

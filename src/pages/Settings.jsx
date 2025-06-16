@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { authFetch } from "../utils/authFetch";
 
 export default function Settings() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); 
   const [message, setMessage] = useState("");
 
   const containerStyle = {
@@ -24,7 +26,7 @@ export default function Settings() {
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
-    marginBottom: "0", // Remove gap below heading
+    marginBottom: "0",
   };
 
   const subtextStyle = {
@@ -32,7 +34,7 @@ export default function Settings() {
     fontSize: "1.125rem",
     textAlign: "center",
     marginBottom: "20px",
-    marginTop: "-30px", // Remove gap above paragraph
+    marginTop: "-30px",
   };
 
   const inputStyle = {
@@ -81,14 +83,50 @@ export default function Settings() {
   const handleMouseEnter = (e, style) => Object.assign(e.target.style, style);
   const handleMouseLeave = (e, style) => Object.assign(e.target.style, style);
 
-  const handleNameUpdate = (e) => {
+  const handleNameUpdate = async (e) => {
     e.preventDefault();
-    setMessage("Name updated!");
+    setMessage("");
+    try {
+      const res = await authFetch("/user/profile", {
+        method: "PUT",
+        body: JSON.stringify({ firstName: name }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Name updated!");
+      } else {
+        setMessage(data.error || "Failed to update name.");
+      }
+    } catch {
+      setMessage("Failed to update name.");
+    }
   };
 
-  const handlePasswordUpdate = (e) => {
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    setMessage("Password updated!");
+    setMessage("");
+
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const res = await authFetch("/user/profile", {
+        method: "PUT",
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Password updated!");
+        setPassword("");
+        setConfirmPassword("");
+      } else {
+        setMessage(data.error || "Failed to update password.");
+      }
+    } catch {
+      setMessage("Failed to update password.");
+    }
   };
 
   return (
@@ -114,8 +152,8 @@ export default function Settings() {
         {message && (
           <p
             style={{
-              color: "#4ade80",
-              background: "#134e4a",
+              color: "#fff", // Always white text
+              background: message.includes("Failed") ? "#7f1d1d" : "#134e4a",
               borderRadius: 8,
               padding: "8px 0",
               textAlign: "center",
@@ -162,6 +200,16 @@ export default function Settings() {
             placeholder="New password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            style={inputStyle}
+            onFocus={(e) => handleMouseEnter(e, focusGlowStyle)}
+            onBlur={(e) => handleMouseLeave(e, inputStyle)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
             style={inputStyle}
             onFocus={(e) => handleMouseEnter(e, focusGlowStyle)}

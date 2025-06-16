@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/ButtonSpinner";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
