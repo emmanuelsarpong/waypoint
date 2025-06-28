@@ -21,7 +21,7 @@ export default function PageSpinner({ size = 48, color = "#fff", minDelay = 200 
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "rgba(0,0,0,0.0)", // transparent, or use a slight overlay if you want
+        background: "rgba(0,0,0,0.0)",
         zIndex: 9999,
       }}
     >

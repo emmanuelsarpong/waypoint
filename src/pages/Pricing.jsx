@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { authFetch } from "../utils/authFetch";
 
-function Pricing() {
+function Pricing({ subscriptionStatus }) {
   const plans = [
     {
       name: "Free",
@@ -36,6 +37,40 @@ function Pricing() {
       ],
     },
   ];
+
+  // Map plan names to Stripe price IDs
+  const priceIds = {
+    Pro: "price_1Rel4IPQH32NHq1Wejl3Rmjh",
+    Team: "price_1ReluzPQH32NHq1WtduW4KqR",
+  };
+
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (planName) => {
+    if (!priceIds[planName]) {
+      alert(
+        `${planName} plan pricing is not configured yet. Please contact support.`
+      );
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await authFetch("/api/billing/create-checkout-session", {
+        method: "POST",
+        body: JSON.stringify({ priceId: priceIds[planName] }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // Redirect to Stripe Checkout
+      } else {
+        alert("Failed to create checkout session. Please try again.");
+      }
+    } catch (err) {
+      console.error("Subscription error:", err);
+      alert("Failed to start subscription. Please try again.");
+    }
+    setLoading(false);
+  };
 
   const cardStyle = {
     background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",
@@ -89,6 +124,16 @@ function Pricing() {
     color: "#10b981",
   };
 
+  const buttonStyle = {
+    padding: "10px 20px",
+    borderRadius: "8px",
+    border: "none",
+    fontSize: "1rem",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  };
+
   return (
     <div
       style={{
@@ -136,9 +181,6 @@ function Pricing() {
               e.currentTarget.style.boxShadow = cardStyle.boxShadow;
               e.currentTarget.style.transform = "scale(1)";
             }}
-            onClick={() => {
-              // Add Stripe checkout or navigation here if needed
-            }}
           >
             <h2 style={titleStyle}>{plan.name}</h2>
             <p style={descriptionStyle}>{plan.description}</p>
@@ -151,6 +193,44 @@ function Pricing() {
                 </li>
               ))}
             </ul>
+            {plan.name === "Free" ? (
+              <button
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#4ade80",
+                  color: "#111",
+                }}
+                disabled
+              >
+                Free Plan
+              </button>
+            ) : (
+              <button
+                style={{
+                  ...buttonStyle,
+                  backgroundColor:
+                    subscriptionStatus === plan.name
+                      ? "#4ade80"
+                      : priceIds[plan.name]
+                      ? "#ff7eb3"
+                      : "#6b7280",
+                  color: "#111",
+                  cursor: !priceIds[plan.name] ? "not-allowed" : "pointer",
+                }}
+                disabled={
+                  loading ||
+                  subscriptionStatus === plan.name ||
+                  !priceIds[plan.name]
+                }
+                onClick={() => handleSubscribe(plan.name)}
+              >
+                {subscriptionStatus === plan.name
+                  ? "Active"
+                  : priceIds[plan.name]
+                  ? "Subscribe"
+                  : "Coming Soon"}
+              </button>
+            )}
           </div>
         ))}
       </div>

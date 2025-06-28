@@ -79,7 +79,7 @@ body .auth {
   color: #6b7280;
   font-size: 1rem;
   pointer-events: none;
-  background-color: #f9f9f9; /* MATCH INPUT BACKGROUND */
+  background-color: #f9f9f9;
   padding: 0 6px;
   transition: all 0.2s ease;
 }
@@ -91,7 +91,7 @@ body .auth {
   font-size: 0.75rem;
   color: #9333ea;
   font-weight: 500;
-  background-color: #f9f9f9; /* MATCH INPUT BACKGROUND */
+  background-color: #f9f9f9;
 }
 
 .filled {

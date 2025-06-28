@@ -30,6 +30,8 @@ import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
+import AdvancedMap from "./components/AdvancedMap";
+import MapPage from "./pages/MapPage";
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -66,14 +68,33 @@ function App() {
   }, [location]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setLoadingUser(false);
+      return;
+    }
+
     setLoadingUser(true);
     authFetch("/user/profile")
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else if (res.status === 401) {
+          // Token is invalid, remove it
+          localStorage.removeItem("token");
+          return null;
+        }
+        return null;
+      })
       .then((data) => {
         setUser(data);
         setLoadingUser(false);
       })
-      .catch(() => setLoadingUser(false));
+      .catch(() => {
+        setUser(null);
+        setLoadingUser(false);
+      });
   }, [location]);
 
   if (loadingUser) {
@@ -131,7 +152,14 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/dashboard" element={<Dashboard user={user} />} />
-                <Route path="/billing" element={<Billing user={user} />} />
+                <Route
+                  path="/billing"
+                  element={
+                    <ProtectedRoute>
+                      <Billing user={user} />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/settings"
                   element={
@@ -145,6 +173,14 @@ function App() {
                 <Route
                   path="/movement-analysis"
                   element={<MovementAnalysisPage />}
+                />
+                <Route
+                  path="/map"
+                  element={
+                    <ProtectedRoute>
+                      <MapPage />
+                    </ProtectedRoute>
+                  }
                 />
                 <Route path="*" element={<NotFound />} />
                 <Route path="/oauth/callback" element={<OAuthCallback />} />

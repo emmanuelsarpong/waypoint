@@ -1,21 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { authFetch } from "../utils/authFetch";
+import { parseISO, subMonths, isAfter } from "date-fns"; // Install date-fns if not present
 
 function Billing({ user }) {
   const [cardMsg, setCardMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState("Active");
+  const [savedCard, setSavedCard] = useState(null);
 
   const payments = [
     { date: "2025-06-01", amount: "$10.00", method: "Visa", status: "Paid" },
     { date: "2025-05-01", amount: "$10.00", method: "Visa", status: "Paid" },
+    // ...more payments
   ];
+
+  // Get date 6 months ago
+  const sixMonthsAgo = subMonths(new Date(), 6);
+
+  // Filter payments within last 6 months
+  const recentPayments = payments.filter((p) =>
+    isAfter(parseISO(p.date), sixMonthsAgo)
+  );
 
   const stripe = useStripe();
   const elements = useElements();
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+  useEffect(() => {
+    async function fetchCard() {
+      try {
+        const res = await authFetch("/api/billing/default-payment-method");
+        if (res.ok) {
+          const data = await res.json();
+          setSavedCard(data.paymentMethod?.card || null);
+        }
+      } catch (err) {
+        console.error("Error fetching payment method:", err);
+      }
+    }
+    fetchCard();
+  }, [user]);
+
+  // Check for success/cancel query params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success") === "1") {
+      setCardMsg("✅ Subscription successful! Welcome to your new plan!");
+      // Clear the URL parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get("canceled") === "1") {
+      setCardMsg("❌ Subscription was canceled. You can try again anytime.");
+      // Clear the URL parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleCardUpdate = async (e) => {
     e.preventDefault();
@@ -29,13 +67,10 @@ function Billing({ user }) {
     }
 
     try {
-      const res = await authFetch(
-        `${backendUrl}/api/billing/create-setup-intent`,
-        {
-          method: "POST",
-          body: JSON.stringify({ customerId: user.stripeCustomerId }),
-        }
-      );
+      const res = await authFetch("/api/billing/create-setup-intent", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
 
       if (!res.ok) {
         const err = await res.json();
@@ -52,10 +87,19 @@ function Billing({ user }) {
       if (result.error) {
         setCardMsg(result.error.message);
       } else {
+        // Set as default in backend
+        await authFetch("/api/billing/set-default-payment-method", {
+          method: "POST",
+          body: JSON.stringify({
+            paymentMethodId: result.setupIntent.payment_method,
+          }),
+        });
         setCardMsg("Card updated successfully!");
+        // Optionally refetch card info here
       }
-    } catch {
+    } catch (err) {
       setCardMsg("An error occurred. Please try again.");
+      console.error(err);
     }
 
     setLoading(false);
@@ -94,7 +138,7 @@ function Billing({ user }) {
         color: "#fff",
         padding: "40px 20px",
         minHeight: "100vh",
-        textAlign: "center",
+        textAlign: "left",
       }}
     >
       <div style={{ marginBottom: "40px" }}>
@@ -119,6 +163,17 @@ function Billing({ user }) {
         >
           Update Payment Method
         </h2>
+        {savedCard && (
+          <div style={{ marginBottom: 12, color: "#9ca3af" }}>
+            Saved card: {savedCard.brand?.toUpperCase()} **** **** ****{" "}
+            {savedCard.last4}
+          </div>
+        )}
+        {!savedCard && (
+          <div style={{ marginBottom: 12, color: "#9ca3af" }}>
+            No card on file.
+          </div>
+        )}
         <form
           onSubmit={handleCardUpdate}
           style={{ display: "flex", flexDirection: "column", gap: 12 }}
@@ -239,14 +294,20 @@ function Billing({ user }) {
             </tr>
           </thead>
           <tbody>
-            {payments.map((p, i) => (
-              <tr key={i} style={{ borderTop: "1px solid #222" }}>
-                <td style={{ padding: "8px 4px" }}>{p.date}</td>
-                <td style={{ padding: "8px 4px" }}>{p.amount}</td>
-                <td style={{ padding: "8px 4px" }}>{p.method}</td>
-                <td style={{ padding: "8px 4px" }}>{p.status}</td>
+            {recentPayments.length === 0 ? (
+              <tr>
+                <td colSpan={4}>No payments in the last 6 months.</td>
               </tr>
-            ))}
+            ) : (
+              recentPayments.map((p, i) => (
+                <tr key={i} style={{ borderTop: "1px solid #222" }}>
+                  <td style={{ padding: "8px 4px" }}>{p.date}</td>
+                  <td style={{ padding: "8px 4px" }}>{p.amount}</td>
+                  <td style={{ padding: "8px 4px" }}>{p.method}</td>
+                  <td style={{ padding: "8px 4px" }}>{p.status}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

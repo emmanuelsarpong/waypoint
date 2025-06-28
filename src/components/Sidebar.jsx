@@ -6,6 +6,7 @@ function Sidebar({ isScrolled, isOpen, toggleSidebar, isAuthenticated }) {
     ...(isAuthenticated
       ? [
           { name: "Dashboard", path: "/dashboard" },
+          { name: "Map", path: "/map" }, 
           { name: "Settings", path: "/settings" },
           { name: "Billing", path: "/billing" },
         ]

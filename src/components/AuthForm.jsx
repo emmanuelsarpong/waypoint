@@ -357,9 +357,9 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
         <h2 className={styles.heading}>
           {
             {
-              login: "Welcome back",
-              signup: "Create your account",
-              "forgot-password": "Forgot Password",
+              login: "Back in motion.",
+              signup: "Start strong.",
+              "forgot-password": "Need a reset?",
             }[mode]
           }
         </h2>
