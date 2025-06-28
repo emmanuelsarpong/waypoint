@@ -460,24 +460,38 @@ export const getPaymentHistory = async (
     const user = req.user;
 
     if (!user?.stripeCustomerId) {
-      res.json({ payments: [] });
+      res.json({
+        payments: [],
+        totalCount: 0,
+        totalPages: 1,
+        currentPage: 1,
+        availableYears: [],
+      });
       return;
     }
 
+    // Parse query parameters
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const selectedMonth = (req.query.month as string) || "";
+    const selectedYear = (req.query.year as string) || "";
+
     console.log(
       "Fetching payment history for customer:",
-      user.stripeCustomerId
+      user.stripeCustomerId,
+      { page, limit, selectedMonth, selectedYear }
     );
 
     // Get both checkout sessions and invoices for complete payment history
+    // Fetch more data to handle filtering locally (Stripe doesn't support date filtering on these endpoints)
     const [checkoutSessions, invoices] = await Promise.all([
       stripe.checkout.sessions.list({
         customer: user.stripeCustomerId,
-        limit: 50,
+        limit: 100, // Fetch more to handle filtering
       }),
       stripe.invoices.list({
         customer: user.stripeCustomerId,
-        limit: 50,
+        limit: 100, // Fetch more to handle filtering
         status: "paid",
       }),
     ]);
@@ -485,12 +499,21 @@ export const getPaymentHistory = async (
     console.log("Checkout sessions found:", checkoutSessions.data.length);
     console.log("Paid invoices found:", invoices.data.length);
 
-    const payments = [];
+    const allPayments = [];
+    const availableYears = new Set<string>();
 
     // Process checkout sessions (initial subscription purchases)
     for (const session of checkoutSessions.data) {
       if (session.status === "complete" && session.amount_total) {
         const createdDate = new Date(session.created * 1000);
+        const year = createdDate.getFullYear().toString();
+        const month = (createdDate.getMonth() + 1).toString().padStart(2, "0");
+
+        availableYears.add(year);
+
+        // Apply date filtering
+        if (selectedYear && year !== selectedYear) continue;
+        if (selectedMonth && month !== selectedMonth) continue;
 
         // Determine plan name based on amount
         const amount = session.amount_total / 100;
@@ -501,7 +524,7 @@ export const getPaymentHistory = async (
           planName = "Team Plan";
         }
 
-        payments.push({
+        allPayments.push({
           id: session.id,
           date: createdDate.toISOString().split("T")[0],
           time: createdDate.toLocaleTimeString("en-US", {
@@ -532,6 +555,14 @@ export const getPaymentHistory = async (
     for (const invoice of invoices.data) {
       if (invoice.status === "paid" && invoice.amount_paid > 0) {
         const createdDate = new Date(invoice.created * 1000);
+        const year = createdDate.getFullYear().toString();
+        const month = (createdDate.getMonth() + 1).toString().padStart(2, "0");
+
+        availableYears.add(year);
+
+        // Apply date filtering
+        if (selectedYear && year !== selectedYear) continue;
+        if (selectedMonth && month !== selectedMonth) continue;
 
         // Determine plan name based on amount
         const amount = invoice.amount_paid / 100;
@@ -553,7 +584,7 @@ export const getPaymentHistory = async (
         }
 
         // Avoid duplicates by checking if we already have a checkout session for the same time
-        const isDuplicate = payments.some(
+        const isDuplicate = allPayments.some(
           (p) =>
             Math.abs(new Date(p.datetime).getTime() - createdDate.getTime()) <
               60000 && // Within 1 minute
@@ -561,7 +592,7 @@ export const getPaymentHistory = async (
         );
 
         if (!isDuplicate) {
-          payments.push({
+          allPayments.push({
             id: invoice.id,
             date: createdDate.toISOString().split("T")[0],
             time: createdDate.toLocaleTimeString("en-US", {
@@ -585,12 +616,33 @@ export const getPaymentHistory = async (
     }
 
     // Sort by datetime (newest first)
-    payments.sort(
+    allPayments.sort(
       (a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()
     );
 
-    console.log("Final payments to return:", payments.length);
-    res.json({ payments });
+    // Calculate pagination
+    const totalCount = allPayments.length;
+    const totalPages = Math.ceil(totalCount / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedPayments = allPayments.slice(startIndex, endIndex);
+
+    // Convert availableYears to sorted array
+    const sortedAvailableYears = Array.from(availableYears).sort(
+      (a, b) => parseInt(b) - parseInt(a)
+    );
+
+    console.log(
+      `Returning ${paginatedPayments.length} of ${totalCount} payments, page ${page}/${totalPages}`
+    );
+
+    res.json({
+      payments: paginatedPayments,
+      totalCount,
+      totalPages,
+      currentPage: page,
+      availableYears: sortedAvailableYears,
+    });
   } catch (err) {
     console.error("Error fetching payment history:", err);
     res.status(500).json({ error: "Failed to fetch payment history" });

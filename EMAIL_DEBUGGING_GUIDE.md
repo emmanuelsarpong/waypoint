@@ -4,14 +4,16 @@
 
 Stripe's behavior for billing emails:
 
-### Test Mode (Current - using pk_test_ keys):
+### Test Mode (Current - using pk*test* keys):
+
 - ❌ Most billing emails are NOT sent to prevent spam
 - ✅ Events are fired and logged
 - ✅ Webhooks work normally
 - ✅ You can see events in Dashboard > Events
 - ❌ No actual emails delivered
 
-### Live Mode (Production - pk_live_ keys):
+### Live Mode (Production - pk*live* keys):
+
 - ✅ All billing emails sent normally
 - ✅ Professional templates used
 - ✅ Emails go to real customers
@@ -19,18 +21,22 @@ Stripe's behavior for billing emails:
 ## How to Test Billing Emails
 
 ### Option 1: Check Stripe Dashboard Events
+
 1. Go to Stripe Dashboard > Events
 2. Look for recent `customer.subscription.updated` events
 3. Click on event to see details
 4. Check "Attempted webhooks" section
 
 ### Option 2: Enable Test Mode Emails (Limited)
+
 Some Stripe billing emails can be sent in test mode:
+
 1. Go to Settings > Billing > Email notifications
 2. Enable "Send emails in test mode" (if available)
 3. Note: This only works for certain email types
 
 ### Option 3: Go Live (Recommended for final testing)
+
 1. Switch to live Stripe keys
 2. Use real (but small) amounts for testing
 3. All emails will be sent normally
@@ -60,7 +66,7 @@ stripe events list --limit 5
 
 When ready to go live:
 
-1. [ ] Switch to live Stripe keys (pk_live_, sk_live_)
+1. [ ] Switch to live Stripe keys (pk*live*, sk*live*)
 2. [ ] Update webhook endpoint in live Stripe Dashboard
 3. [ ] Test with real subscription changes
 4. [ ] Verify emails are sent to customers
@@ -69,8 +75,9 @@ When ready to go live:
 ## Email Template Customization
 
 Your Stripe email settings are already configured correctly:
+
 - ✅ Customer emails enabled
-- ✅ Payment failure notifications enabled  
+- ✅ Payment failure notifications enabled
 - ✅ Subscription management enabled
 - ✅ Customer portal configured
 
