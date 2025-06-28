@@ -4,8 +4,7 @@ import jwt from "jsonwebtoken";
 import { catchAsync } from "../utils/catchAsync";
 import winston from "winston";
 import User from "../models/userModel";
-import { sendEmail } from "../services/emailService";
-import { emailTemplate } from "../templates/baseEmail";
+import { emailService } from "../services/emailService";
 import crypto from "crypto";
 import Stripe from "stripe";
 
@@ -71,21 +70,8 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     newUser.stripeCustomerId = customer.id;
     await newUser.save();
 
-    const verificationLink = `http://localhost:5173/verify-email?token=${encodeURIComponent(
-      verificationToken
-    )}`;
-
     try {
-      await sendEmail({
-        to: email,
-        subject: "Verify your Waypoint account",
-        html: emailTemplate({
-          mode: "verify",
-          username: firstName,
-          email,
-          actionUrl: verificationLink,
-        }),
-      });
+      await emailService.sendVerificationEmail(email, verificationToken);
     } catch (emailErr) {
       logger.error("Email sending failed:", emailErr);
       await User.deleteOne({ _id: newUser._id });
@@ -218,23 +204,9 @@ export const forgotPassword = catchAsync(
     user.resetPasswordTokenExpires = resetTokenExpires;
     await user.save();
 
-    // Build reset link
-    const resetLink = `http://localhost:5173/reset-password?token=${encodeURIComponent(
-      resetToken
-    )}`;
-
     // Send email
     try {
-      await sendEmail({
-        to: email,
-        subject: "Reset your Waypoint password",
-        html: emailTemplate({
-          mode: "forgot",
-          username: user.firstName,
-          email,
-          actionUrl: resetLink,
-        }),
-      });
+      await emailService.sendPasswordResetEmail(email, resetToken);
     } catch (emailErr) {
       logger.error("Password reset email failed:", emailErr);
       // Optionally clear the token if email fails

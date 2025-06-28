@@ -3,15 +3,15 @@ import Logo from "./Logo";
 
 function Sidebar({ isScrolled, isOpen, toggleSidebar, isAuthenticated }) {
   const navItems = [
+    { name: "Home", path: "/" },
     ...(isAuthenticated
       ? [
           { name: "Dashboard", path: "/dashboard" },
-          { name: "Map", path: "/map" }, 
+          { name: "Map", path: "/map" },
           { name: "Settings", path: "/settings" },
           { name: "Billing", path: "/billing" },
         ]
       : []),
-    { name: "Home", path: "/" },
     { name: "Pricing", path: "/pricing" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },

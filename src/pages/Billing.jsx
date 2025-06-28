@@ -86,6 +86,12 @@ function Billing({ user }) {
       // Clear the URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
 
+      // Refresh subscription status and payment history after successful payment
+      setTimeout(() => {
+        refreshSubscriptionData();
+        refreshPaymentHistory();
+      }, 2000); // Wait 2 seconds to let webhook processing complete
+
       // Auto-clear success message after 10 seconds
       const timer = setTimeout(() => {
         setCardMsg("");
@@ -189,6 +195,45 @@ function Billing({ user }) {
       setLoadingPortal(false);
     }
   };
+
+  // Function to refresh subscription status and payment history
+  const refreshSubscriptionData = async () => {
+    try {
+      const res = await authFetch("/api/billing/subscription-status");
+      if (res.ok) {
+        const data = await res.json();
+        setSubscriptionData(data);
+      }
+    } catch (err) {
+      console.error("Error refreshing subscription status:", err);
+    }
+  };
+
+  const refreshPaymentHistory = async () => {
+    try {
+      setLoadingPayments(true);
+      const res = await authFetch("/api/billing/payment-history");
+      if (res.ok) {
+        const data = await res.json();
+        setPayments(data.payments || []);
+      }
+    } catch (err) {
+      console.error("Error refreshing payment history:", err);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
+  // Periodic refresh of subscription status (every 30 seconds)
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(() => {
+      refreshSubscriptionData();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   const cardStyle = {
     background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",

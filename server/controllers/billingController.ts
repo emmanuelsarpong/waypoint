@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
 import User from "../models/userModel"; // adjust path as needed
-import { sendPaymentConfirmationEmail } from "../services/emailService";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
@@ -309,22 +308,42 @@ export const stripeWebhook = async (
   res: Response
 ): Promise<void> => {
   try {
+    console.log(`🎯 Webhook called at ${new Date().toISOString()}`);
+    console.log(
+      `📋 Headers:`,
+      req.headers["stripe-signature"]
+        ? "Stripe signature present"
+        : "No Stripe signature"
+    );
+    console.log(`📋 Body received:`, JSON.stringify(req.body, null, 2));
+
     const sig = req.headers["stripe-signature"];
     let event;
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig!,
-        process.env.STRIPE_WEBHOOK_SECRET!
-      );
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error("Webhook signature verification failed:", errorMessage);
-      res.status(400).send(`Webhook Error: ${errorMessage}`);
+
+    if (sig) {
+      try {
+        event = stripe.webhooks.constructEvent(
+          req.body,
+          sig!,
+          process.env.STRIPE_WEBHOOK_SECRET!
+        );
+        console.log(`✅ Signature verification passed`);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.error(
+          "❌ Webhook signature verification failed:",
+          errorMessage
+        );
+        res.status(400).send(`Webhook Error: ${errorMessage}`);
+        return;
+      }
+    } else {
+      console.log("❌ No Stripe signature provided");
+      res.status(400).send("Webhook Error: No signature provided");
       return;
     }
 
-    console.log(`Received webhook event: ${event.type}`);
+    console.log(`✅ Processing webhook event: ${event.type}`);
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as any;
@@ -333,7 +352,7 @@ export const stripeWebhook = async (
       console.log("Session data:", JSON.stringify(session, null, 2));
 
       if (userId) {
-        // Update user subscription status
+        // Update user subscription status - Stripe handles all emails
         const user = await User.findByIdAndUpdate(
           userId,
           { subscriptionStatus: "active" },
@@ -341,69 +360,12 @@ export const stripeWebhook = async (
         );
 
         console.log(
-          `User found and updated:`,
+          `✅ User subscription status updated to active:`,
           user ? user.email : "No user found"
         );
-
-        if (user && session.amount_total) {
-          // Determine plan name based on amount (amounts are in cents for CAD)
-          const amount = session.amount_total / 100;
-          let planName = "Subscription";
-          if (amount === 7) {
-            planName = "Pro Plan";
-          } else if (amount === 25) {
-            planName = "Team Plan";
-          }
-
-          console.log(
-            `Sending email for ${planName} (${amount} CAD) to ${user.email}`
-          );
-
-          // Get subscription details to calculate next billing date
-          let nextBillingDate = null;
-          try {
-            if (
-              session.subscription &&
-              typeof session.subscription === "string"
-            ) {
-              const subscription = await stripe.subscriptions.retrieve(
-                session.subscription
-              );
-              const nextBilling = new Date(
-                (subscription as any).current_period_end * 1000
-              );
-              nextBillingDate = nextBilling.toLocaleDateString();
-              console.log(`Next billing date: ${nextBillingDate}`);
-            }
-          } catch (err) {
-            console.error("Error fetching subscription details:", err);
-          }
-
-          // Send payment confirmation email with enhanced details
-          try {
-            console.log(
-              "About to send email with SMTP_USER:",
-              process.env.SMTP_USER
-            );
-            await sendPaymentConfirmationEmail(
-              user.email,
-              `$${amount.toFixed(2)} CAD`,
-              planName,
-              new Date().toLocaleDateString(),
-              nextBillingDate || undefined,
-              true
-            );
-            console.log(
-              `✅ Payment confirmation email sent successfully to: ${user.email}`
-            );
-          } catch (emailError) {
-            console.error(
-              "❌ Failed to send payment confirmation email:",
-              emailError
-            );
-            // Don't fail the webhook if email fails
-          }
-        }
+        console.log(
+          `📧 Payment confirmation email handled by Stripe automatically`
+        );
       } else {
         console.log("No userId found in session metadata");
       }
@@ -418,6 +380,43 @@ export const stripeWebhook = async (
         await User.findByIdAndUpdate(userId, {
           subscriptionStatus: "canceled",
         });
+        console.log(`✅ User subscription status updated to canceled`);
+        console.log(`📧 Cancellation email handled by Stripe automatically`);
+      }
+    }
+
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as any;
+      const userId = subscription.metadata?.userId;
+      const customerId = subscription.customer;
+      console.log(
+        `Subscription updated for user: ${userId}, customer: ${customerId}`
+      );
+      console.log("Subscription data:", JSON.stringify(subscription, null, 2));
+
+      // Find user by either userId or Stripe customer ID
+      let user = null;
+      if (userId) {
+        user = await User.findById(userId);
+      } else if (customerId) {
+        user = await User.findOne({ stripeCustomerId: customerId });
+      }
+
+      if (user) {
+        // Update subscription status if needed
+        const newStatus =
+          subscription.status === "active" ? "active" : subscription.status;
+        if (user.subscriptionStatus !== newStatus) {
+          await User.findByIdAndUpdate(user._id, {
+            subscriptionStatus: newStatus,
+          });
+          console.log(
+            `✅ User subscription status updated to ${newStatus}: ${user.email}`
+          );
+        }
+        console.log(`📧 Plan change email handled by Stripe automatically`);
+      } else {
+        console.log("No user found for subscription update");
       }
     }
 
@@ -426,37 +425,22 @@ export const stripeWebhook = async (
       const customerId = invoice.customer;
       console.log(`Invoice payment succeeded for customer: ${customerId}`);
 
-      // Find user by Stripe customer ID
+      // Find user by Stripe customer ID and update status if needed
       const user = await User.findOne({ stripeCustomerId: customerId });
 
-      if (user && invoice.amount_paid) {
-        // Determine plan name based on amount
-        const amount = invoice.amount_paid / 100;
-        let planName = "Subscription";
-        if (amount === 7) {
-          planName = "Pro Plan";
-        } else if (amount === 25) {
-          planName = "Team Plan";
-        }
-
-        // Send payment confirmation email for recurring payments
-        try {
-          await sendPaymentConfirmationEmail(
-            user.email,
-            `$${amount.toFixed(2)}`,
-            planName,
-            new Date(invoice.created * 1000).toLocaleDateString()
-          );
+      if (user) {
+        // Ensure user status is active for successful recurring payments
+        if (user.subscriptionStatus !== "active") {
+          await User.findByIdAndUpdate(user._id, {
+            subscriptionStatus: "active",
+          });
           console.log(
-            `Recurring payment confirmation email sent to: ${user.email}`
+            `✅ User subscription status updated to active: ${user.email}`
           );
-        } catch (emailError) {
-          console.error(
-            "Failed to send recurring payment confirmation email:",
-            emailError
-          );
-          // Don't fail the webhook if email fails
         }
+        console.log(
+          `📧 Recurring payment receipt handled by Stripe automatically`
+        );
       }
     }
 
@@ -731,4 +715,25 @@ export const getSubscriptionStatus = async (
     console.error("Error fetching subscription status:", err);
     res.status(500).json({ error: "Failed to fetch subscription status" });
   }
+};
+
+// Simple webhook status endpoint for debugging
+export const webhookStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  res.json({
+    message: "Webhook endpoint is working",
+    timestamp: new Date().toISOString(),
+    environment: {
+      stripeWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+      emailHandling: "Stripe-managed (automatic)",
+      features: [
+        "Subscription status tracking",
+        "Payment receipts (Stripe)",
+        "Failed payment alerts (Stripe)",
+        "Renewal reminders (Stripe)",
+      ],
+    },
+  });
 };
