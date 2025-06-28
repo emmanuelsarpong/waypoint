@@ -1,5 +1,3 @@
-// server/templates/baseEmail.ts
-
 type EmailMode =
   | "signup"
   | "verify"

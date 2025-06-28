@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { authFetch } from "../utils/authFetch";
 
-function Pricing({ subscriptionStatus }) {
+function Pricing({ user }) {
+  const [subscriptionData, setSubscriptionData] = useState({
+    status: "inactive",
+    plan: null,
+  });
   const plans = [
     {
       name: "Free",
@@ -40,36 +44,130 @@ function Pricing({ subscriptionStatus }) {
 
   // Map plan names to Stripe price IDs
   const priceIds = {
-    Pro: "price_1Rel4IPQH32NHq1Wejl3Rmjh",
+    Pro: "price_1Rel4IPQH32NHq1WejI3Rmjh",
     Team: "price_1ReluzPQH32NHq1WtduW4KqR",
   };
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    async function fetchSubscriptionStatus() {
+      if (!user) return;
+
+      try {
+        const res = await authFetch("/api/billing/subscription-status");
+        if (res.ok) {
+          const data = await res.json();
+          setSubscriptionData(data);
+        }
+      } catch (err) {
+        console.error("Error fetching subscription status:", err);
+      }
+    }
+    fetchSubscriptionStatus();
+  }, [user]);
+
+  const getButtonText = (planName) => {
+    if (!user) {
+      return "Login to Subscribe";
+    }
+
+    const currentPlan = subscriptionData.plan;
+    const isActive = subscriptionData.status === "active";
+
+    if (isActive && currentPlan === planName) {
+      return "Current Plan";
+    }
+
+    if (isActive && currentPlan && currentPlan !== planName) {
+      // User has a different plan
+      if (
+        (currentPlan === "Pro" && planName === "Team") ||
+        (currentPlan === "Free" && (planName === "Pro" || planName === "Team"))
+      ) {
+        return "Upgrade";
+      } else if (
+        (currentPlan === "Team" && planName === "Pro") ||
+        ((currentPlan === "Pro" || currentPlan === "Team") &&
+          planName === "Free")
+      ) {
+        return "Downgrade";
+      }
+    }
+
+    return priceIds[planName] ? "Subscribe" : "Coming Soon";
+  };
+
+  const getButtonColor = (planName) => {
+    const buttonText = getButtonText(planName);
+
+    if (buttonText === "Current Plan") return "#4ade80";
+    if (buttonText === "Upgrade") return "#ff7eb3";
+    if (buttonText === "Downgrade") return "#fbbf24";
+    if (buttonText === "Login to Subscribe") return "#6b7280";
+    if (buttonText === "Coming Soon") return "#6b7280";
+    return "#ff7eb3"; // Default subscribe color
+  };
+
   const handleSubscribe = async (planName) => {
+    console.log("handleSubscribe called with:", planName);
+    console.log("User:", user);
+    console.log("Price IDs:", priceIds);
+
     if (!priceIds[planName]) {
       alert(
         `${planName} plan pricing is not configured yet. Please contact support.`
       );
       return;
     }
+
+    // Check if user is logged in
+    if (!user) {
+      console.log("No user found, redirecting to login");
+      alert("Please log in to subscribe to a plan.");
+      window.location.href = "/login";
+      return;
+    }
+
+    console.log("Starting subscription process...");
     setLoading(true);
     try {
+      console.log("Making API call to create checkout session");
       const res = await authFetch("/api/billing/create-checkout-session", {
         method: "POST",
         body: JSON.stringify({ priceId: priceIds[planName] }),
       });
+
+      console.log("Response status:", res.status);
+      console.log("Response ok:", res.ok);
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.log("401 Unauthorized - redirecting to login");
+          alert("Please log in to subscribe to a plan.");
+          window.location.href = "/login";
+          return;
+        }
+        const errorData = await res.json();
+        console.log("Error data:", errorData);
+        throw new Error(errorData.error || "Failed to create checkout session");
+      }
+
       const data = await res.json();
+      console.log("Success data:", data);
       if (data.url) {
+        console.log("Redirecting to Stripe Checkout:", data.url);
         window.location.href = data.url; // Redirect to Stripe Checkout
       } else {
+        console.log("No URL in response");
         alert("Failed to create checkout session. Please try again.");
       }
     } catch (err) {
       console.error("Subscription error:", err);
-      alert("Failed to start subscription. Please try again.");
+      alert(err.message || "Failed to start subscription. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const cardStyle = {
@@ -208,27 +306,24 @@ function Pricing({ subscriptionStatus }) {
               <button
                 style={{
                   ...buttonStyle,
-                  backgroundColor:
-                    subscriptionStatus === plan.name
-                      ? "#4ade80"
-                      : priceIds[plan.name]
-                      ? "#ff7eb3"
-                      : "#6b7280",
+                  backgroundColor: getButtonColor(plan.name),
                   color: "#111",
-                  cursor: !priceIds[plan.name] ? "not-allowed" : "pointer",
+                  cursor:
+                    !priceIds[plan.name] ||
+                    !user ||
+                    getButtonText(plan.name) === "Current Plan"
+                      ? "not-allowed"
+                      : "pointer",
                 }}
                 disabled={
                   loading ||
-                  subscriptionStatus === plan.name ||
-                  !priceIds[plan.name]
+                  getButtonText(plan.name) === "Current Plan" ||
+                  getButtonText(plan.name) === "Coming Soon" ||
+                  !user
                 }
                 onClick={() => handleSubscribe(plan.name)}
               >
-                {subscriptionStatus === plan.name
-                  ? "Active"
-                  : priceIds[plan.name]
-                  ? "Subscribe"
-                  : "Coming Soon"}
+                {getButtonText(plan.name)}
               </button>
             )}
           </div>

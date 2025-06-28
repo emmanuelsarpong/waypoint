@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { authFetch } from "../utils/authFetch";
-import { parseISO, subMonths, isAfter } from "date-fns"; // Install date-fns if not present
-
 function Billing({ user }) {
   const [cardMsg, setCardMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState("Active");
+  const [subscriptionData, setSubscriptionData] = useState({
+    status: "inactive",
+    plan: null,
+    currentPeriodEnd: null,
+    cancelAtPeriodEnd: false,
+  });
   const [savedCard, setSavedCard] = useState(null);
-
-  const payments = [
-    { date: "2025-06-01", amount: "$10.00", method: "Visa", status: "Paid" },
-    { date: "2025-05-01", amount: "$10.00", method: "Visa", status: "Paid" },
-    // ...more payments
-  ];
-
-  // Get date 6 months ago
-  const sixMonthsAgo = subMonths(new Date(), 6);
-
-  // Filter payments within last 6 months
-  const recentPayments = payments.filter((p) =>
-    isAfter(parseISO(p.date), sixMonthsAgo)
-  );
+  const [payments, setPayments] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const [notificationTimer, setNotificationTimer] = useState(null);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -41,19 +34,82 @@ function Billing({ user }) {
     fetchCard();
   }, [user]);
 
+  useEffect(() => {
+    async function fetchSubscriptionStatus() {
+      try {
+        const res = await authFetch("/api/billing/subscription-status");
+        if (res.ok) {
+          const data = await res.json();
+          setSubscriptionData(data);
+        }
+      } catch (err) {
+        console.error("Error fetching subscription status:", err);
+      }
+    }
+    if (user) {
+      fetchSubscriptionStatus();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    async function fetchPaymentHistory() {
+      try {
+        setLoadingPayments(true);
+        const res = await authFetch("/api/billing/payment-history");
+        if (res.ok) {
+          const data = await res.json();
+          setPayments(data.payments || []);
+        }
+      } catch (err) {
+        console.error("Error fetching payment history:", err);
+      } finally {
+        setLoadingPayments(false);
+      }
+    }
+    if (user) {
+      fetchPaymentHistory();
+    }
+  }, [user]);
+
   // Check for success/cancel query params
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("success") === "1") {
-      setCardMsg("✅ Subscription successful! Welcome to your new plan!");
-      // Clear the URL parameter
+      const emailSent = urlParams.get("email_sent") === "1";
+      if (emailSent) {
+        setCardMsg(
+          "✅ Payment successful! A receipt has been sent to your email address."
+        );
+      } else {
+        setCardMsg("✅ Subscription successful! Welcome to your new plan!");
+      }
+      // Clear the URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Auto-clear success message after 10 seconds
+      const timer = setTimeout(() => {
+        setCardMsg("");
+      }, 10000);
+      setNotificationTimer(timer);
     } else if (urlParams.get("canceled") === "1") {
       setCardMsg("❌ Subscription was canceled. You can try again anytime.");
       // Clear the URL parameter
       window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Auto-clear cancel message after 5 seconds
+      const timer = setTimeout(() => {
+        setCardMsg("");
+      }, 5000);
+      setNotificationTimer(timer);
     }
-  }, []);
+
+    // Cleanup timer on unmount
+    return () => {
+      if (notificationTimer) {
+        clearTimeout(notificationTimer);
+      }
+    };
+  }, [notificationTimer]);
 
   const handleCardUpdate = async (e) => {
     e.preventDefault();
@@ -105,6 +161,35 @@ function Billing({ user }) {
     setLoading(false);
   };
 
+  const handleOpenCustomerPortal = async () => {
+    setLoadingPortal(true);
+    try {
+      const res = await authFetch("/api/billing/create-customer-portal", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        window.location.href = data.url; // Redirect to Stripe Customer Portal
+      } else {
+        const errorData = await res.json();
+        if (errorData.supportAction) {
+          setCardMsg(
+            "Billing portal is not yet configured. Please contact support to manage your subscription."
+          );
+        } else {
+          setCardMsg(errorData.error || "Failed to open billing portal");
+        }
+      }
+    } catch (err) {
+      console.error("Error opening customer portal:", err);
+      setCardMsg("Failed to open billing portal. Please try again.");
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
   const cardStyle = {
     background: "linear-gradient(145deg, #1a1a1a, #0f0f0f)",
     border: "1px solid #2a2a2a",
@@ -149,6 +234,94 @@ function Billing({ user }) {
           Manage your payment methods and subscription.
         </p>
       </div>
+
+      {/* Success/Error Notification */}
+      {cardMsg && (
+        <div
+          style={{
+            ...cardStyle,
+            maxWidth: "100%",
+            cursor: "default",
+            marginBottom: "40px",
+            backgroundColor:
+              cardMsg.includes("successful") || cardMsg.includes("✅")
+                ? "linear-gradient(145deg, #064e3b, #022c22)"
+                : "linear-gradient(145deg, #7f1d1d, #450a0a)",
+            borderColor:
+              cardMsg.includes("successful") || cardMsg.includes("✅")
+                ? "#059669"
+                : "#dc2626",
+            position: "relative",
+          }}
+        >
+          <button
+            onClick={() => {
+              setCardMsg("");
+              if (notificationTimer) {
+                clearTimeout(notificationTimer);
+                setNotificationTimer(null);
+              }
+            }}
+            style={{
+              position: "absolute",
+              top: "15px",
+              right: "15px",
+              background: "none",
+              border: "none",
+              color: "#9ca3af",
+              fontSize: "1.2rem",
+              cursor: "pointer",
+              padding: "5px",
+              lineHeight: 1,
+            }}
+            title="Close notification"
+          >
+            ✕
+          </button>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              marginRight: "40px",
+            }}
+          >
+            <span style={{ fontSize: "1.5rem" }}>
+              {cardMsg.includes("successful") || cardMsg.includes("✅")
+                ? "📧"
+                : "❌"}
+            </span>
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  color:
+                    cardMsg.includes("successful") || cardMsg.includes("✅")
+                      ? "#10b981"
+                      : "#ef4444",
+                }}
+              >
+                {cardMsg}
+              </p>
+              {cardMsg.includes("receipt has been sent") && (
+                <p
+                  style={{
+                    margin: "8px 0 0 0",
+                    fontSize: "0.9rem",
+                    color: "#6ee7b7",
+                  }}
+                >
+                  Check your inbox for the payment receipt and subscription
+                  details.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div
         style={{
@@ -238,28 +411,71 @@ function Billing({ user }) {
             Status:{" "}
             <span
               style={{
-                color: subscriptionStatus === "Active" ? "#4ade80" : "#f87171",
+                color:
+                  subscriptionData.status === "active" ? "#4ade80" : "#9ca3af",
               }}
             >
-              {subscriptionStatus}
+              {subscriptionData.status === "active" ? "Active" : "Inactive"}
             </span>
           </div>
-          <button
-            type="button"
-            style={{
-              ...buttonStyle,
-              backgroundColor:
-                subscriptionStatus === "Active" ? "#ff7eb3" : "#4ade80",
-              color: "#111",
-            }}
-            onClick={() =>
-              setSubscriptionStatus(
-                subscriptionStatus === "Active" ? "Cancelled" : "Active"
-              )
-            }
-          >
-            {subscriptionStatus === "Active" ? "Cancel" : "Subscribe"}
-          </button>
+          {subscriptionData.plan && (
+            <div>
+              Plan:{" "}
+              <span style={{ color: "#4ade80" }}>{subscriptionData.plan}</span>
+            </div>
+          )}
+          {subscriptionData.currentPeriodEnd && (
+            <div>
+              Next billing date:{" "}
+              <span style={{ color: "#9ca3af" }}>
+                {new Date(
+                  subscriptionData.currentPeriodEnd
+                ).toLocaleDateString()}
+              </span>
+            </div>
+          )}
+          {subscriptionData.cancelAtPeriodEnd && (
+            <div style={{ color: "#f87171", fontWeight: "bold" }}>
+              ⚠️ Subscription will cancel at the end of the current period
+            </div>
+          )}
+          {subscriptionData.status === "active" ? (
+            <button
+              type="button"
+              style={{
+                ...buttonStyle,
+                backgroundColor: "#3b82f6",
+                color: "#fff",
+              }}
+              onClick={handleOpenCustomerPortal}
+              disabled={loadingPortal}
+            >
+              {loadingPortal ? "Loading..." : "Manage Subscription"}
+            </button>
+          ) : (
+            <div style={{ marginTop: "10px" }}>
+              <p
+                style={{
+                  color: "#9ca3af",
+                  marginBottom: "10px",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Subscribe to a plan to unlock premium features
+              </p>
+              <button
+                type="button"
+                style={{
+                  ...buttonStyle,
+                  backgroundColor: "#4ade80",
+                  color: "#111",
+                }}
+                onClick={() => (window.location.href = "/pricing")}
+              >
+                View Plans
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -287,24 +503,79 @@ function Billing({ user }) {
         >
           <thead>
             <tr style={{ color: "#9ca3af" }}>
-              <th style={{ textAlign: "left", padding: "8px 4px" }}>Date</th>
+              <th style={{ textAlign: "left", padding: "8px 4px" }}>
+                Date & Time
+              </th>
               <th style={{ textAlign: "left", padding: "8px 4px" }}>Amount</th>
-              <th style={{ textAlign: "left", padding: "8px 4px" }}>Method</th>
+              <th style={{ textAlign: "left", padding: "8px 4px" }}>
+                Description
+              </th>
               <th style={{ textAlign: "left", padding: "8px 4px" }}>Status</th>
             </tr>
           </thead>
           <tbody>
-            {recentPayments.length === 0 ? (
+            {loadingPayments ? (
               <tr>
-                <td colSpan={4}>No payments in the last 6 months.</td>
+                <td
+                  colSpan={4}
+                  style={{ padding: "16px 4px", textAlign: "center" }}
+                >
+                  Loading payment history...
+                </td>
+              </tr>
+            ) : payments.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  style={{ padding: "16px 4px", textAlign: "center" }}
+                >
+                  No payments found.
+                </td>
               </tr>
             ) : (
-              recentPayments.map((p, i) => (
-                <tr key={i} style={{ borderTop: "1px solid #222" }}>
-                  <td style={{ padding: "8px 4px" }}>{p.date}</td>
-                  <td style={{ padding: "8px 4px" }}>{p.amount}</td>
-                  <td style={{ padding: "8px 4px" }}>{p.method}</td>
-                  <td style={{ padding: "8px 4px" }}>{p.status}</td>
+              payments.map((p, i) => (
+                <tr key={p.id || i} style={{ borderTop: "1px solid #222" }}>
+                  <td style={{ padding: "8px 4px" }}>
+                    <div>{p.date}</div>
+                    {p.time && (
+                      <div style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
+                        {p.time}
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ padding: "8px 4px", fontWeight: "bold" }}>
+                    {p.amount}
+                    {p.currency && p.currency !== "USD" && (
+                      <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
+                        {" " + p.currency}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ padding: "8px 4px" }}>
+                    <div>{p.description || p.type}</div>
+                    {p.invoiceNumber && (
+                      <div style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
+                        Invoice: {p.invoiceNumber}
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ padding: "8px 4px" }}>
+                    <span
+                      style={{
+                        color: p.status === "Paid" ? "#4ade80" : "#f87171",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "0.85rem",
+                        fontWeight: "bold",
+                        backgroundColor:
+                          p.status === "Paid"
+                            ? "rgba(74, 222, 128, 0.1)"
+                            : "rgba(248, 113, 113, 0.1)",
+                      }}
+                    >
+                      {p.status}
+                    </span>
+                  </td>
                 </tr>
               ))
             )}
