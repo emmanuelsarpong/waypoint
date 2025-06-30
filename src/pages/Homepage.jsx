@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom"; 
+/* eslint-disable no-unused-vars */
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import heroImage from "../assets/pexels-codioful-7135057.jpg";
 import howItWorksImage from "../assets/pexels-codioful-7130536.jpg";
 import dashboardPreview from "../assets/pexels-codioful-7130498.jpg";
@@ -82,33 +84,71 @@ function Homepage() {
   ];
 
   return (
-    <div className="text-white">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="text-white"
+    >
       {/* Hero Section */}
-      <section className="w-full h-[500px] relative mb-[200px] rounded-lg overflow-hidden px-6">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full h-[500px] relative mb-[200px] rounded-lg overflow-hidden px-6"
+      >
         <img
           src={heroImage}
           alt="Hero"
           className="absolute inset-0 w-full h-full object-cover z-[-1]"
         />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center bg-black bg-opacity-50 rounded-lg">
-          <h1 className="text-4xl font-extrabold mb-4 text-white">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl font-extrabold mb-4 text-white"
+          >
             Track the Path. Master the Journey.
-          </h1>
-          <p className="text-lg text-neutral-300 mb-6 max-w-xl">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-lg text-neutral-300 mb-6 max-w-xl"
+          >
             Waypoint helps you log your outdoor runs, walks, and rides—so you
             can move with purpose.
-          </p>
-          <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
-            Get Started
-          </Button>
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+              Get Started
+            </Button>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* How It Works + Dashboard */}
-      <section className="w-full bg-black py-20 px-6 mb-[200px]">
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="w-full bg-black py-20 px-6 mb-[200px]"
+      >
         <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto">
           {/* How It Works */}
-          <div className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[65%] min-w-[300px]">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[65%] min-w-[300px]"
+          >
             <div className="relative h-[250px] w-full">
               <img
                 src={howItWorksImage}
@@ -116,28 +156,52 @@ function Homepage() {
                 className="absolute inset-0 w-full h-full object-cover z-[-1]"
               />
               <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
-                <h2 className="text-3xl font-bold leading-tight">
+                <motion.h2
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="text-3xl font-bold leading-tight"
+                >
                   How It
                   <br />
                   Works
-                </h2>
+                </motion.h2>
               </div>
             </div>
             <div className="p-6">
-              <p className="text-neutral-400 mb-4">
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="text-neutral-400 mb-4"
+              >
                 Log your journey with our intuitive map interface. Track your
                 path, set goals, and visualize your progress in real-time.
-              </p>
-              <ul className="list-disc list-inside text-neutral-500 space-y-2 mt-6">
+              </motion.p>
+              <motion.ul
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="list-disc list-inside text-neutral-500 space-y-2 mt-6"
+              >
                 <li>Mark your running, biking, or walking paths</li>
                 <li>Sync with your GPS for real-time updates</li>
                 <li>Set goals and milestones</li>
-              </ul>
+              </motion.ul>
             </div>
-          </div>
+          </motion.div>
 
           {/* Beautiful Dashboard */}
-          <div className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[30%] min-w-[300px]">
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[30%] min-w-[300px]"
+          >
             <div className="relative h-[250px] w-full">
               <img
                 src={dashboardPreview}
@@ -145,53 +209,106 @@ function Homepage() {
                 className="absolute inset-0 w-full h-full object-cover z-[-1]"
               />
               <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
-                <h2 className="text-2xl font-bold leading-tight">
+                <motion.h2
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                  className="text-2xl font-bold leading-tight"
+                >
                   Beautiful
                   <br />
                   Dashboard
-                </h2>
+                </motion.h2>
               </div>
             </div>
             <div className="p-6">
-              <p className="text-neutral-400 text-left">
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="text-neutral-400 text-left"
+              >
                 Get insights on your performance, trends, and distances. Whether
                 you're a casual jogger or a serious athlete, our analytics help
                 you stay on track.
-              </p>
+              </motion.p>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Testimonials Section */}
-      <section className="w-full px-6 py-20 mb-[200px] bg-neutral-900">
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.2 }}
+        className="w-full px-6 py-20 mb-[200px] bg-neutral-900"
+      >
         <div className="max-w-[1200px] mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-10">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-3xl font-bold mb-10"
+          >
             What Our Users Are Saying
-          </h2>
+          </motion.h2>
           <div className="flex flex-wrap justify-center gap-10">
             {testimonials.map((t, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 * idx }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
                 className="w-[250px] flex flex-col items-center text-center"
               >
-                <img
+                <motion.img
                   src={t.image}
                   alt={t.name}
                   className="w-[200px] h-[200px] object-cover rounded-lg mb-4"
+                  whileHover={{ 
+                    scale: 1.05,
+                    transition: { duration: 0.3 }
+                  }}
                 />
-                <blockquote className="italic text-neutral-200 mb-2">
-                  “{t.quote}”
-                </blockquote>
-                <p className="text-neutral-500">— {t.name}</p>
-              </div>
+                <motion.blockquote
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 + 0.1 * idx }}
+                  viewport={{ once: true }}
+                  className="italic text-neutral-200 mb-2"
+                >
+                  "{t.quote}"
+                </motion.blockquote>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 + 0.1 * idx }}
+                  viewport={{ once: true }}
+                  className="text-neutral-500"
+                >
+                  — {t.name}
+                </motion.p>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Call to Action */}
-      <section className="w-full px-6 py-20 mb-[200px]">
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+        className="w-full px-6 py-20 mb-[200px]"
+      >
         <div className="relative h-[300px] max-w-[1200px] mx-auto rounded-lg overflow-hidden">
           <img
             src={heroImage}
@@ -200,24 +317,50 @@ function Homepage() {
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 z-0" />
           <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold mb-4"
+            >
               Ready to Master Your Journey?
-            </h2>
-            <p className="text-neutral-300 mb-6">
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="text-neutral-300 mb-6"
+            >
               Sign up and start tracking your movement today.
-            </p>
-            <Link to="/signup">
-              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
-                Create Account
-              </Button>
-            </Link>
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Link to="/signup">
+                <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+                  Create Account
+                </Button>
+              </Link>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Card Layout */}
-      <Card cards={bottomCards} />
-    </div>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <Card cards={bottomCards} />
+      </motion.div>
+    </motion.div>
   );
 }
 

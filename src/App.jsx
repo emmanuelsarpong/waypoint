@@ -34,7 +34,7 @@ import AdvancedMapClean from "./components/AdvancedMapClean";
 import MapPage from "./pages/MapPage";
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
@@ -153,7 +153,10 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/pricing" element={<Pricing user={user} />} />
-                  <Route path="/dashboard" element={<Dashboard user={user} />} />
+                  <Route
+                    path="/dashboard"
+                    element={<Dashboard user={user} />}
+                  />
                   <Route
                     path="/billing"
                     element={
