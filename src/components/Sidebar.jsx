@@ -128,14 +128,26 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                 }
                 style={{
                   textDecoration: "none",
-                  margin: "5px 80px 5px 5px",
-                  padding: "20px 25px 24px 20px",
-                  height: "25px",
+                  margin: "5px 5px 5px 5px",
+                  padding: "20px 20px 20px 20px",
+                  height: "auto",
                   borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  minHeight: "60px",
                 }}
               >
-                <span>{item.name}</span>
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <span style={{ flex: 1 }}>{item.name}</span>
+                <span
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  style={{
+                    marginLeft: "auto",
+                    paddingLeft: "20px",
+                    fontSize: "18px",
+                    fontWeight: "300",
+                  }}
+                >
                   ›
                 </span>
               </NavLink>
