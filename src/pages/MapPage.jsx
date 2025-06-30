@@ -1,5 +1,9 @@
-import AdvancedMap from "../components/AdvancedMap";
+import AdvancedMapClean from "../components/AdvancedMapClean";
 
 export default function MapPage() {
-  return <AdvancedMap />;
+  return (
+    <div style={{ marginTop: "40px", paddingBottom: "40px" }}>
+      <AdvancedMapClean />
+    </div>
+  );
 }

@@ -30,21 +30,14 @@ import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
-import AdvancedMap from "./components/AdvancedMap";
+import AdvancedMapClean from "./components/AdvancedMapClean";
 import MapPage from "./pages/MapPage";
 
 function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const path = location.pathname;
@@ -119,75 +112,79 @@ function App() {
       {!isAuthPage && (
         <div className="flex">
           <Sidebar
-            isScrolled={isScrolled}
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
             isAuthenticated={!!user}
           />
 
-          <div
-            className={`flex flex-col flex-1 ${
-              sidebarOpen ? "ml-[250px]" : "ml-0"
-            } transition-all duration-300`}
+          <Topbar
+            toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+            isAuthenticated={!!user}
+            onLogout={() => setUser(null)}
+            sidebarOpen={sidebarOpen}
+          />
+
+          {/* Main content - Apply blur when sidebar is open on mobile */}
+          <main
+            className="mt-[70px] w-full max-w-[1200px] mx-auto px-6 transition-all duration-300"
+            style={{
+              marginLeft:
+                window.innerWidth <= 768
+                  ? "0px"
+                  : sidebarOpen
+                  ? "250px"
+                  : "0px",
+              filter:
+                window.innerWidth <= 768 && sidebarOpen ? "blur(4px)" : "none",
+              transition: "all 0.3s ease-in-out",
+              paddingLeft: "25px",
+              paddingRight: "25px",
+            }}
           >
-            <Topbar
-              toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-              isAuthenticated={!!user}
-              onLogout={() => setUser(null)}
-            />
+            <Routes>
+              <Route path="/" element={<Homepage />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/pricing" element={<Pricing user={user} />} />
+              <Route path="/dashboard" element={<Dashboard user={user} />} />
+              <Route
+                path="/billing"
+                element={
+                  <ProtectedRoute>
+                    <Billing user={user} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/trails" element={<TrailsPage />} />
+              <Route path="/gps-goals" element={<GPSGoalsPage />} />
+              <Route
+                path="/movement-analysis"
+                element={<MovementAnalysisPage />}
+              />
+              <Route
+                path="/map"
+                element={
+                  <ProtectedRoute>
+                    <MapPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+              <Route path="/oauth/callback" element={<OAuthCallback />} />
+            </Routes>
 
-            <main
-              className="mt-[70px] w-full max-w-[1200px] mx-auto px-6"
-              style={{
-                paddingLeft: "25px",
-                paddingRight: "25px",
-              }}
-            >
-              <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/pricing" element={<Pricing user={user} />} />
-                <Route path="/dashboard" element={<Dashboard user={user} />} />
-                <Route
-                  path="/billing"
-                  element={
-                    <ProtectedRoute>
-                      <Billing user={user} />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/trails" element={<TrailsPage />} />
-                <Route path="/gps-goals" element={<GPSGoalsPage />} />
-                <Route
-                  path="/movement-analysis"
-                  element={<MovementAnalysisPage />}
-                />
-                <Route
-                  path="/map"
-                  element={
-                    <ProtectedRoute>
-                      <MapPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-                <Route path="/oauth/callback" element={<OAuthCallback />} />
-              </Routes>
-
-              <div style={{ marginTop: "150px" }}>
-                <SocialMediaBar />
-              </div>
-            </main>
-          </div>
+            <div style={{ marginTop: "150px" }}>
+              <SocialMediaBar />
+            </div>
+          </main>
         </div>
       )}
 
