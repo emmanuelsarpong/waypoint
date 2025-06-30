@@ -194,7 +194,7 @@ function Homepage() {
             </div>
           </motion.div>
 
-          {/* Beautiful Dashboard */}
+          {/* Interactive Dashboard */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -216,7 +216,7 @@ function Homepage() {
                   viewport={{ once: true }}
                   className="text-2xl font-bold leading-tight"
                 >
-                  Beautiful
+                  Interactive
                   <br />
                   Dashboard
                 </motion.h2>
