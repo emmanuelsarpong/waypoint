@@ -61,7 +61,6 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           borderRight: "0.5px solid #3F3F3F",
           padding: "24px",
           paddingTop: "24px",
-          // Force solid black background
           backgroundColor: "#000000 !important",
           background: "#000000",
         }}

@@ -124,9 +124,9 @@ function App() {
             sidebarOpen={sidebarOpen}
           />
 
-          {/* Main content - Apply blur when sidebar is open on mobile */}
-          <main
-            className="mt-[70px] w-full max-w-[1200px] mx-auto px-6 transition-all duration-300"
+          {/* Main content wrapper */}
+          <div
+            className="w-full transition-all duration-300"
             style={{
               marginLeft:
                 window.innerWidth <= 768
@@ -137,54 +137,63 @@ function App() {
               filter:
                 window.innerWidth <= 768 && sidebarOpen ? "blur(4px)" : "none",
               transition: "all 0.3s ease-in-out",
-              paddingLeft: "25px",
-              paddingRight: "25px",
             }}
           >
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/pricing" element={<Pricing user={user} />} />
-              <Route path="/dashboard" element={<Dashboard user={user} />} />
-              <Route
-                path="/billing"
-                element={
-                  <ProtectedRoute>
-                    <Billing user={user} />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/trails" element={<TrailsPage />} />
-              <Route path="/gps-goals" element={<GPSGoalsPage />} />
-              <Route
-                path="/movement-analysis"
-                element={<MovementAnalysisPage />}
-              />
-              <Route
-                path="/map"
-                element={
-                  <ProtectedRoute>
-                    <MapPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-              <Route path="/oauth/callback" element={<OAuthCallback />} />
-            </Routes>
+            <main className="mt-[70px]">
+              {/* This container centers all content with responsive padding */}
+              <div
+                className="w-full max-w-[1200px] mx-auto"
+                style={{
+                  paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
+                  paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
+                }}
+              >
+                <Routes>
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/pricing" element={<Pricing user={user} />} />
+                  <Route path="/dashboard" element={<Dashboard user={user} />} />
+                  <Route
+                    path="/billing"
+                    element={
+                      <ProtectedRoute>
+                        <Billing user={user} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <ProtectedRoute>
+                        <Settings />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/trails" element={<TrailsPage />} />
+                  <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                  <Route
+                    path="/movement-analysis"
+                    element={<MovementAnalysisPage />}
+                  />
+                  <Route
+                    path="/map"
+                    element={
+                      <ProtectedRoute>
+                        <MapPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                  <Route path="/oauth/callback" element={<OAuthCallback />} />
+                </Routes>
 
-            <div style={{ marginTop: "150px" }}>
-              <SocialMediaBar />
-            </div>
-          </main>
+                <div style={{ marginTop: "150px" }}>
+                  <SocialMediaBar />
+                </div>
+              </div>
+            </main>
+          </div>
         </div>
       )}
 
