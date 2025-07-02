@@ -1,4 +1,5 @@
-.profile-card-grid {
+.profile-card-grid,
+.dashboard-widget-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
@@ -11,12 +12,14 @@
 }
 
 @media (min-width: 640px) {
-  .profile-card-grid {
+  .profile-card-grid,
+  .dashboard-widget-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (min-width: 1024px) {
-  .profile-card-grid {
+  .profile-card-grid,
+  .dashboard-widget-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -24,9 +27,9 @@
 .profile-card {
   background: #111;
   border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border: 1px solid #2a2a2a;
-  padding: 1.25rem; 
+  padding: 1.25rem;
   transition: box-shadow 0.3s;
   height: 100%;
   display: flex;
@@ -34,7 +37,7 @@
   justify-content: center;
 }
 .profile-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 /* Toggle button styles */
@@ -49,4 +52,177 @@
   box-shadow: 0 2px 8px #fb257644;
   transform: scale(1.05);
   border: 2px solid #fb2576;
+}
+
+/* Recent Activities Section */
+.activity-item {
+  background: linear-gradient(to bottom right, #111, #1a1a1a);
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.activity-item:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  transform: scale(1.02);
+}
+
+.sport-icon {
+  filter: drop-shadow(0 0 8px rgba(251, 37, 118, 0.4));
+}
+
+/* Goals Section */
+.goal-widget {
+  background: linear-gradient(to bottom right, #111, #1a1a1a);
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  transition: none;
+  min-height: 160px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+}
+
+/* Goals Grid Specific Styling */
+.goals-section .grid {
+  gap: 1.5rem !important; 
+}
+
+/* Achievements Section */
+.achievement-badge {
+  background: linear-gradient(to bottom right, #111, #1a1a1a);
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  min-height: 120px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem; /* Enhanced padding */
+  gap: 0.5rem; /* Space between icon and text */
+}
+
+.achievement-badge:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  transform: scale(1.02);
+}
+
+.badge-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 167, 38, 0.4));
+  font-size: 2.5rem; /* Slightly larger icons */
+  margin-bottom: 0.5rem;
+}
+
+.badge-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  text-align: center;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Social Feed Section */
+.friend-activity {
+  background: linear-gradient(to bottom right, #111, #1a1a1a);
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.friend-activity:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  transform: scale(1.02);
+}
+
+/* Badges Grid Specific Styling */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; /* 24px gap */
+  width: 100%;
+}
+
+/* Progress Bar Styling */
+.goal-progress-track {
+  width: 100%;
+  background: rgba(34, 34, 34, 0.8);
+  border-radius: 9999px;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.goal-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #76ff03, #8bc34a);
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(118, 255, 3, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .activity-item {
+    padding: 1rem !important;
+  }
+
+  .goal-widget {
+    padding: 1.25rem !important;
+    min-height: 140px;
+  }
+
+  .goals-section .grid {
+    gap: 1rem !important; /* Smaller gap on mobile */
+  }
+
+  .achievement-badge {
+    padding: 1rem !important;
+    min-height: 100px;
+  }
+
+  .friend-activity {
+    padding: 1rem !important;
+  }
+
+  .sport-icon,
+  .badge-icon {
+    font-size: 2rem !important;
+  }
+
+  .badges-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .badge-name {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .badges-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .achievement-badge {
+    padding: 0.75rem !important;
+    min-height: 80px;
+  }
+
+  .badge-icon {
+    font-size: 1.75rem !important;
+  }
+
+  .badge-name {
+    font-size: 0.7rem !important;
+  }
 }

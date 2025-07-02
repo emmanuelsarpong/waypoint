@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StatWidget from "../components/StatWidget";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -10,6 +10,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { fetchUserStats } from "../api"; 
 
 const weeklyData = [
   { name: "Mon", value: 2.3 },
@@ -47,9 +48,41 @@ const yearlyData = [
 export default function Dashboard({ user }) {
   const navigate = useNavigate();
   const [range, setRange] = useState("monthly");
+  const [userStats, setUserStats] = useState({
+    totalDistance: 0,
+    totalRoutes: 0,
+    totalCalories: 0,
+    weeklyData: [],
+  });
+  const [recentRoutes, setRecentRoutes] = useState([]);
+  const [friendActivities, setFriendActivities] = useState([]); 
+
+  useEffect(() => {
+    // Fetch user's actual route data
+    if (user?.id) {
+      fetchUserStats(user.id)
+        .then((data) => {
+          setUserStats(data);
+          setRecentRoutes(data.recentRoutes || []); 
+          setFriendActivities(data.friendActivities || []); 
+        })
+        .catch((error) => {
+          console.error("Error fetching user stats:", error);
+          // Set default empty state on error
+          setUserStats({
+            totalDistance: 0,
+            totalRoutes: 0,
+            totalCalories: 0,
+            weeklyData: [],
+          });
+          setRecentRoutes([]);
+          setFriendActivities([]);
+        });
+    }
+  }, [user]);
 
   const getChartData = () => {
-    if (range === "weekly") return weeklyData;
+    if (range === "weekly") return userStats.weeklyData;
     if (range === "yearly") return yearlyData;
     return monthlyData;
   };
@@ -57,14 +90,14 @@ export default function Dashboard({ user }) {
   const statWidgets = [
     {
       title: "Move",
-      value: "1,173",
+      value: userStats.totalCalories.toLocaleString(),
       unit: "CAL",
       color: "#fb2576",
       path: "/move",
     },
     {
       title: "Exercise",
-      value: "101",
+      value: userStats.totalRoutes.toLocaleString(),
       unit: "MIN",
       color: "#caff70",
       path: "/exercise",
@@ -100,8 +133,31 @@ export default function Dashboard({ user }) {
     },
   ];
 
+  const goalWidgets = [
+    {
+      title: "Weekly Distance Goal",
+      current: 15.2,
+      target: 25.0,
+      unit: "KM",
+      progress: 60.8,
+    },
+    {
+      title: "Monthly Runs",
+      current: 8,
+      target: 12,
+      unit: "RUNS",
+      progress: 66.7,
+    },
+  ];
+
+  const achievements = [
+    { name: "First Steps", icon: "👣" },
+    { name: "10km Club", icon: "🏅" },
+    { name: "Marathon Master", icon: "🏆" },
+  ];
+
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-20">
       <div className="w-full max-w-screen-2xl mx-auto px-4">
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
           {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
@@ -192,30 +248,167 @@ export default function Dashboard({ user }) {
             </div>
           </div>
         </div>
+
+        {/* Recent Activities Component */}
+        <div className="w-full px-4">
+          <div
+            className="recent-activities w-full mx-auto mt-10"
+            style={{ maxWidth: "1080px" }}
+          >
+            <h3 className="text-2xl font-bold mb-6">Recent Activities</h3>
+            {recentRoutes.length > 0 ? (
+              recentRoutes.map((route, index) => {
+                const getSportIcon = (sport) => {
+                  const icons = {
+                    running: "🏃",
+                    cycling: "🚴",
+                    hiking: "🥾",
+                    walking: "🚶",
+                  };
+                  return icons[sport] || "🏃";
+                };
+
+                return (
+                  <div
+                    className="activity-item flex items-center gap-4 p-6 mb-4"
+                    key={index}
+                  >
+                    <span className="sport-icon text-3xl">
+                      {getSportIcon(route.sport)}
+                    </span>
+                    <div className="activity-details flex-1">
+                      <h4 className="text-lg font-semibold">{route.name}</h4>
+                      <p className="text-sm text-neutral-400">
+                        {route.distance} km • {route.calories} cal •{" "}
+                        {new Date(route.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="activity-stats text-right">
+                      <div className="text-lg font-bold text-[#fb2576]">
+                        {Math.floor(route.duration / 60)}:
+                        {String(route.duration % 60).padStart(2, "0")}
+                      </div>
+                      <div className="text-xs text-neutral-400">Duration</div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-neutral-400 mb-4">
+                  No recent activities found.
+                </p>
+                <p className="text-sm text-neutral-500">
+                  Start tracking your workouts to see them here!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Goals Section */}
+        <div className="w-full px-4">
+          <div
+            className="goals-section w-full mx-auto mt-10"
+            style={{ maxWidth: "1080px" }}
+          >
+            <h3 className="text-2xl font-bold mb-6">Your Goals</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {goalWidgets.map(({ title, current, unit, progress, target }) => (
+                <div
+                  className="goal-widget flex flex-col justify-between"
+                  key={title}
+                >
+                  <div>
+                    <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold">
+                        {current.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-neutral-400">{unit}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="goal-progress-track">
+                      <div
+                        className="goal-progress-bar"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-2 text-xs text-neutral-400">
+                      <span>
+                        {current} / {target} {unit.toLowerCase()}
+                      </span>
+                      <span>{progress.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Achievements Section */}
+        <div className="w-full px-4">
+          <div
+            className="achievements-section w-full mx-auto mt-10"
+            style={{ maxWidth: "1080px" }}
+          >
+            <h3 className="text-2xl font-bold mb-6">Recent Achievements</h3>
+            <div className="badges-grid grid grid-cols-3 gap-6">
+              {achievements.map((badge, index) => (
+                <div
+                  className="achievement-badge p-4"
+                  key={badge.name || index}
+                >
+                  <span className="badge-icon text-4xl">{badge.icon}</span>
+                  <span className="badge-name text-sm text-center mt-2">
+                    {badge.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Social Feed Section */}
+        <div className="w-full px-4">
+          <div
+            className="social-feed w-full mx-auto mt-10"
+            style={{ maxWidth: "1080px" }}
+          >
+            <h3 className="text-2xl font-bold mb-6">Friend Activity</h3>
+            {friendActivities.length > 0 ? (
+              friendActivities.map((activity, index) => (
+                <div
+                  className="friend-activity flex items-center gap-4 p-4 mb-4"
+                  key={index}
+                >
+                  <img
+                    src={activity.user.avatar}
+                    alt={`${activity.user.name}'s avatar`}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <p className="text-sm text-neutral-400">
+                    {activity.user.name} completed a{" "}
+                    <span className="font-semibold">{activity.distance}km</span>{" "}
+                    run
+                  </p>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-neutral-400 mb-4">
+                  No friend activities found.
+                </p>
+                <p className="text-sm text-neutral-500">
+                  Connect with friends to see their activities here!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* Responsive grid styles */}
-      <style>{`
-        .dashboard-widget-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-        }
-
-        @media (max-width: 1024px) {
-          .dashboard-widget-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-          }
-        }
-
-        @media (max-width: 700px) {
-          .dashboard-widget-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
-          }
-        }
-      `}</style>
     </div>
   );
 }
