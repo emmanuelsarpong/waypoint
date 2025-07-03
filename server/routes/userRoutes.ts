@@ -19,9 +19,9 @@ router.get(
       return;
     }
     res.json({
-      firstName: req.user.firstName,
+      firstName: (req.user as any).firstName,
       email: req.user.email,
-      stripeCustomerId: req.user.stripeCustomerId,
+      stripeCustomerId: (req.user as any).stripeCustomerId,
     });
   }
 );

@@ -11,18 +11,18 @@ export const createSetupIntent = async (
   res: Response
 ): Promise<void> => {
   try {
-    let customerId = req.user?.stripeCustomerId;
+    let customerId = (req.user as any)?.stripeCustomerId;
 
     // If user doesn't have a Stripe customer ID, create one
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: req.user.email,
-        metadata: { userId: req.user._id.toString() },
+        email: req.user!.email,
+        metadata: { userId: req.user!._id.toString() },
       });
 
       // Update user with new customer ID
-      req.user.stripeCustomerId = customer.id;
-      await req.user.save();
+      req.user!.stripeCustomerId = customer.id;
+      await req.user!.save();
 
       customerId = customer.id;
     }
@@ -40,13 +40,13 @@ export const createSetupIntent = async (
           `Customer ${customerId} not found, creating new customer...`
         );
         const customer = await stripe.customers.create({
-          email: req.user.email,
-          metadata: { userId: req.user._id.toString() },
+          email: req.user!.email,
+          metadata: { userId: req.user!._id.toString() },
         });
 
         // Update user with new customer ID
-        req.user.stripeCustomerId = customer.id;
-        await req.user.save();
+        req.user!.stripeCustomerId = customer.id;
+        await req.user!.save();
 
         // Create setup intent with new customer
         const setupIntent = await stripe.setupIntents.create({
@@ -68,19 +68,19 @@ export const getDefaultPaymentMethod = async (
   res: Response
 ): Promise<void> => {
   try {
-    let customerId = req.user?.stripeCustomerId;
+    let customerId = (req.user as any)?.stripeCustomerId;
 
     // If user doesn't have a Stripe customer ID, create one
     if (!customerId) {
       console.log("No customer ID found, creating new customer...");
       const customer = await stripe.customers.create({
-        email: req.user.email,
-        metadata: { userId: req.user._id.toString() },
+        email: req.user!.email,
+        metadata: { userId: req.user!._id.toString() },
       });
 
       // Update user with new customer ID
-      req.user.stripeCustomerId = customer.id;
-      await req.user.save();
+      req.user!.stripeCustomerId = customer.id;
+      await req.user!.save();
 
       customerId = customer.id;
       // New customer won't have a default payment method
@@ -101,13 +101,13 @@ export const getDefaultPaymentMethod = async (
           `Customer ${customerId} not found, creating new customer...`
         );
         customer = await stripe.customers.create({
-          email: req.user.email,
-          metadata: { userId: req.user._id.toString() },
+          email: req.user!.email,
+          metadata: { userId: req.user!._id.toString() },
         });
 
         // Update user with new customer ID
-        req.user.stripeCustomerId = customer.id;
-        await req.user.save();
+        req.user!.stripeCustomerId = customer.id;
+        await req.user!.save();
 
         // New customer won't have a default payment method
         res.json({ paymentMethod: null });
@@ -138,12 +138,12 @@ export const confirmCardSetup = async (
       return;
     }
 
-    if (!req.user?.stripeCustomerId) {
+    if (!(req.user as any)?.stripeCustomerId) {
       res.status(400).json({ error: "No Stripe customer ID found for user" });
       return;
     }
 
-    const customerId = req.user.stripeCustomerId;
+    const customerId = req.user!.stripeCustomerId;
 
     const setupIntent = await stripe.setupIntents.confirm(clientSecret, {
       payment_method: paymentMethodId,
@@ -184,12 +184,12 @@ export const setDefaultPaymentMethod = async (
       return;
     }
 
-    if (!req.user?.stripeCustomerId) {
+    if (!(req.user as any)?.stripeCustomerId) {
       res.status(400).json({ error: "No Stripe customer ID found for user" });
       return;
     }
 
-    const customerId = req.user.stripeCustomerId;
+    const customerId = req.user!.stripeCustomerId;
 
     // Attach the payment method to the customer
     await stripe.paymentMethods.attach(paymentMethodId, {
@@ -280,18 +280,18 @@ export const ensureStripeCustomer = async (
   res: Response
 ): Promise<void> => {
   try {
-    let customerId = req.user?.stripeCustomerId;
+    let customerId = (req.user as any)?.stripeCustomerId;
 
     // If user doesn't have a Stripe customer ID, create one
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: req.user.email,
-        metadata: { userId: req.user._id.toString() },
+        email: req.user!.email,
+        metadata: { userId: req.user!._id.toString() },
       });
 
       // Update user with new customer ID
-      req.user.stripeCustomerId = customer.id;
-      await req.user.save();
+      req.user!.stripeCustomerId = customer.id;
+      await req.user!.save();
 
       customerId = customer.id;
     }

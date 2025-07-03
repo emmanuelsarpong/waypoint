@@ -112,14 +112,21 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
 
         {/* Navigation content */}
         <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
-          <nav className="flex flex-col gap-6 flex-1">
+          <nav
+            className="flex flex-col gap-2 justify-center"
+            style={{
+              height: "50vh",
+              paddingTop: "20px",
+              paddingBottom: "20px",
+            }}
+          >
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 onClick={handleNavClick}
                 className={({ isActive }) =>
-                  `group text-base font-medium flex items-center justify-between px-5 py-3 rounded-lg transition-all duration-200 ${
+                  `group text-sm font-medium flex items-center justify-between px-4 py-2 rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-neutral-900 text-white"
                       : "text-neutral-400 hover:bg-gradient-to-br hover:from-[#2C2C2C] hover:to-[#111111] hover:text-white"
@@ -127,14 +134,15 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                 }
                 style={{
                   textDecoration: "none",
-                  margin: "5px 5px 5px 5px",
-                  padding: "20px 20px 20px 20px",
+                  margin: "2px 8px",
+                  padding: "12px 16px",
                   height: "auto",
                   borderRadius: "8px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  minHeight: "60px",
+                  minHeight: "44px",
+                  fontSize: "14px",
                 }}
               >
                 <span style={{ flex: 1 }}>{item.name}</span>
@@ -142,8 +150,8 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                   className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   style={{
                     marginLeft: "auto",
-                    paddingLeft: "20px",
-                    fontSize: "18px",
+                    paddingLeft: "16px",
+                    fontSize: "16px",
                     fontWeight: "300",
                   }}
                 >
@@ -153,12 +161,22 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
             ))}
           </nav>
 
+          {/* Spacer to push footer to bottom */}
+          <div className="flex-1"></div>
+
           <footer
-            className="text-base text-neutral-400 px-5 py-3"
+            className="text-base text-neutral-400"
             style={{
-              padding: "24px",
-              fontSize: "14px",
+              padding: "0 24px 0 24px",
+              fontSize: "12px",
               color: "#3A3A3A",
+              textAlign: "left",
+              marginTop: "auto",
+              marginBottom: "20px",
+              position: "absolute",
+              bottom: "24px",
+              left: "0",
+              right: "0",
             }}
           >
             © 2025 Waypoint. All rights reserved.

@@ -56,11 +56,11 @@ app.use("/api/billing", billingRoutes);
 app.use("/api/workouts", workoutRoutes);
 
 // Test route to seed sample data
-app.post("/api/seed-workouts", (req, res) => {
+app.post("/api/seed-workouts", async (req, res) => {
   try {
     // For testing, use a default user ID
     const testUserId = "test-user-123";
-    seedSampleWorkouts(testUserId);
+    await seedSampleWorkouts(testUserId);
     res.json({
       status: "success",
       message: "Sample workouts seeded successfully",

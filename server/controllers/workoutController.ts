@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
+import Workout from "../models/workoutModel";
+import mongoose from "mongoose";
 
 // Workout data interface (matches what Apple Watch app will send)
 interface WorkoutData {
@@ -31,14 +33,9 @@ interface WorkoutData {
   source: "apple_watch" | "iphone" | "web_app";
 }
 
-// In-memory storage for now (replace with MongoDB later)
-let workouts: Array<
-  WorkoutData & { id: string; userId: string; createdAt: string }
-> = [];
-
 // POST /api/workouts - Create new workout
 export const createWorkout = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = (req.user as any).id;
   const workoutData: WorkoutData = req.body;
 
   // Validate required fields
@@ -54,15 +51,23 @@ export const createWorkout = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  // Create new workout
-  const newWorkout = {
-    id: Date.now().toString(),
-    userId,
-    createdAt: new Date().toISOString(),
-    ...workoutData,
-  };
+  // Convert coordinate timestamps to Date objects
+  const coordinates = workoutData.coordinates.map((coord) => ({
+    ...coord,
+    timestamp: new Date(coord.timestamp),
+  }));
 
-  workouts.push(newWorkout);
+  // Create new workout in database
+  const newWorkout = await Workout.create({
+    userId: new mongoose.Types.ObjectId(userId),
+    name: workoutData.name,
+    sport: workoutData.sport,
+    startTime: new Date(workoutData.startTime),
+    endTime: new Date(workoutData.endTime),
+    coordinates,
+    stats: workoutData.stats,
+    source: workoutData.source,
+  });
 
   res.status(201).json({
     status: "success",
@@ -75,42 +80,40 @@ export const createWorkout = catchAsync(async (req: Request, res: Response) => {
 // GET /api/workouts - Get user's workouts with filtering
 export const getUserWorkouts = catchAsync(
   async (req: Request, res: Response) => {
-    const userId = req.user.id;
+    const userId = (req.user as any).id;
     const { sport, page = 1, limit = 20, sortBy = "createdAt" } = req.query;
 
-    // Filter user's workouts
-    let userWorkouts = workouts.filter((w) => w.userId === userId);
+    // Build query
+    const query: any = { userId: new mongoose.Types.ObjectId(userId) };
 
     // Filter by sport if specified
     if (sport && sport !== "all") {
-      userWorkouts = userWorkouts.filter((w) => w.sport === sport);
+      query.sport = sport;
     }
 
-    // Sort workouts (newest first by default)
-    userWorkouts.sort((a, b) => {
-      if (sortBy === "distance") {
-        return b.stats.distance - a.stats.distance;
-      }
-      if (sortBy === "duration") {
-        return b.stats.duration - a.stats.duration;
-      }
-      // Default: sort by date (newest first)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    // Build sort object
+    let sortObj: any = { createdAt: -1 }; // Default: newest first
+    if (sortBy === "distance") {
+      sortObj = { "stats.distance": -1 };
+    } else if (sortBy === "duration") {
+      sortObj = { "stats.duration": -1 };
+    }
 
-    // Pagination
-    const startIndex = (Number(page) - 1) * Number(limit);
-    const endIndex = startIndex + Number(limit);
-    const paginatedWorkouts = userWorkouts.slice(startIndex, endIndex);
+    // Execute query with pagination
+    const skip = (Number(page) - 1) * Number(limit);
+    const [userWorkouts, totalCount] = await Promise.all([
+      Workout.find(query).sort(sortObj).skip(skip).limit(Number(limit)).lean(),
+      Workout.countDocuments(query),
+    ]);
 
     res.json({
       status: "success",
-      results: paginatedWorkouts.length,
-      totalWorkouts: userWorkouts.length,
+      results: userWorkouts.length,
+      totalWorkouts: totalCount,
       page: Number(page),
-      totalPages: Math.ceil(userWorkouts.length / Number(limit)),
+      totalPages: Math.ceil(totalCount / Number(limit)),
       data: {
-        workouts: paginatedWorkouts,
+        workouts: userWorkouts,
       },
     });
   }
@@ -119,8 +122,12 @@ export const getUserWorkouts = catchAsync(
 // GET /api/workouts/stats - Get user's workout statistics
 export const getWorkoutStats = catchAsync(
   async (req: Request, res: Response) => {
-    const userId = req.user.id;
-    const userWorkouts = workouts.filter((w) => w.userId === userId);
+    const userId = (req.user as any).id;
+
+    // Get all user workouts for stats calculation
+    const userWorkouts = await Workout.find({
+      userId: new mongoose.Types.ObjectId(userId),
+    }).lean();
 
     if (userWorkouts.length === 0) {
       return res.json({
@@ -134,6 +141,8 @@ export const getWorkoutStats = catchAsync(
           avgDistance: 0,
           avgDuration: 0,
           sportBreakdown: {},
+          recentRoutes: [],
+          weeklyData: [],
         },
       });
     }
@@ -171,6 +180,26 @@ export const getWorkoutStats = catchAsync(
       }
     );
 
+    // Get recent routes (last 5)
+    const recentRoutes = userWorkouts
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .slice(0, 5)
+      .map((workout) => ({
+        id: workout._id,
+        name: workout.name,
+        sport: workout.sport,
+        distance: workout.stats.distance,
+        date: workout.createdAt,
+        duration: workout.stats.duration,
+        calories: workout.stats.calories,
+      }));
+
+    // Generate weekly data (last 7 days)
+    const weeklyData = generateWeeklyData(userWorkouts);
+
     res.json({
       status: "success",
       data: {
@@ -183,20 +212,53 @@ export const getWorkoutStats = catchAsync(
           Math.round((stats.totalDistance / userWorkouts.length) * 10) / 10,
         avgDuration: Math.round(stats.totalDuration / userWorkouts.length),
         sportBreakdown: stats.sportBreakdown,
+        recentRoutes,
+        weeklyData,
       },
     });
   }
 );
 
+// Helper function to generate weekly data
+function generateWeeklyData(workouts: any[]) {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weeklyData = days.map((day) => ({ name: day, value: 0 }));
+
+  const now = new Date();
+  const weekStart = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000); // 7 days ago
+
+  workouts.forEach((workout) => {
+    const workoutDate = new Date(workout.createdAt);
+    if (workoutDate >= weekStart) {
+      const dayIndex = (workoutDate.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+      weeklyData[dayIndex].value += workout.stats.distance;
+    }
+  });
+
+  return weeklyData.map((day) => ({
+    ...day,
+    value: Math.round(day.value * 10) / 10,
+  }));
+}
+
 // GET /api/workouts/:id - Get specific workout
 export const getWorkoutById = catchAsync(
   async (req: Request, res: Response) => {
-    const userId = req.user.id;
+    const userId = (req.user as any).id;
     const workoutId = req.params.id;
 
-    const workout = workouts.find(
-      (w) => w.id === workoutId && w.userId === userId
-    );
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid workout ID format",
+      });
+    }
+
+    const workout = await Workout.findOne({
+      _id: new mongoose.Types.ObjectId(workoutId),
+      userId: new mongoose.Types.ObjectId(userId),
+    }).lean();
 
     if (!workout) {
       return res.status(404).json({
@@ -216,22 +278,19 @@ export const getWorkoutById = catchAsync(
 
 // PUT /api/workouts/:id - Update workout
 export const updateWorkout = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = (req.user as any).id;
   const workoutId = req.params.id;
   const updates = req.body;
 
-  const workoutIndex = workouts.findIndex(
-    (w) => w.id === workoutId && w.userId === userId
-  );
-
-  if (workoutIndex === -1) {
-    return res.status(404).json({
+  // Validate ObjectId format
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(400).json({
       status: "error",
-      message: "Workout not found",
+      message: "Invalid workout ID format",
     });
   }
 
-  // Update allowed fields (name, sport, notes, etc.)
+  // Update allowed fields (name, sport, etc.)
   const allowedUpdates = ["name", "sport"];
   const filteredUpdates: any = {};
 
@@ -241,33 +300,54 @@ export const updateWorkout = catchAsync(async (req: Request, res: Response) => {
     }
   });
 
-  workouts[workoutIndex] = { ...workouts[workoutIndex], ...filteredUpdates };
-
-  res.json({
-    status: "success",
-    data: {
-      workout: workouts[workoutIndex],
+  const workout = await Workout.findOneAndUpdate(
+    {
+      _id: new mongoose.Types.ObjectId(workoutId),
+      userId: new mongoose.Types.ObjectId(userId),
     },
-  });
-});
+    filteredUpdates,
+    { new: true }
+  ).lean();
 
-// DELETE /api/workouts/:id - Delete workout
-export const deleteWorkout = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
-  const workoutId = req.params.id;
-
-  const workoutIndex = workouts.findIndex(
-    (w) => w.id === workoutId && w.userId === userId
-  );
-
-  if (workoutIndex === -1) {
+  if (!workout) {
     return res.status(404).json({
       status: "error",
       message: "Workout not found",
     });
   }
 
-  workouts.splice(workoutIndex, 1);
+  res.json({
+    status: "success",
+    data: {
+      workout,
+    },
+  });
+});
+
+// DELETE /api/workouts/:id - Delete workout
+export const deleteWorkout = catchAsync(async (req: Request, res: Response) => {
+  const userId = (req.user as any).id;
+  const workoutId = req.params.id;
+
+  // Validate ObjectId format
+  if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+    return res.status(400).json({
+      status: "error",
+      message: "Invalid workout ID format",
+    });
+  }
+
+  const workout = await Workout.findOneAndDelete({
+    _id: new mongoose.Types.ObjectId(workoutId),
+    userId: new mongoose.Types.ObjectId(userId),
+  });
+
+  if (!workout) {
+    return res.status(404).json({
+      status: "error",
+      message: "Workout not found",
+    });
+  }
 
   res.status(204).json({
     status: "success",
@@ -276,102 +356,153 @@ export const deleteWorkout = catchAsync(async (req: Request, res: Response) => {
 });
 
 // Seed some sample data for testing
-export const seedSampleWorkouts = (userId: string) => {
-  const sampleWorkouts = [
-    {
-      id: "sample_1",
-      userId,
-      name: "Morning Run in Park",
-      sport: "running" as const,
-      startTime: "2025-06-27T08:00:00Z",
-      endTime: "2025-06-27T08:30:00Z",
-      coordinates: [
-        {
-          lat: 45.5017,
-          lng: -73.5673,
-          timestamp: "2025-06-27T08:00:00Z",
-          elevation: 50,
-        },
-        {
-          lat: 45.5025,
-          lng: -73.568,
-          timestamp: "2025-06-27T08:05:00Z",
-          elevation: 55,
-        },
-        {
-          lat: 45.5035,
-          lng: -73.5675,
-          timestamp: "2025-06-27T08:10:00Z",
-          elevation: 52,
-        },
-        {
-          lat: 45.5017,
-          lng: -73.5673,
-          timestamp: "2025-06-27T08:30:00Z",
-          elevation: 50,
-        },
-      ],
-      stats: {
-        distance: 5.2,
-        duration: 1800,
-        avgPace: "5:45",
-        elevationGain: 120,
-        elevationLoss: 115,
-        calories: 350,
-        avgHeartRate: 150,
-        maxHeartRate: 175,
-        steps: 6800,
-      },
-      source: "apple_watch" as const,
-      createdAt: "2025-06-27T08:30:00Z",
-    },
-    {
-      id: "sample_2",
-      userId,
-      name: "Cycling Along River",
-      sport: "cycling" as const,
-      startTime: "2025-06-26T09:00:00Z",
-      endTime: "2025-06-26T09:45:00Z",
-      coordinates: [
-        {
-          lat: 45.4995,
-          lng: -73.57,
-          timestamp: "2025-06-26T09:00:00Z",
-          elevation: 40,
-        },
-        {
-          lat: 45.4985,
-          lng: -73.572,
-          timestamp: "2025-06-26T09:15:00Z",
-          elevation: 42,
-        },
-        {
-          lat: 45.4945,
-          lng: -73.58,
-          timestamp: "2025-06-26T09:45:00Z",
-          elevation: 38,
-        },
-      ],
-      stats: {
-        distance: 15.8,
-        duration: 2700,
-        avgSpeed: "21.2 km/h",
-        maxSpeed: 35.5,
-        elevationGain: 85,
-        elevationLoss: 92,
-        calories: 420,
-        avgHeartRate: 140,
-        maxHeartRate: 165,
-      },
-      source: "iphone" as const,
-      createdAt: "2025-06-26T09:45:00Z",
-    },
-  ];
+export const seedSampleWorkouts = async (userId: string) => {
+  try {
+    // Check if user already has workouts
+    const existingWorkouts = await Workout.countDocuments({
+      userId: new mongoose.Types.ObjectId(userId),
+    });
 
-  // Add sample workouts if they don't exist
-  sampleWorkouts.forEach((workout) => {
-    if (!workouts.find((w) => w.id === workout.id)) {
-      workouts.push(workout);
+    if (existingWorkouts > 0) {
+      console.log(
+        `User ${userId} already has ${existingWorkouts} workouts. Skipping seed.`
+      );
+      return;
     }
-  });
+
+    const sampleWorkouts = [
+      {
+        userId: new mongoose.Types.ObjectId(userId),
+        name: "Morning Run in Park",
+        sport: "running" as const,
+        startTime: new Date("2025-06-27T08:00:00Z"),
+        endTime: new Date("2025-06-27T08:30:00Z"),
+        coordinates: [
+          {
+            lat: 45.5017,
+            lng: -73.5673,
+            timestamp: new Date("2025-06-27T08:00:00Z"),
+            elevation: 50,
+          },
+          {
+            lat: 45.5025,
+            lng: -73.568,
+            timestamp: new Date("2025-06-27T08:05:00Z"),
+            elevation: 55,
+          },
+          {
+            lat: 45.5035,
+            lng: -73.5675,
+            timestamp: new Date("2025-06-27T08:10:00Z"),
+            elevation: 52,
+          },
+          {
+            lat: 45.5017,
+            lng: -73.5673,
+            timestamp: new Date("2025-06-27T08:30:00Z"),
+            elevation: 50,
+          },
+        ],
+        stats: {
+          distance: 5.2,
+          duration: 1800,
+          avgPace: "5:45",
+          elevationGain: 120,
+          elevationLoss: 115,
+          calories: 350,
+          avgHeartRate: 150,
+          maxHeartRate: 175,
+          steps: 6800,
+        },
+        source: "apple_watch" as const,
+      },
+      {
+        userId: new mongoose.Types.ObjectId(userId),
+        name: "Cycling Along River",
+        sport: "cycling" as const,
+        startTime: new Date("2025-06-26T09:00:00Z"),
+        endTime: new Date("2025-06-26T09:45:00Z"),
+        coordinates: [
+          {
+            lat: 45.4995,
+            lng: -73.57,
+            timestamp: new Date("2025-06-26T09:00:00Z"),
+            elevation: 40,
+          },
+          {
+            lat: 45.4985,
+            lng: -73.572,
+            timestamp: new Date("2025-06-26T09:15:00Z"),
+            elevation: 42,
+          },
+          {
+            lat: 45.4945,
+            lng: -73.58,
+            timestamp: new Date("2025-06-26T09:45:00Z"),
+            elevation: 38,
+          },
+        ],
+        stats: {
+          distance: 15.8,
+          duration: 2700,
+          avgSpeed: "21.2 km/h",
+          maxSpeed: 35.5,
+          elevationGain: 85,
+          elevationLoss: 92,
+          calories: 420,
+          avgHeartRate: 140,
+          maxHeartRate: 165,
+        },
+        source: "iphone" as const,
+      },
+      {
+        userId: new mongoose.Types.ObjectId(userId),
+        name: "Evening Jog",
+        sport: "running" as const,
+        startTime: new Date("2025-06-25T19:00:00Z"),
+        endTime: new Date("2025-06-25T19:20:00Z"),
+        coordinates: [
+          {
+            lat: 45.502,
+            lng: -73.568,
+            timestamp: new Date("2025-06-25T19:00:00Z"),
+            elevation: 48,
+          },
+          {
+            lat: 45.503,
+            lng: -73.5685,
+            timestamp: new Date("2025-06-25T19:10:00Z"),
+            elevation: 52,
+          },
+          {
+            lat: 45.502,
+            lng: -73.568,
+            timestamp: new Date("2025-06-25T19:20:00Z"),
+            elevation: 48,
+          },
+        ],
+        stats: {
+          distance: 3.8,
+          duration: 1200,
+          avgPace: "5:15",
+          elevationGain: 45,
+          elevationLoss: 45,
+          calories: 280,
+          avgHeartRate: 145,
+          maxHeartRate: 165,
+          steps: 4500,
+        },
+        source: "apple_watch" as const,
+      },
+    ];
+
+    // Insert sample workouts
+    await Workout.insertMany(sampleWorkouts);
+    console.log(
+      `Successfully seeded ${sampleWorkouts.length} sample workouts for user ${userId}`
+    );
+  } catch (error) {
+    console.error("Error seeding sample workouts:", error);
+    throw error;
+  }
 };

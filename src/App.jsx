@@ -126,7 +126,7 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className="w-full transition-all duration-300"
+            className="w-full transition-all duration-300 relative"
             style={{
               marginLeft:
                 window.innerWidth <= 768
@@ -139,6 +139,16 @@ function App() {
               transition: "all 0.3s ease-in-out",
             }}
           >
+            {/* Invisible overlay for closing sidebar on mobile when content is blurred */}
+            {window.innerWidth <= 768 && sidebarOpen && (
+              <div
+                className="fixed inset-0 z-20 cursor-pointer"
+                onClick={() => setSidebarOpen(false)}
+                style={{
+                  backgroundColor: "transparent",
+                }}
+              />
+            )}
             <main className="mt-[70px]">
               {/* This container centers all content with responsive padding */}
               <div

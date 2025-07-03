@@ -2,15 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
 
-// Extend the Request interface to include the 'user' property
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
-}
-
 export const protect = async (
   req: Request,
   res: Response,
