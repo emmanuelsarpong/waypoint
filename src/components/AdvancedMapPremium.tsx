@@ -343,6 +343,32 @@ const GlobalMapStyles = createGlobalStyle<{ $mapStyle?: string }>`
   .leaflet-marker-icon {
     cursor: pointer !important;
   }
+
+  /* Enhanced route styling */
+  .creating-route {
+    filter: drop-shadow(0 2px 4px rgba(255, 107, 53, 0.3)) !important;
+    animation: pulse-route 2s ease-in-out infinite !important;
+  }
+
+  @keyframes pulse-route {
+    0%, 100% {
+      filter: drop-shadow(0 2px 4px rgba(255, 107, 53, 0.3));
+    }
+    50% {
+      filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.6));
+    }
+  }
+
+  /* Route polylines with smooth rendering */
+  .leaflet-pane .leaflet-overlay-pane svg {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Interactive route styling */
+  .leaflet-interactive:hover {
+    filter: drop-shadow(0 2px 6px rgba(255, 107, 53, 0.4));
+    cursor: pointer;
+  }
 `;
 
 // Animations
@@ -776,74 +802,141 @@ const RouteCreator: React.FC<{
     },
   });
 
-  // Generate route using OpenRouteService API with improved fallback
+  // Generate route using multiple routing APIs with enhanced fallback
   const generateRouteWithAPI = async (
     waypoints: RouteWaypoint[]
   ): Promise<[number, number][]> => {
     try {
       setIsLoading(true);
-
-      // First try: OpenRouteService free API
       const coordinates = waypoints.map((wp) => [wp.lng, wp.lat]);
 
-      const response = await fetch(
-        "https://api.openrouteservice.org/v2/directions/foot-walking/geojson",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept:
-              "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
-          },
-          body: JSON.stringify({
-            coordinates: coordinates,
-            elevation: false,
-            extra_info: ["surface", "steepness"],
-            geometry_format: "geojson",
-            instructions: false,
-            maneuvers: false,
-          }),
-        }
-      );
+      // Try GraphHopper routing first (more reliable for walking routes)
+      try {
+        const graphHopperCoords = coordinates
+          .map(([lng, lat]) => `point=${lat},${lng}`)
+          .join("&");
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.features && data.features[0] && data.features[0].geometry) {
-          const coords = data.features[0].geometry.coordinates;
-          return coords.map(([lng, lat]: [number, number]) => [lat, lng]);
+        const graphHopperResponse = await fetch(
+          `https://graphhopper.com/api/1/route?${graphHopperCoords}&vehicle=foot&debug=true&calc_points=true&type=json`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (graphHopperResponse.ok) {
+          const data = await graphHopperResponse.json();
+          if (data.paths && data.paths[0] && data.paths[0].points) {
+            // Decode GraphHopper polyline
+            const decodedPath = decodePolyline(data.paths[0].points);
+            return decodedPath;
+          }
         }
+      } catch (error) {
+        console.warn("GraphHopper routing failed:", error);
       }
 
-      // Second try: OSRM free routing service
-      const osrmCoords = coordinates
-        .map(([lng, lat]) => `${lng},${lat}`)
-        .join(";");
-      const osrmResponse = await fetch(
-        `https://router.project-osrm.org/route/v1/walking/${osrmCoords}?overview=full&geometries=geojson`
-      );
+      // Try OSRM routing service
+      try {
+        const osrmCoords = coordinates
+          .map(([lng, lat]) => `${lng},${lat}`)
+          .join(";");
+        const osrmResponse = await fetch(
+          `https://router.project-osrm.org/route/v1/walking/${osrmCoords}?overview=full&geometries=geojson&steps=true`
+        );
 
-      if (osrmResponse.ok) {
-        const osrmData = await osrmResponse.json();
-        if (
-          osrmData.routes &&
-          osrmData.routes[0] &&
-          osrmData.routes[0].geometry
-        ) {
-          const coords = osrmData.routes[0].geometry.coordinates;
-          return coords.map(([lng, lat]: [number, number]) => [lat, lng]);
+        if (osrmResponse.ok) {
+          const osrmData = await osrmResponse.json();
+          if (
+            osrmData.routes &&
+            osrmData.routes[0] &&
+            osrmData.routes[0].geometry
+          ) {
+            const coords = osrmData.routes[0].geometry.coordinates;
+            return coords.map(([lng, lat]: [number, number]) => [lat, lng]);
+          }
         }
+      } catch (error) {
+        console.warn("OSRM routing failed:", error);
+      }
+
+      // Try OpenRouteService as backup
+      try {
+        const response = await fetch(
+          "https://api.openrouteservice.org/v2/directions/foot-walking/geojson",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json, application/geo+json",
+            },
+            body: JSON.stringify({
+              coordinates: coordinates,
+              elevation: false,
+              geometry_format: "geojson",
+              instructions: false,
+              maneuvers: false,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.features && data.features[0] && data.features[0].geometry) {
+            const coords = data.features[0].geometry.coordinates;
+            return coords.map(([lng, lat]: [number, number]) => [lat, lng]);
+          }
+        }
+      } catch (error) {
+        console.warn("OpenRouteService routing failed:", error);
       }
 
       throw new Error("All routing APIs failed");
     } catch (error) {
       console.warn(
-        "External routing APIs failed, using enhanced fallback:",
+        "External routing APIs failed, using enhanced street routing:",
         error
       );
       return generateEnhancedStreetPath(waypoints);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Polyline decoder for GraphHopper and other services
+  const decodePolyline = (encoded: string): [number, number][] => {
+    const poly: [number, number][] = [];
+    let index = 0;
+    let lat = 0;
+    let lng = 0;
+
+    while (index < encoded.length) {
+      let b;
+      let shift = 0;
+      let result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlat = result & 1 ? ~(result >> 1) : result >> 1;
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlng = result & 1 ? ~(result >> 1) : result >> 1;
+      lng += dlng;
+
+      poly.push([lat / 1e5, lng / 1e5]);
+    }
+
+    return poly;
   };
 
   // Enhanced fallback that simulates realistic street following
@@ -858,53 +951,120 @@ const RouteCreator: React.FC<{
 
       path.push([start.lat, start.lng]);
 
-      // Calculate Manhattan-style routing (following streets)
+      // Calculate distance and determine routing complexity
       const latDiff = end.lat - start.lat;
       const lngDiff = end.lng - start.lng;
+      const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
 
-      // Determine primary direction for street following
-      const absLatDiff = Math.abs(latDiff);
-      const absLngDiff = Math.abs(lngDiff);
+      // More segments for longer distances to create realistic curves
+      const segments = Math.max(5, Math.floor(distance * 2000));
 
-      const segments = Math.max(
-        3,
-        Math.floor((absLatDiff + absLngDiff) * 1000)
-      );
+      // Create realistic street-following path with multiple approaches
+      const pathStrategy = Math.random();
 
-      // Create intermediate points that follow street grid patterns
-      for (let j = 1; j < segments; j++) {
-        const progress = j / segments;
+      if (pathStrategy < 0.4) {
+        // Strategy 1: L-shaped routing (common in city grids)
+        const turnPoint =
+          Math.random() > 0.5
+            ? 0.3 + Math.random() * 0.4
+            : 0.6 + Math.random() * 0.3;
 
-        // Use stepped interpolation to simulate street corners
-        let lat, lng;
+        for (let j = 1; j < segments; j++) {
+          const progress = j / segments;
+          let lat, lng;
 
-        if (progress < 0.5) {
-          // First half: move primarily in one direction
-          if (absLatDiff > absLngDiff) {
-            lat = start.lat + latDiff * (progress * 2);
-            lng = start.lng + lngDiff * (progress * 0.2);
+          if (progress < turnPoint) {
+            // Move primarily in latitude first
+            lat = start.lat + latDiff * (progress / turnPoint);
+            lng = start.lng + lngDiff * 0.1 * (progress / turnPoint);
           } else {
-            lat = start.lat + latDiff * (progress * 0.2);
-            lng = start.lng + lngDiff * (progress * 2);
+            // Then move in longitude
+            const adjustedProgress = (progress - turnPoint) / (1 - turnPoint);
+            lat = start.lat + latDiff * (1 - 0.1 * (1 - adjustedProgress));
+            lng = start.lng + lngDiff * (0.1 + 0.9 * adjustedProgress);
           }
-        } else {
-          // Second half: adjust to reach destination
-          const adjustedProgress = (progress - 0.5) * 2;
-          if (absLatDiff > absLngDiff) {
-            lat = start.lat + latDiff * (1.0 - adjustedProgress * 0.2);
-            lng = start.lng + lngDiff * (0.1 + adjustedProgress * 0.9);
+
+          // Add street-like noise
+          lat += (Math.random() - 0.5) * 0.0001;
+          lng += (Math.random() - 0.5) * 0.0001;
+
+          path.push([lat, lng]);
+        }
+      } else if (pathStrategy < 0.7) {
+        // Strategy 2: Curved diagonal with realistic bends
+        for (let j = 1; j < segments; j++) {
+          const progress = j / segments;
+
+          // Base interpolation
+          let lat = start.lat + latDiff * progress;
+          let lng = start.lng + lngDiff * progress;
+
+          // Add realistic street curves using sine waves
+          const curveStrength = distance * 50; // Stronger curves for longer distances
+          const curve1 = Math.sin(progress * Math.PI * 2) * curveStrength;
+          const curve2 =
+            Math.sin(progress * Math.PI * 3 + Math.PI / 4) *
+            curveStrength *
+            0.5;
+
+          // Apply curves perpendicular to the main direction
+          if (Math.abs(latDiff) > Math.abs(lngDiff)) {
+            lng += curve1 + curve2;
           } else {
-            lat = start.lat + latDiff * (0.1 + adjustedProgress * 0.9);
-            lng = start.lng + lngDiff * (1.0 - adjustedProgress * 0.2);
+            lat += curve1 + curve2;
+          }
+
+          // Add micro-variations for street imperfections
+          lat += (Math.random() - 0.5) * 0.00005;
+          lng += (Math.random() - 0.5) * 0.00005;
+
+          path.push([lat, lng]);
+        }
+      } else {
+        // Strategy 3: Multi-segment routing with intermediate waypoints
+        const intermediatePoints = Math.min(3, Math.floor(distance * 1000));
+
+        for (let k = 0; k < intermediatePoints + 1; k++) {
+          const segmentProgress = k / (intermediatePoints + 1);
+          const nextProgress = (k + 1) / (intermediatePoints + 1);
+
+          const segmentStart = {
+            lat: start.lat + latDiff * segmentProgress,
+            lng: start.lng + lngDiff * segmentProgress,
+          };
+          const segmentEnd = {
+            lat: start.lat + latDiff * nextProgress,
+            lng: start.lng + lngDiff * nextProgress,
+          };
+
+          // Add variation to intermediate points to simulate street routing
+          if (k > 0 && k < intermediatePoints) {
+            segmentStart.lat += (Math.random() - 0.5) * 0.0002;
+            segmentStart.lng += (Math.random() - 0.5) * 0.0002;
+          }
+
+          const segmentSteps = Math.floor(segments / (intermediatePoints + 1));
+
+          for (let j = 0; j < segmentSteps; j++) {
+            const stepProgress = j / segmentSteps;
+            let lat =
+              segmentStart.lat +
+              (segmentEnd.lat - segmentStart.lat) * stepProgress;
+            let lng =
+              segmentStart.lng +
+              (segmentEnd.lng - segmentStart.lng) * stepProgress;
+
+            // Add realistic street following curves
+            const streetCurve = Math.sin(stepProgress * Math.PI * 4) * 0.00003;
+            if (Math.abs(latDiff) > Math.abs(lngDiff)) {
+              lng += streetCurve;
+            } else {
+              lat += streetCurve;
+            }
+
+            path.push([lat, lng]);
           }
         }
-
-        // Add slight randomization to simulate real street curves
-        const variation = 0.0001;
-        lat += (Math.random() - 0.5) * variation;
-        lng += (Math.random() - 0.5) * variation;
-
-        path.push([lat, lng]);
       }
     }
 
@@ -1734,11 +1894,14 @@ const AdvancedMapPremium: React.FC = () => {
             {mode === "create" && routeGeometry.length > 1 && (
               <Polyline
                 positions={routeGeometry}
-                color="#00d4ff"
-                weight={4}
+                color="#ff6b35"
+                weight={5}
                 opacity={0.9}
-                dashArray="10, 5"
                 className="creating-route"
+                pathOptions={{
+                  lineCap: "round",
+                  lineJoin: "round",
+                }}
               />
             )}
 
@@ -1781,10 +1944,17 @@ const AdvancedMapPremium: React.FC = () => {
                   coord.lat,
                   coord.lng,
                 ])}
-                color={getSportColor(route.sport)}
-                weight={selectedRoute?.id === route.id ? 4 : 2}
-                opacity={selectedRoute?.id === route.id ? 1 : 0.7}
-                dashArray={selectedRoute?.id === route.id ? undefined : "5, 10"}
+                color={
+                  selectedRoute?.id === route.id
+                    ? "#ff6b35"
+                    : getSportColor(route.sport)
+                }
+                weight={selectedRoute?.id === route.id ? 5 : 3}
+                opacity={selectedRoute?.id === route.id ? 0.9 : 0.6}
+                pathOptions={{
+                  lineCap: "round",
+                  lineJoin: "round",
+                }}
                 eventHandlers={{
                   click: () => handleRouteClick(route),
                 }}
