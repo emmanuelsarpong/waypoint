@@ -458,6 +458,7 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   padding: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   display: flex;
@@ -613,7 +614,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   top: 200px;
   left: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
-  max-height: calc(100vh - 320px);
+  max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -627,7 +628,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   @media (max-width: 768px) {
     left: 12px;
     width: calc(100% - 24px);
-    max-height: 400px;
+    max-height: calc(100vh - 120px);
   }
 `;
 
@@ -718,7 +719,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   top: 200px;
   right: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
-  max-height: calc(100vh - 320px);
+  max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -732,7 +733,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   @media (max-width: 768px) {
     right: 12px;
     width: calc(100% - 24px);
-    max-height: 400px;
+    max-height: calc(100vh - 120px);
     top: 500px;
   }
 `;
