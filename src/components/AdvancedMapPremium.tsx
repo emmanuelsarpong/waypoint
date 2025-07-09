@@ -369,6 +369,20 @@ const GlobalMapStyles = createGlobalStyle<{ $mapStyle?: string }>`
     filter: drop-shadow(0 2px 6px rgba(255, 107, 53, 0.4));
     cursor: pointer;
   }
+
+  /* Mobile scrolling improvements */
+  @media (max-width: 768px) {
+    .sidebar-content,
+    .analytics-content {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Smooth scrolling for all browsers */
+  * {
+    scroll-behavior: smooth;
+  }
 `;
 
 // Animations
@@ -603,9 +617,12 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   z-index: 1002;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     left: 12px;
@@ -620,6 +637,7 @@ const SidebarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const SidebarTitle = styled.h3`
@@ -630,19 +648,67 @@ const SidebarTitle = styled.h3`
 `;
 
 const SidebarContent = styled.div`
-  max-height: 400px;
+  flex: 1;
   overflow-y: auto;
+  padding: 0;
+  scroll-behavior: smooth;
 
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
 
   &::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.2)
+    );
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.3)
+    );
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.4)
+    );
+  }
+
+  /* Fade out effect at top and bottom when scrolling */
+  &::before,
+  &::after {
+    content: "";
+    position: sticky;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(15, 15, 15, 0.95), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(15, 15, 15, 0.95), transparent);
   }
 `;
 
@@ -656,15 +722,84 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   z-index: 1003;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 768px) {
     right: 12px;
     width: calc(100% - 24px);
     max-height: 400px;
     top: 500px;
+  }
+`;
+
+// Analytics Panel Content
+const AnalyticsContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.2)
+    );
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.3)
+    );
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.4)
+    );
+  }
+
+  /* Fade out effect at top and bottom when scrolling */
+  &::before,
+  &::after {
+    content: "";
+    position: sticky;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, rgba(15, 15, 15, 0.95), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(15, 15, 15, 0.95), transparent);
   }
 `;
 
@@ -1705,136 +1840,140 @@ const AdvancedMapPremium: React.FC = () => {
                 </SmartButton>
               </SidebarHeader>
 
-              <div style={{ padding: "16px" }}>
-                <div style={{ marginBottom: "16px" }}>
-                  <h4
-                    style={{
-                      margin: "0 0 8px 0",
-                      color: "#ffffff",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {selectedRoute.name}
-                  </h4>
-                  <div style={{ fontSize: "0.875rem", color: "#a0a0a0" }}>
-                    📅 {new Date(selectedRoute.date).toLocaleDateString()}
-                  </div>
-                  {selectedRoute.weather && (
-                    <div
+              <AnalyticsContent>
+                <div style={{ padding: "16px" }}>
+                  <div style={{ marginBottom: "16px" }}>
+                    <h4
                       style={{
-                        fontSize: "0.875rem",
-                        color: "#a0a0a0",
-                        marginTop: "4px",
+                        margin: "0 0 8px 0",
+                        color: "#ffffff",
+                        fontSize: "1.1rem",
                       }}
                     >
-                      🌡️ {selectedRoute.weather.temperature}°C •{" "}
-                      {selectedRoute.weather.condition}
+                      {selectedRoute.name}
+                    </h4>
+                    <div style={{ fontSize: "0.875rem", color: "#a0a0a0" }}>
+                      📅 {new Date(selectedRoute.date).toLocaleDateString()}
                     </div>
-                  )}
-                </div>
-
-                <StatsGrid>
-                  <StatCard $color="#3b82f6">
-                    <StatValue $color="#3b82f6">
-                      {selectedRoute.stats.distance}
-                    </StatValue>
-                    <StatLabel>Kilometers</StatLabel>
-                  </StatCard>
-                  <StatCard $color="#f59e0b">
-                    <StatValue $color="#f59e0b">
-                      {formatDuration(selectedRoute.stats.duration)}
-                    </StatValue>
-                    <StatLabel>Duration</StatLabel>
-                  </StatCard>
-                  <StatCard $color="#10b981">
-                    <StatValue $color="#10b981">
-                      {selectedRoute.stats.avgPace}
-                    </StatValue>
-                    <StatLabel>Avg Pace</StatLabel>
-                  </StatCard>
-                  <StatCard $color="#ef4444">
-                    <StatValue $color="#ef4444">
-                      {selectedRoute.stats.elevationGain}m
-                    </StatValue>
-                    <StatLabel>Elevation</StatLabel>
-                  </StatCard>
-                </StatsGrid>
-
-                <div style={{ marginTop: "16px" }}>
-                  <h5
-                    style={{
-                      margin: "0 0 8px 0",
-                      color: "#ffffff",
-                      fontSize: "0.9rem",
-                    }}
-                  >
-                    Elevation Profile
-                  </h5>
-                  <div
-                    style={{
-                      height: "120px",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      borderRadius: "8px",
-                      padding: "8px",
-                    }}
-                  >
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={selectedRoute.coordinates.map((coord, index) => ({
-                          distance:
-                            (index / selectedRoute.coordinates.length) *
-                            selectedRoute.stats.distance,
-                          elevation: coord.elevation || 0,
-                        }))}
+                    {selectedRoute.weather && (
+                      <div
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "#a0a0a0",
+                          marginTop: "4px",
+                        }}
                       >
-                        <defs>
-                          <linearGradient
-                            id="elevationGradient"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor={getSportColor(selectedRoute.sport)}
-                              stopOpacity={0.8}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor={getSportColor(selectedRoute.sport)}
-                              stopOpacity={0.1}
-                            />
-                          </linearGradient>
-                        </defs>
-                        <XAxis dataKey="distance" hide />
-                        <YAxis hide />
-                        <Tooltip
-                          labelFormatter={(value) => `${value.toFixed(1)}km`}
-                          formatter={(value: number) => [
-                            `${value}m`,
-                            "Elevation",
-                          ]}
-                          contentStyle={{
-                            background: "rgba(15, 15, 15, 0.9)",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
-                            borderRadius: "8px",
-                            color: "white",
-                          }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="elevation"
-                          stroke={getSportColor(selectedRoute.sport)}
-                          fillOpacity={1}
-                          fill="url(#elevationGradient)"
-                          strokeWidth={2}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                        🌡️ {selectedRoute.weather.temperature}°C •{" "}
+                        {selectedRoute.weather.condition}
+                      </div>
+                    )}
+                  </div>
+
+                  <StatsGrid>
+                    <StatCard $color="#3b82f6">
+                      <StatValue $color="#3b82f6">
+                        {selectedRoute.stats.distance}
+                      </StatValue>
+                      <StatLabel>Kilometers</StatLabel>
+                    </StatCard>
+                    <StatCard $color="#f59e0b">
+                      <StatValue $color="#f59e0b">
+                        {formatDuration(selectedRoute.stats.duration)}
+                      </StatValue>
+                      <StatLabel>Duration</StatLabel>
+                    </StatCard>
+                    <StatCard $color="#10b981">
+                      <StatValue $color="#10b981">
+                        {selectedRoute.stats.avgPace}
+                      </StatValue>
+                      <StatLabel>Avg Pace</StatLabel>
+                    </StatCard>
+                    <StatCard $color="#ef4444">
+                      <StatValue $color="#ef4444">
+                        {selectedRoute.stats.elevationGain}m
+                      </StatValue>
+                      <StatLabel>Elevation</StatLabel>
+                    </StatCard>
+                  </StatsGrid>
+
+                  <div style={{ marginTop: "16px" }}>
+                    <h5
+                      style={{
+                        margin: "0 0 8px 0",
+                        color: "#ffffff",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      Elevation Profile
+                    </h5>
+                    <div
+                      style={{
+                        height: "120px",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        borderRadius: "8px",
+                        padding: "8px",
+                      }}
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={selectedRoute.coordinates.map(
+                            (coord, index) => ({
+                              distance:
+                                (index / selectedRoute.coordinates.length) *
+                                selectedRoute.stats.distance,
+                              elevation: coord.elevation || 0,
+                            })
+                          )}
+                        >
+                          <defs>
+                            <linearGradient
+                              id="elevationGradient"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor={getSportColor(selectedRoute.sport)}
+                                stopOpacity={0.8}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor={getSportColor(selectedRoute.sport)}
+                                stopOpacity={0.1}
+                              />
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="distance" hide />
+                          <YAxis hide />
+                          <Tooltip
+                            labelFormatter={(value) => `${value.toFixed(1)}km`}
+                            formatter={(value: number) => [
+                              `${value}m`,
+                              "Elevation",
+                            ]}
+                            contentStyle={{
+                              background: "rgba(15, 15, 15, 0.9)",
+                              border: "1px solid rgba(255, 255, 255, 0.1)",
+                              borderRadius: "8px",
+                              color: "white",
+                            }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="elevation"
+                            stroke={getSportColor(selectedRoute.sport)}
+                            fillOpacity={1}
+                            fill="url(#elevationGradient)"
+                            strokeWidth={2}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </AnalyticsContent>
             </AnalyticsPanel>
           )}
         </AnimatePresence>
