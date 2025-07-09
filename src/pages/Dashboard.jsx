@@ -62,27 +62,41 @@ export default function Dashboard({ user }) {
     if (user?.id) {
       fetchUserStats(user.id)
         .then((data) => {
+          console.log("Fetched user stats:", data); // Debug log
           setUserStats(data);
           setRecentRoutes(data.recentRoutes || []);
           setFriendActivities(data.friendActivities || []);
         })
         .catch((error) => {
           console.error("Error fetching user stats:", error);
-          // Set default empty state on error
+          // Set default data with the weekly data as fallback
           setUserStats({
             totalDistance: 0,
             totalRoutes: 0,
             totalCalories: 0,
-            weeklyData: [],
+            weeklyData: weeklyData, // Use the mock weeklyData as fallback
           });
           setRecentRoutes([]);
           setFriendActivities([]);
         });
+    } else {
+      // If no user ID, use default data
+      setUserStats({
+        totalDistance: 0,
+        totalRoutes: 0,
+        totalCalories: 0,
+        weeklyData: weeklyData, 
+      });
     }
   }, [user]);
 
   const getChartData = () => {
-    if (range === "weekly") return userStats.weeklyData;
+    if (range === "weekly") {
+      // Use actual user data if available, otherwise fall back to mock data
+      return userStats.weeklyData && userStats.weeklyData.length > 0
+        ? userStats.weeklyData
+        : weeklyData;
+    }
     if (range === "yearly") return yearlyData;
     return monthlyData;
   };

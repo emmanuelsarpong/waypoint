@@ -448,6 +448,35 @@ const Subtitle = styled.p`
   letter-spacing: 0.01em;
 `;
 
+// Success Alert Component
+const SuccessAlert = styled(motion.div)<{ $visible: boolean }>`
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  z-index: 3000;
+  display: ${(props) => (props.$visible ? "flex" : "none")};
+  align-items: center;
+  gap: 8px;
+  max-width: 320px;
+
+  @media (max-width: 768px) {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 280px;
+  }
+`;
+
 // Smart Controls Panel
 const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
@@ -1461,7 +1490,9 @@ const PREMIUM_ROUTES: Route[] = [
 ];
 
 // Component to center map on user location
-const MapCenter: React.FC<{ location: [number, number] | null }> = ({ location }) => {
+const MapCenter: React.FC<{ location: [number, number] | null }> = ({
+  location,
+}) => {
   const map = useMap();
 
   useEffect(() => {
@@ -1474,9 +1505,11 @@ const MapCenter: React.FC<{ location: [number, number] | null }> = ({ location }
 };
 
 // Current Location Marker Component
-const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({ position }) => {
+const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({
+  position,
+}) => {
   const currentLocationIcon = L.divIcon({
-    className: 'current-location-marker',
+    className: "current-location-marker",
     html: `
       <div style="
         width: 20px;
@@ -1502,10 +1535,10 @@ const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({ posit
   return (
     <Marker position={position} icon={currentLocationIcon}>
       <Popup>
-        <div style={{ textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
-          <strong style={{ color: '#3b82f6' }}>📍 Your Location</strong>
+        <div style={{ textAlign: "center", fontFamily: "Inter, sans-serif" }}>
+          <strong style={{ color: "#3b82f6" }}>📍 Your Location</strong>
           <br />
-          <small style={{ color: '#666' }}>
+          <small style={{ color: "#666" }}>
             {position[0].toFixed(6)}, {position[1].toFixed(6)}
           </small>
         </div>
@@ -1526,8 +1559,12 @@ const AdvancedMapPremium: React.FC = () => {
   const [sportFilter, setSportFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
   const [locationLoading, setLocationLoading] = useState(true);
+  const [alertMessage, setAlertMessage] = useState<string>("");
+  const [showAlert, setShowAlert] = useState(false);
   const [mapStyle, setMapStyle] = useState<MapStyle>({
     name: "Light",
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1558,6 +1595,13 @@ const AdvancedMapPremium: React.FC = () => {
     },
   ];
 
+  // Function to show alert
+  const showSuccessAlert = useCallback((message: string) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 4000); // Hide after 4 seconds
+  }, []);
+
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
@@ -1573,7 +1617,7 @@ const AdvancedMapPremium: React.FC = () => {
   useEffect(() => {
     const getCurrentLocation = () => {
       setLocationLoading(true);
-      
+
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -1587,7 +1631,7 @@ const AdvancedMapPremium: React.FC = () => {
             // Fall back to NYC coordinates if geolocation fails
             setUserLocation([40.7829, -73.9654]);
             setLocationLoading(false);
-            
+
             // Show user-friendly error message
             if (error.code === error.PERMISSION_DENIED) {
               console.log("Location access denied by user");
@@ -1647,47 +1691,10 @@ const AdvancedMapPremium: React.FC = () => {
     setRouteGeometry([]);
   }, []);
 
-  // Refresh user location
-  const handleLocationRefresh = useCallback(() => {
-    setLocationLoading(true);
-    
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
-          setLocationLoading(false);
-          console.log("Location refreshed:", latitude, longitude);
-        },
-        (error) => {
-          console.warn("Geolocation refresh error:", error);
-          setLocationLoading(false);
-          
-          // Show user-friendly error message based on error type
-          if (error.code === error.PERMISSION_DENIED) {
-            alert("Location access denied. Please enable location permissions in your browser settings.");
-          } else if (error.code === error.POSITION_UNAVAILABLE) {
-            alert("Location information is unavailable. Please try again.");
-          } else if (error.code === error.TIMEOUT) {
-            alert("Location request timed out. Please try again.");
-          }
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0, // Force fresh location
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-      setLocationLoading(false);
-    }
-  }, []);
-
   // Save route
   const handleSaveRoute = useCallback(async () => {
     if (routeGeometry.length < 2) {
-      alert("Please create a route with at least 2 waypoints");
+      showSuccessAlert("⚠️ Please create a route with at least 2 waypoints");
       return;
     }
 
@@ -1721,14 +1728,14 @@ const AdvancedMapPremium: React.FC = () => {
     };
 
     setSavedRoutes((prev) => [newRoute, ...prev]);
-    setSelectedRoute(newRoute);
-    setShowAnalytics(true);
     setMode("view");
     setWaypoints([]);
     setRouteGeometry([]);
 
-    alert(`Route saved: ${newRoute.stats.distance}km`);
-  }, [routeGeometry, savedRoutes]);
+    showSuccessAlert(
+      `✅ Route saved successfully: ${newRoute.stats.distance}km`
+    );
+  }, [routeGeometry, savedRoutes, showSuccessAlert]);
 
   // Clear route
   const handleClearRoute = useCallback(() => {
@@ -1742,6 +1749,18 @@ const AdvancedMapPremium: React.FC = () => {
   return (
     <>
       <GlobalMapStyles $mapStyle={mapStyle.name} />
+      <SuccessAlert
+        $visible={showAlert}
+        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+        animate={{
+          opacity: showAlert ? 1 : 0,
+          y: showAlert ? 0 : -20,
+          scale: showAlert ? 1 : 0.95,
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        {alertMessage}
+      </SuccessAlert>
       <MapWrapper>
         <Header
           initial={{ opacity: 0, y: -20 }}
@@ -1814,44 +1833,6 @@ const AdvancedMapPremium: React.FC = () => {
             <option value="Satellite">🛰️ Satellite</option>
             <option value="Terrain">🏔️ Terrain</option>
           </MapStyleDropdown>
-
-          {/* Location Status Indicator */}
-          {locationLoading ? (
-            <SmartButton
-              $variant="secondary"
-              $disabled={true}
-              style={{ opacity: 0.7 }}
-            >
-              📡 Getting Location...
-            </SmartButton>
-          ) : userLocation ? (
-            <SmartButton
-              $variant="success"
-              $disabled={true}
-              style={{ opacity: 0.8 }}
-            >
-              📍 Location Found
-            </SmartButton>
-          ) : (
-            <SmartButton
-              $variant="warning"
-              $disabled={true}
-              style={{ opacity: 0.8 }}
-            >
-              📍 Using Default Location
-            </SmartButton>
-          )}
-
-          {/* Location Refresh Button */}
-          <SmartButton
-            $variant="secondary"
-            onClick={handleLocationRefresh}
-            $disabled={locationLoading}
-            whileHover={{ scale: locationLoading ? 1 : 1.02 }}
-            whileTap={{ scale: locationLoading ? 1 : 0.98 }}
-          >
-            🎯 {locationLoading ? "Locating..." : "My Location"}
-          </SmartButton>
 
           <SmartButton
             $variant="primary"
