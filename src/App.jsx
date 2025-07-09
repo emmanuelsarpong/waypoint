@@ -157,7 +157,7 @@ function App() {
                   paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
                 }}
               >
-                <div className="flex-1 pb-16">
+                <div className="flex-1 pb-24">
                   <Routes>
                     <Route path="/" element={<Homepage />} />
                     <Route path="/about" element={<About />} />
@@ -196,7 +196,7 @@ function App() {
                 </div>
 
                 {/* Footer always at bottom */}
-                <div className="mt-auto pt-8 pb-4">
+                <div className="mt-auto pt-12 pb-8">
                   <SocialMediaBar />
                 </div>
               </div>

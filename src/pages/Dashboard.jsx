@@ -85,7 +85,7 @@ export default function Dashboard({ user }) {
         totalDistance: 0,
         totalRoutes: 0,
         totalCalories: 0,
-        weeklyData: weeklyData, 
+        weeklyData: weeklyData,
       });
     }
   }, [user]);
@@ -237,7 +237,7 @@ export default function Dashboard({ user }) {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-20">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-32">
       <div className="w-full max-w-screen-2xl mx-auto px-4">
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
           {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
@@ -652,7 +652,10 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* Social Feed Section */}
-        <div className="w-full px-4" style={{ marginTop: "160px" }}>
+        <div
+          className="w-full px-4"
+          style={{ marginTop: "160px", marginBottom: "60px" }}
+        >
           <div
             className="social-feed w-full mx-auto"
             style={{ maxWidth: "1080px" }}

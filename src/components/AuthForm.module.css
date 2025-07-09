@@ -228,3 +228,9 @@ body .auth {
 .logo:hover {
   text-decoration: none;
 }
+
+.icon {
+  width: 32px;
+  height: 32px;
+  color: #000;
+}
