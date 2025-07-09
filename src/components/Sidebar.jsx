@@ -44,16 +44,22 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       {/* Mobile Dark Overlay - Mobile only */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 z-30 transition-all duration-300"
-          onClick={toggleSidebar}
+          className="fixed inset-0 z-50 transition-all duration-300"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+          }}
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(4px)",
+            pointerEvents: "auto",
           }}
         />
       )}
 
       <aside
-        className={`bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-40 shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-50 shadow-lg transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
@@ -172,7 +178,6 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
               color: "#3A3A3A",
               textAlign: "left",
               marginTop: "auto",
-              marginBottom: "20px",
               position: "absolute",
               bottom: "24px",
               left: "0",

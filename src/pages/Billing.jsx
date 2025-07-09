@@ -441,7 +441,6 @@ function Billing({ user }) {
         backgroundColor: "#000",
         color: "#fff",
         padding: "40px 20px",
-        minHeight: "100vh",
         textAlign: "left",
       }}
     >

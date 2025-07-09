@@ -19,7 +19,7 @@ function Contact() {
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
-    marginBottom: "0", 
+    marginBottom: "0",
   };
 
   const subtextStyle = {
@@ -27,7 +27,7 @@ function Contact() {
     fontSize: "1.125rem",
     textAlign: "center",
     marginBottom: "20px",
-    marginTop: "0", 
+    marginTop: "0",
   };
 
   const inputStyle = {
@@ -91,7 +91,7 @@ function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "contact_us",
-          firstName: form.name, 
+          firstName: form.name,
           email: form.email,
           message: form.message,
         }),
@@ -111,20 +111,18 @@ function Contact() {
   return (
     <div
       style={{
-        flex: "1",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "60px 20px",
         backgroundColor: "#000",
         color: "#fff",
-        marginBottom: "455px", 
       }}
     >
       <form style={containerStyle} onSubmit={handleSubmit}>
         <h1 style={headingStyle}>Contact Us</h1>
         <p style={subtextStyle}>
-          We'd love to hear from you. Fill out the form below to get in touch.
+          We&apos;d love to hear from you. Fill out the form below to get in touch.
         </p>
         <input
           type="text"

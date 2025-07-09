@@ -107,10 +107,10 @@ const formatDuration = (seconds) => {
 
 const getSportColor = (sport) => {
   const colors = {
-    running: "#ef4444",
-    cycling: "#3b82f6",
-    hiking: "#22c55e",
-    default: "#8b5cf6",
+    running: "#00d4ff",
+    cycling: "#00ff94",
+    hiking: "#ff6b6b",
+    default: "#a78bfa",
   };
   return colors[sport] || colors.default;
 };
@@ -144,7 +144,8 @@ const AdvancedMapClean = () => {
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
     };
 
     checkMobile();
@@ -371,149 +372,163 @@ const AdvancedMapClean = () => {
           marginRight: "auto",
         }}
       >
-        {/* Routes List Sidebar - Simple overlay style */}
+        {/* Routes List Sidebar - Fixed widget */}
         {showRoutesList && (
           <div
             style={{
               position: "absolute",
-              top: isMobile ? "12px" : "24px",
-              left: isMobile ? "12px" : "24px",
-              right: isMobile ? "12px" : "auto",
-              width: isMobile ? "auto" : "360px",
-              height: isMobile ? "calc(100% - 180px)" : "calc(100% - 120px)",
+              top: isMobile ? "80px" : "24px",
+              left: isMobile ? "12px" : "80px",
+              width: isMobile ? "280px" : "300px",
+              maxHeight: isMobile ? "300px" : "400px",
               background: "rgba(20, 20, 22, 0.98)",
               backdropFilter: "blur(20px)",
-              borderRadius: isMobile ? "16px" : "20px",
+              borderRadius: "16px",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               boxShadow:
                 "0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 255, 255, 0.05)",
               zIndex: 1001,
               overflow: "hidden",
-              maxWidth: isMobile ? "none" : "360px",
             }}
           >
-            {/* Simple Header */}
+            {/* Compact Header */}
             <div
               style={{
-                padding: "24px",
+                padding: "16px 20px",
                 background: "transparent",
                 borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                 color: "white",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "16px",
-                }}
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
                 <h3
                   style={{
                     margin: 0,
-                    fontSize: "1.25rem",
+                    fontSize: "1rem",
                     fontWeight: "600",
                     color: "#ffffff",
                   }}
                 >
                   My Routes
                 </h3>
-                <button
-                  onClick={() => setShowRoutesList(false)}
-                  style={{
-                    background: "rgba(255, 255, 255, 0.1)",
-                    backdropFilter: "blur(10px)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: "8px",
-                    width: "32px",
-                    height: "32px",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    color: "#ffffff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = "rgba(239, 68, 68, 0.8)";
-                    e.target.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                    e.target.style.boxShadow =
-                      "0 4px 12px rgba(239, 68, 68, 0.4)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = "rgba(255, 255, 255, 0.1)";
-                    e.target.style.border =
-                      "1px solid rgba(255, 255, 255, 0.2)";
-                    e.target.style.boxShadow = "none";
-                  }}
-                >
-                  ✕
-                </button>
               </div>
-
-              {/* Simple Stats Grid */}
-              <div
+              <button
+                onClick={() => setShowRoutesList(false)}
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: "12px",
-                  fontSize: "0.875rem",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: "6px",
+                  width: "28px",
+                  height: "28px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "rgba(239, 68, 68, 0.8)";
+                  e.target.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.border = "1px solid rgba(255, 255, 255, 0.2)";
                 }}
               >
-                <div style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "1.125rem",
-                      color: "#ffffff",
-                    }}
-                  >
-                    {savedRoutes.length}
-                  </div>
-                  <div style={{ opacity: 0.6, color: "#a0a0a0" }}>Routes</div>
+                ✕
+              </button>
+            </div>
+
+            {/* Compact Stats Grid */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: "8px",
+                fontSize: "0.8rem",
+                padding: "12px 16px",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "1rem",
+                    color: "#ffffff",
+                  }}
+                >
+                  {savedRoutes.length}
                 </div>
-                <div style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "1.125rem",
-                      color: "#ffffff",
-                    }}
-                  >
-                    {savedRoutes
-                      .reduce((sum, route) => sum + route.distance, 0)
-                      .toFixed(1)}
-                    km
-                  </div>
-                  <div style={{ opacity: 0.6, color: "#a0a0a0" }}>Total</div>
+                <div
+                  style={{
+                    opacity: 0.6,
+                    color: "#a0a0a0",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Routes
                 </div>
-                <div style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "1.125rem",
-                      color: "#ffffff",
-                    }}
-                  >
-                    {Math.round(
-                      savedRoutes.reduce(
-                        (sum, route) => sum + route.calories,
-                        0
-                      )
-                    )}
-                  </div>
-                  <div style={{ opacity: 0.6, color: "#a0a0a0" }}>Calories</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "1rem",
+                    color: "#ffffff",
+                  }}
+                >
+                  {savedRoutes
+                    .reduce((sum, route) => sum + route.distance, 0)
+                    .toFixed(1)}
+                  km
+                </div>
+                <div
+                  style={{
+                    opacity: 0.6,
+                    color: "#a0a0a0",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Total
+                </div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "1rem",
+                    color: "#ffffff",
+                  }}
+                >
+                  {Math.round(
+                    savedRoutes.reduce((sum, route) => sum + route.calories, 0)
+                  )}
+                </div>
+                <div
+                  style={{
+                    opacity: 0.6,
+                    color: "#a0a0a0",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Calories
                 </div>
               </div>
             </div>
 
-            {/* Simple Content Area */}
+            {/* Compact Content Area */}
             <div
               style={{
-                padding: "20px",
-                height: "calc(100% - 140px)",
+                padding: "12px 16px",
+                maxHeight: "200px",
                 overflowY: "auto",
                 background: "transparent",
               }}
@@ -574,13 +589,13 @@ const AdvancedMapClean = () => {
                     key={route.id}
                     onClick={() => handleRouteClick(route)}
                     style={{
-                      padding: "16px",
-                      marginBottom: "12px",
+                      padding: "12px",
+                      marginBottom: "8px",
                       border:
                         selectedRoute?.id === route.id
                           ? `2px solid ${getSportColor(route.sport)}`
                           : "1px solid rgba(255, 255, 255, 0.1)",
-                      borderRadius: "16px",
+                      borderRadius: "12px",
                       cursor: "pointer",
                       background:
                         selectedRoute?.id === route.id
@@ -633,7 +648,7 @@ const AdvancedMapClean = () => {
                       <h4
                         style={{
                           margin: 0,
-                          fontSize: "1rem",
+                          fontSize: "0.9rem",
                           fontWeight: "600",
                           color: "#ffffff",
                           flex: 1,
@@ -732,7 +747,11 @@ const AdvancedMapClean = () => {
           style={{
             position: "absolute",
             top: isMobile ? "12px" : "24px",
-            left: isMobile ? "12px" : showRoutesList ? "408px" : "24px",
+            left: isMobile
+              ? "12px"
+              : showRoutesList
+              ? `${(isMobile ? 280 : 300) + 96}px`
+              : "24px",
             right: isMobile ? "12px" : "24px",
             zIndex: 1002,
             transition: "all 0.3s",
@@ -978,9 +997,9 @@ const AdvancedMapClean = () => {
             {!selectedRoute && path.length > 1 && (
               <Polyline
                 positions={path}
-                color="#8b5cf6"
-                weight={5}
-                opacity={0.8}
+                color="#00d4ff"
+                weight={2}
+                opacity={0.9}
               />
             )}
 
@@ -990,9 +1009,9 @@ const AdvancedMapClean = () => {
                 key={route.id}
                 positions={route.coordinates}
                 color={getSportColor(route.sport)}
-                weight={selectedRoute?.id === route.id ? 6 : 4}
-                opacity={selectedRoute?.id === route.id ? 1 : 0.7}
-                dashArray={selectedRoute?.id === route.id ? null : "5, 5"}
+                weight={selectedRoute?.id === route.id ? 3 : 2}
+                opacity={selectedRoute?.id === route.id ? 1 : 0.8}
+                dashArray={selectedRoute?.id === route.id ? null : "3, 3"}
                 eventHandlers={{
                   click: () => handleRouteClick(route),
                 }}
@@ -1054,21 +1073,18 @@ const AdvancedMapClean = () => {
           <div
             style={{
               position: "absolute",
-              top: isMobile ? "12px" : "80px",
-              right: isMobile ? "12px" : "24px",
-              left: isMobile ? "12px" : "auto",
+              top: isMobile ? "380px" : "80px",
+              left: isMobile ? "12px" : window.innerWidth - 360 + "px",
               background: "rgba(20, 20, 22, 0.98)",
               backdropFilter: "blur(20px)",
-              padding: isMobile ? "16px" : "24px",
-              borderRadius: isMobile ? "16px" : "20px",
+              padding: "16px",
+              borderRadius: "16px",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               boxShadow:
                 "0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 255, 255, 0.05)",
               zIndex: 1003,
-              minWidth: isMobile ? "auto" : "320px",
-              maxWidth: isMobile ? "none" : "400px",
-              maxHeight: isMobile ? "calc(100vh - 200px)" : "none",
-              overflowY: isMobile ? "auto" : "visible",
+              minWidth: "280px",
+              maxWidth: "320px",
               pointerEvents: "auto",
             }}
           >
@@ -1082,18 +1098,26 @@ const AdvancedMapClean = () => {
                   marginBottom: "8px",
                 }}
               >
-                <h3
+                <div
                   style={{
-                    margin: 0,
-                    color: "#ffffff",
-                    fontSize: "1.25rem",
-                    fontWeight: "600",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                     flex: 1,
-                    marginRight: "12px",
                   }}
                 >
-                  {selectedRoute.name}
-                </h3>
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: "#ffffff",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      marginRight: "12px",
+                    }}
+                  >
+                    {selectedRoute.name}
+                  </h3>
+                </div>
                 <span
                   style={{
                     padding: "6px 14px",
@@ -1389,7 +1413,7 @@ const AdvancedMapClean = () => {
             }
             
             .leaflet-control-container .leaflet-bottom.leaflet-left {
-              bottom: 180px !important;
+              bottom: 240px !important;
               left: 12px !important;
             }
             
@@ -1417,7 +1441,7 @@ const AdvancedMapClean = () => {
             }
             
             .leaflet-control-container .leaflet-bottom.leaflet-left {
-              bottom: 160px !important;
+              bottom: 220px !important;
               left: 8px !important;
             }
           }

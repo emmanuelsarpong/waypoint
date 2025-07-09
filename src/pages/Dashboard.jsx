@@ -10,7 +10,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { fetchUserStats } from "../api"; 
+import { fetchUserStats } from "../api";
 
 const weeklyData = [
   { name: "Mon", value: 2.3 },
@@ -55,7 +55,7 @@ export default function Dashboard({ user }) {
     weeklyData: [],
   });
   const [recentRoutes, setRecentRoutes] = useState([]);
-  const [friendActivities, setFriendActivities] = useState([]); 
+  const [friendActivities, setFriendActivities] = useState([]);
 
   useEffect(() => {
     // Fetch user's actual route data
@@ -63,8 +63,8 @@ export default function Dashboard({ user }) {
       fetchUserStats(user.id)
         .then((data) => {
           setUserStats(data);
-          setRecentRoutes(data.recentRoutes || []); 
-          setFriendActivities(data.friendActivities || []); 
+          setRecentRoutes(data.recentRoutes || []);
+          setFriendActivities(data.friendActivities || []);
         })
         .catch((error) => {
           console.error("Error fetching user stats:", error);
@@ -151,9 +151,75 @@ export default function Dashboard({ user }) {
   ];
 
   const achievements = [
-    { name: "First Steps", icon: "👣" },
-    { name: "10km Club", icon: "🏅" },
-    { name: "Marathon Master", icon: "🏆" },
+    {
+      name: "First Steps",
+      icon: (
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 2L13.09 8.26L19 7L17.74 13.74L23 14.5L16.74 16.91L18 23L12 18.5L6 23L7.26 16.91L1 14.5L6.26 13.74L5 7L10.91 8.26L12 2Z"
+            fill="#caff70"
+          />
+          <path
+            d="M12 6L12.5 9.5L16 9L15.5 12.5L18 13L15.5 15.5L16 19L12 16.5L8 19L8.5 15.5L6 13L8.5 12.5L8 9L11.5 9.5L12 6Z"
+            fill="#1a1a1a"
+          />
+          <circle cx="12" cy="12" r="2" fill="#caff70" />
+        </svg>
+      ),
+    },
+    {
+      name: "10km Club",
+      icon: (
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="12" cy="12" r="10" fill="#ffd700" />
+          <circle cx="12" cy="12" r="8" fill="#ffed4e" />
+          <circle cx="12" cy="12" r="6" fill="#ffd700" />
+          <path d="M9 12h2v-2h2v2h2v2h-2v2h-2v-2H9v-2z" fill="white" />
+          <path
+            d="M12 4v2M12 18v2M4 12h2M18 12h2"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      name: "Marathon Master",
+      icon: (
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 2L15.5 8.5L22 9.5L17 14.5L18.5 21L12 17.5L5.5 21L7 14.5L2 9.5L8.5 8.5L12 2Z"
+            fill="#ff6b35"
+          />
+          <path
+            d="M12 5L14.5 10L19 10.5L15.5 14L16.5 18.5L12 16L7.5 18.5L8.5 14L5 10.5L9.5 10L12 5Z"
+            fill="#ff8c69"
+          />
+          <circle cx="12" cy="11" r="3" fill="white" />
+          <path d="M11 10h2v2h-2z" fill="#ff6b35" />
+          <rect x="10" y="16" width="4" height="2" rx="1" fill="#ff6b35" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -250,9 +316,9 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* Recent Activities Component */}
-        <div className="w-full px-4">
+        <div className="w-full px-4" style={{ marginTop: "120px" }}>
           <div
-            className="recent-activities w-full mx-auto mt-10"
+            className="recent-activities w-full mx-auto"
             style={{ maxWidth: "1080px" }}
           >
             <h3 className="text-2xl font-bold mb-6">Recent Activities</h3>
@@ -260,12 +326,210 @@ export default function Dashboard({ user }) {
               recentRoutes.map((route, index) => {
                 const getSportIcon = (sport) => {
                   const icons = {
-                    running: "🏃",
-                    cycling: "🚴",
-                    hiking: "🥾",
-                    walking: "🚶",
+                    running: (
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        {/* Running shoe with motion lines */}
+                        <path
+                          d="M4 18h14c1.1 0 2-.9 2-2v-2c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v4z"
+                          fill="white"
+                        />
+                        <path
+                          d="M6 13h10c.55 0 1-.45 1-1s-.45-1-1-1H6c-.55 0-1 .45-1 1s.45 1 1 1z"
+                          fill="white"
+                        />
+                        <path
+                          d="M8 11V9c0-.55.45-1 1-1h4c.55 0 1 .45 1 1v2"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="1.5"
+                        />
+                        {/* Motion lines */}
+                        <path
+                          d="M2 8h3M2 10h2M2 12h4"
+                          stroke="white"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                        {/* Sole grip pattern */}
+                        <circle cx="7" cy="16" r="0.5" fill="#333" />
+                        <circle cx="10" cy="16" r="0.5" fill="#333" />
+                        <circle cx="13" cy="16" r="0.5" fill="#333" />
+                      </svg>
+                    ),
+                    cycling: (
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        {/* Detailed bicycle */}
+                        <circle
+                          cx="6"
+                          cy="18"
+                          r="3"
+                          stroke="white"
+                          strokeWidth="2"
+                          fill="none"
+                        />
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="3"
+                          stroke="white"
+                          strokeWidth="2"
+                          fill="none"
+                        />
+                        {/* Frame */}
+                        <path
+                          d="M6 18L12 6L18 18"
+                          stroke="white"
+                          strokeWidth="2"
+                          fill="none"
+                        />
+                        <path
+                          d="M12 6L15 12L18 18"
+                          stroke="white"
+                          strokeWidth="2"
+                          fill="none"
+                        />
+                        <path d="M9 12h6" stroke="white" strokeWidth="2" />
+                        {/* Handlebars */}
+                        <path
+                          d="M10 6h4"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        {/* Pedals */}
+                        <circle cx="12" cy="15" r="1" fill="white" />
+                        {/* Seat */}
+                        <path
+                          d="M11 5h2"
+                          stroke="white"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    ),
+                    hiking: (
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        {/* Hiking boot */}
+                        <path
+                          d="M4 20h12c1.1 0 2-.9 2-2v-1c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v3z"
+                          fill="white"
+                        />
+                        <path
+                          d="M6 16h8c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1H7c-.55 0-1 .45-1 1v3z"
+                          fill="white"
+                        />
+                        {/* Boot shaft */}
+                        <path
+                          d="M8 12V8c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v4"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="1.5"
+                        />
+                        {/* Laces */}
+                        <path
+                          d="M9 8L11 10L13 8M9 10L11 12L13 10"
+                          stroke="#333"
+                          strokeWidth="1"
+                        />
+                        {/* Mountain silhouette */}
+                        <path
+                          d="M2 6l3-3 2 2 3-3 2 2 3-2v4H2V6z"
+                          fill="white"
+                          opacity="0.7"
+                        />
+                        {/* Hiking stick */}
+                        <path
+                          d="M18 4v12"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M17 4h2"
+                          stroke="white"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    ),
+                    walking: (
+                      <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        {/* Footprint trail */}
+                        <ellipse
+                          cx="7"
+                          cy="16"
+                          rx="2"
+                          ry="3"
+                          fill="white"
+                          opacity="0.8"
+                        />
+                        <ellipse
+                          cx="13"
+                          cy="12"
+                          rx="2"
+                          ry="3"
+                          fill="white"
+                          opacity="0.6"
+                        />
+                        <ellipse
+                          cx="8"
+                          cy="8"
+                          rx="2"
+                          ry="3"
+                          fill="white"
+                          opacity="0.4"
+                        />
+                        {/* Foot detail (toes) */}
+                        <circle cx="6.5" cy="14.5" r="0.3" fill="#333" />
+                        <circle cx="7" cy="14.2" r="0.3" fill="#333" />
+                        <circle cx="7.5" cy="14.5" r="0.3" fill="#333" />
+                        <circle cx="12.5" cy="10.5" r="0.3" fill="#333" />
+                        <circle cx="13" cy="10.2" r="0.3" fill="#333" />
+                        <circle cx="13.5" cy="10.5" r="0.3" fill="#333" />
+                        {/* Path/trail */}
+                        <path
+                          d="M2 20h20"
+                          stroke="white"
+                          strokeWidth="1"
+                          strokeDasharray="2,2"
+                          opacity="0.5"
+                        />
+                        {/* Movement arrow */}
+                        <path
+                          d="M16 6l2 2-2 2M16 8h4"
+                          stroke="white"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    ),
                   };
-                  return icons[sport] || "🏃";
+                  return icons[sport] || icons.running;
                 };
 
                 return (
@@ -273,9 +537,9 @@ export default function Dashboard({ user }) {
                     className="activity-item flex items-center gap-4 p-6 mb-4"
                     key={index}
                   >
-                    <span className="sport-icon text-3xl">
+                    <div className="sport-icon flex items-center justify-center">
                       {getSportIcon(route.sport)}
-                    </span>
+                    </div>
                     <div className="activity-details flex-1">
                       <h4 className="text-lg font-semibold">{route.name}</h4>
                       <p className="text-sm text-neutral-400">
@@ -307,9 +571,9 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* Goals Section */}
-        <div className="w-full px-4">
+        <div className="w-full px-4" style={{ marginTop: "160px" }}>
           <div
-            className="goals-section w-full mx-auto mt-10"
+            className="goals-section w-full mx-auto"
             style={{ maxWidth: "1080px" }}
           >
             <h3 className="text-2xl font-bold mb-6">Your Goals</h3>
@@ -349,9 +613,9 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* Achievements Section */}
-        <div className="w-full px-4">
+        <div className="w-full px-4" style={{ marginTop: "160px" }}>
           <div
-            className="achievements-section w-full mx-auto mt-10"
+            className="achievements-section w-full mx-auto"
             style={{ maxWidth: "1080px" }}
           >
             <h3 className="text-2xl font-bold mb-6">Recent Achievements</h3>
@@ -361,8 +625,10 @@ export default function Dashboard({ user }) {
                   className="achievement-badge p-4"
                   key={badge.name || index}
                 >
-                  <span className="badge-icon text-4xl">{badge.icon}</span>
-                  <span className="badge-name text-sm text-center mt-2">
+                  <div className="badge-icon flex justify-center items-center mb-2">
+                    {badge.icon}
+                  </div>
+                  <span className="badge-name text-sm text-center mt-2 block">
                     {badge.name}
                   </span>
                 </div>
@@ -372,9 +638,9 @@ export default function Dashboard({ user }) {
         </div>
 
         {/* Social Feed Section */}
-        <div className="w-full px-4">
+        <div className="w-full px-4" style={{ marginTop: "160px" }}>
           <div
-            className="social-feed w-full mx-auto mt-10"
+            className="social-feed w-full mx-auto"
             style={{ maxWidth: "1080px" }}
           >
             <h3 className="text-2xl font-bold mb-6">Friend Activity</h3>

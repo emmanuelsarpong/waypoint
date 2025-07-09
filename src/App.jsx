@@ -30,7 +30,6 @@ import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
-import AdvancedMapClean from "./components/AdvancedMapClean";
 import MapPage from "./pages/MapPage";
 
 function App() {
@@ -105,12 +104,12 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`h-screen flex flex-col ${
         isAuthPage ? "bg-white text-black" : "bg-black text-white"
       }`}
     >
       {!isAuthPage && (
-        <div className="flex">
+        <div className="flex h-full">
           <Sidebar
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
@@ -126,7 +125,7 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className="w-full transition-all duration-300 relative"
+            className="w-full transition-all duration-300 relative flex flex-col h-full"
             style={{
               marginLeft:
                 window.innerWidth <= 768
@@ -149,59 +148,55 @@ function App() {
                 }}
               />
             )}
-            <main className="mt-[70px]">
+            <main className="mt-[70px] flex-1 flex flex-col">
               {/* This container centers all content with responsive padding */}
               <div
-                className="w-full max-w-[1200px] mx-auto"
+                className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
                 style={{
                   paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
                   paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
                 }}
               >
-                <Routes>
-                  <Route path="/" element={<Homepage />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/pricing" element={<Pricing user={user} />} />
-                  <Route
-                    path="/dashboard"
-                    element={<Dashboard user={user} />}
-                  />
-                  <Route
-                    path="/billing"
-                    element={
-                      <ProtectedRoute>
-                        <Billing user={user} />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/settings"
-                    element={
-                      <ProtectedRoute>
-                        <Settings />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/trails" element={<TrailsPage />} />
-                  <Route path="/gps-goals" element={<GPSGoalsPage />} />
-                  <Route
-                    path="/movement-analysis"
-                    element={<MovementAnalysisPage />}
-                  />
-                  <Route
-                    path="/map"
-                    element={
-                      <ProtectedRoute>
-                        <MapPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<NotFound />} />
-                  <Route path="/oauth/callback" element={<OAuthCallback />} />
-                </Routes>
+                <div className="flex-1 pb-16">
+                  <Routes>
+                    <Route path="/" element={<Homepage />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/pricing" element={<Pricing user={user} />} />
+                    <Route
+                      path="/dashboard"
+                      element={<Dashboard user={user} />}
+                    />
+                    <Route
+                      path="/billing"
+                      element={
+                        <ProtectedRoute>
+                          <Billing user={user} />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings"
+                      element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/trails" element={<TrailsPage />} />
+                    <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                    <Route
+                      path="/movement-analysis"
+                      element={<MovementAnalysisPage />}
+                    />
+                    <Route path="/map" element={<MapPage />} />
+                    <Route path="*" element={<NotFound />} />
+                    <Route path="/oauth/callback" element={<OAuthCallback />} />
+                  </Routes>
+                </div>
 
-                <div style={{ marginTop: "150px" }}>
+                {/* Footer always at bottom */}
+                <div className="mt-auto pt-8 pb-4">
                   <SocialMediaBar />
                 </div>
               </div>

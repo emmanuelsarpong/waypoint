@@ -7,7 +7,6 @@ function About() {
     padding: "40px 20px",
     backgroundColor: "#000",
     color: "#fff",
-    minHeight: "calc(100vh - 300px)", 
     textAlign: "center",
   };
 

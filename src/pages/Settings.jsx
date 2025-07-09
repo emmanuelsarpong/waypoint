@@ -4,7 +4,7 @@ import { authFetch } from "../utils/authFetch";
 export default function Settings() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); 
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const containerStyle = {
@@ -132,14 +132,12 @@ export default function Settings() {
   return (
     <div
       style={{
-        flex: "1",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "60px 20px",
         backgroundColor: "#000",
         color: "#fff",
-        marginBottom: "455px", // Match Contact.jsx
       }}
     >
       <form
