@@ -1460,6 +1460,60 @@ const PREMIUM_ROUTES: Route[] = [
   },
 ];
 
+// Component to center map on user location
+const MapCenter: React.FC<{ location: [number, number] | null }> = ({ location }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (location) {
+      map.setView(location, 13);
+    }
+  }, [location, map]);
+
+  return null;
+};
+
+// Current Location Marker Component
+const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({ position }) => {
+  const currentLocationIcon = L.divIcon({
+    className: 'current-location-marker',
+    html: `
+      <div style="
+        width: 20px;
+        height: 20px;
+        background: #3b82f6;
+        border: 3px solid #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        animation: pulse-location 2s ease-in-out infinite;
+      "></div>
+      <style>
+        @keyframes pulse-location {
+          0% { transform: scale(1); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); }
+          50% { transform: scale(1.1); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6); }
+          100% { transform: scale(1); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); }
+        }
+      </style>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
+
+  return (
+    <Marker position={position} icon={currentLocationIcon}>
+      <Popup>
+        <div style={{ textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+          <strong style={{ color: '#3b82f6' }}>📍 Your Location</strong>
+          <br />
+          <small style={{ color: '#666' }}>
+            {position[0].toFixed(6)}, {position[1].toFixed(6)}
+          </small>
+        </div>
+      </Popup>
+    </Marker>
+  );
+};
+
 // Main Component
 const AdvancedMapPremium: React.FC = () => {
   const [mode, setMode] = useState<"create" | "view">("view");
@@ -1472,6 +1526,8 @@ const AdvancedMapPremium: React.FC = () => {
   const [sportFilter, setSportFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [locationLoading, setLocationLoading] = useState(true);
   const [mapStyle, setMapStyle] = useState<MapStyle>({
     name: "Light",
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1513,6 +1569,50 @@ const AdvancedMapPremium: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Get user's current location
+  useEffect(() => {
+    const getCurrentLocation = () => {
+      setLocationLoading(true);
+      
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setUserLocation([latitude, longitude]);
+            setLocationLoading(false);
+            console.log("User location obtained:", latitude, longitude);
+          },
+          (error) => {
+            console.warn("Geolocation error:", error);
+            // Fall back to NYC coordinates if geolocation fails
+            setUserLocation([40.7829, -73.9654]);
+            setLocationLoading(false);
+            
+            // Show user-friendly error message
+            if (error.code === error.PERMISSION_DENIED) {
+              console.log("Location access denied by user");
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+              console.log("Location information unavailable");
+            } else if (error.code === error.TIMEOUT) {
+              console.log("Location request timed out");
+            }
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000, // 10 seconds
+            maximumAge: 300000, // 5 minutes
+          }
+        );
+      } else {
+        console.warn("Geolocation not supported");
+        setUserLocation([40.7829, -73.9654]);
+        setLocationLoading(false);
+      }
+    };
+
+    getCurrentLocation();
+  }, []);
+
   // Load premium routes
   useEffect(() => {
     setSavedRoutes(PREMIUM_ROUTES);
@@ -1545,6 +1645,43 @@ const AdvancedMapPremium: React.FC = () => {
     setShowAnalytics(false);
     setWaypoints([]);
     setRouteGeometry([]);
+  }, []);
+
+  // Refresh user location
+  const handleLocationRefresh = useCallback(() => {
+    setLocationLoading(true);
+    
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          setLocationLoading(false);
+          console.log("Location refreshed:", latitude, longitude);
+        },
+        (error) => {
+          console.warn("Geolocation refresh error:", error);
+          setLocationLoading(false);
+          
+          // Show user-friendly error message based on error type
+          if (error.code === error.PERMISSION_DENIED) {
+            alert("Location access denied. Please enable location permissions in your browser settings.");
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            alert("Location information is unavailable. Please try again.");
+          } else if (error.code === error.TIMEOUT) {
+            alert("Location request timed out. Please try again.");
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0, // Force fresh location
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+      setLocationLoading(false);
+    }
   }, []);
 
   // Save route
@@ -1677,6 +1814,44 @@ const AdvancedMapPremium: React.FC = () => {
             <option value="Satellite">🛰️ Satellite</option>
             <option value="Terrain">🏔️ Terrain</option>
           </MapStyleDropdown>
+
+          {/* Location Status Indicator */}
+          {locationLoading ? (
+            <SmartButton
+              $variant="secondary"
+              $disabled={true}
+              style={{ opacity: 0.7 }}
+            >
+              📡 Getting Location...
+            </SmartButton>
+          ) : userLocation ? (
+            <SmartButton
+              $variant="success"
+              $disabled={true}
+              style={{ opacity: 0.8 }}
+            >
+              📍 Location Found
+            </SmartButton>
+          ) : (
+            <SmartButton
+              $variant="warning"
+              $disabled={true}
+              style={{ opacity: 0.8 }}
+            >
+              📍 Using Default Location
+            </SmartButton>
+          )}
+
+          {/* Location Refresh Button */}
+          <SmartButton
+            $variant="secondary"
+            onClick={handleLocationRefresh}
+            $disabled={locationLoading}
+            whileHover={{ scale: locationLoading ? 1 : 1.02 }}
+            whileTap={{ scale: locationLoading ? 1 : 0.98 }}
+          >
+            🎯 {locationLoading ? "Locating..." : "My Location"}
+          </SmartButton>
 
           <SmartButton
             $variant="primary"
@@ -2012,7 +2187,7 @@ const AdvancedMapPremium: React.FC = () => {
 
         <MapErrorBoundary>
           <MapContainer
-            center={[40.7829, -73.9654]}
+            center={userLocation || [40.7829, -73.9654]}
             zoom={13}
             style={{
               width: "100%",
@@ -2021,6 +2196,12 @@ const AdvancedMapPremium: React.FC = () => {
             scrollWheelZoom={true}
           >
             <DynamicTileLayer mapStyle={mapStyle} />
+            <MapCenter location={userLocation} />
+
+            {/* Show current location marker */}
+            {userLocation && !locationLoading && (
+              <CurrentLocationMarker position={userLocation} />
+            )}
 
             <RouteCreator
               mode={mode}
