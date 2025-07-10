@@ -16,7 +16,16 @@ import "./config/passportSetup";
 import oauthRoutes from "./routes/oauthRoutes";
 import { seedSampleWorkouts } from "./controllers/workoutController";
 
-connectDB();
+// Connect to database (non-blocking)
+connectDB().then((connected) => {
+  if (connected) {
+    console.log('Database connection established');
+  } else {
+    console.log('Database connection failed, but server will continue');
+  }
+}).catch((error) => {
+  console.error('Database connection error:', error);
+});
 
 const app = express();
 
@@ -77,7 +86,19 @@ app.post("/api/seed-workouts", async (req, res) => {
 
 // Add this before error handling middleware
 app.get("/", (req, res) => {
-  res.send("API is running!");
+  res.json({ 
+    status: "success",
+    message: "Waypoint API is running!",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Error handling middleware (should be after all routes)
