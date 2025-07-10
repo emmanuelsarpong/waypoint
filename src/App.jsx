@@ -149,57 +149,79 @@ function App() {
               />
             )}
             <main className="mt-[70px] flex-1 flex flex-col">
-              {/* This container centers all content with responsive padding */}
-              <div
-                className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
-                style={{
-                  paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
-                  paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
-                }}
-              >
-                <div className="flex-1 pb-24">
-                  <Routes>
-                    <Route path="/" element={<Homepage />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/pricing" element={<Pricing user={user} />} />
-                    <Route
-                      path="/dashboard"
-                      element={<Dashboard user={user} />}
-                    />
-                    <Route
-                      path="/billing"
-                      element={
-                        <ProtectedRoute>
-                          <Billing user={user} />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/settings"
-                      element={
-                        <ProtectedRoute>
-                          <Settings />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/trails" element={<TrailsPage />} />
-                    <Route path="/gps-goals" element={<GPSGoalsPage />} />
-                    <Route
-                      path="/movement-analysis"
-                      element={<MovementAnalysisPage />}
-                    />
-                    <Route path="/map" element={<MapPage />} />
-                    <Route path="*" element={<NotFound />} />
-                    <Route path="/oauth/callback" element={<OAuthCallback />} />
-                  </Routes>
+              {/* Special handling for map route - no container constraints */}
+              {location.pathname === "/map" ? (
+                <div className="flex-1 w-full h-full flex flex-col">
+                  <div className="flex-1">
+                    <Routes>
+                      <Route path="/map" element={<MapPage />} />
+                    </Routes>
+                  </div>
+                  {/* Footer for map page */}
+                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-80 backdrop-blur-sm">
+                    <SocialMediaBar />
+                  </div>
                 </div>
+              ) : (
+                <>
+                  {/* This container centers all content with responsive padding */}
+                  <div
+                    className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
+                    style={{
+                      paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
+                      paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
+                    }}
+                  >
+                    <div className="flex-1 pb-24">
+                      <Routes>
+                        <Route path="/" element={<Homepage />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route
+                          path="/pricing"
+                          element={<Pricing user={user} />}
+                        />
+                        <Route
+                          path="/dashboard"
+                          element={<Dashboard user={user} />}
+                        />
+                        <Route
+                          path="/billing"
+                          element={
+                            <ProtectedRoute>
+                              <Billing user={user} />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings"
+                          element={
+                            <ProtectedRoute>
+                              <Settings />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route path="/trails" element={<TrailsPage />} />
+                        <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                        <Route
+                          path="/movement-analysis"
+                          element={<MovementAnalysisPage />}
+                        />
+                        <Route path="*" element={<NotFound />} />
+                        <Route
+                          path="/oauth/callback"
+                          element={<OAuthCallback />}
+                        />
+                      </Routes>
+                    </div>
 
-                {/* Footer always at bottom */}
-                <div className="mt-auto pt-12 pb-8">
-                  <SocialMediaBar />
-                </div>
-              </div>
+                    {/* Footer always at bottom */}
+                    <div className="mt-auto pt-12 pb-8">
+                      <SocialMediaBar />
+                    </div>
+                  </div>
+                </>
+              )}
             </main>
           </div>
         </div>

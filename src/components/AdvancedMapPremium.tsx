@@ -409,7 +409,9 @@ const glow = keyframes`
 // Main Container
 const MapWrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 140px);
+  height: calc(
+    100vh - 70px - 60px
+  ); /* Subtract topbar (70px) and footer (60px) */
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;

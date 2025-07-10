@@ -84,7 +84,7 @@ function Homepage() {
   ];
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -231,7 +231,7 @@ function Homepage() {
                 className="text-neutral-400 text-left"
               >
                 Get insights on your performance, trends, and distances. Whether
-                you're a casual jogger or a serious athlete, our analytics help
+                you&#39;re a casual jogger or a serious athlete, our analytics help
                 you stay on track.
               </motion.p>
             </div>
@@ -272,9 +272,9 @@ function Homepage() {
                   src={t.image}
                   alt={t.name}
                   className="w-[200px] h-[200px] object-cover rounded-lg mb-4"
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.05,
-                    transition: { duration: 0.3 }
+                    transition: { duration: 0.3 },
                   }}
                 />
                 <motion.blockquote
@@ -284,7 +284,7 @@ function Homepage() {
                   viewport={{ once: true }}
                   className="italic text-neutral-200 mb-2"
                 >
-                  "{t.quote}"
+                  &quot;{t.quote}&quot;
                 </motion.blockquote>
                 <motion.p
                   initial={{ opacity: 0 }}
@@ -357,6 +357,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
+        className="mb-32" // Added bottom margin for spacing before footer
       >
         <Card cards={bottomCards} />
       </motion.div>
