@@ -55,11 +55,7 @@
     "styled-components": "^6.1.19",
     "turf": "^3.0.14",
     "winston": "^3.17.0",
-    "typescript": "^5.8.3"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.25.0",
-    "@tailwindcss/postcss": "^4.1.5",
+    "typescript": "^5.8.3",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
@@ -70,9 +66,13 @@
     "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
+    "@types/winston": "^2.4.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@tailwindcss/postcss": "^4.1.5",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@types/winston": "^2.4.4",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.45.0",
@@ -85,7 +85,6 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-eslint": "^1.8.1"
   },
