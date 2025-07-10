@@ -320,6 +320,14 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
     setLoading(true);
     setError("");
 
+    // DEMO MODE for CEO presentation
+    if (window.location.search.includes('demo=true') || email === 'demo@waypoint.com') {
+      setLoading(false);
+      localStorage.setItem("token", "demo-token-for-ceo");
+      navigate("/dashboard");
+      return;
+    }
+
     if (mode === "signup" && password !== confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -338,8 +346,10 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
         body = { email };
       }
 
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      // Use the correct API URL
+      const backendUrl = import.meta.env.VITE_API_URL || 
+                        import.meta.env.VITE_BACKEND_URL || 
+                        "http://localhost:3000";
       const res = await fetch(`${backendUrl}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
