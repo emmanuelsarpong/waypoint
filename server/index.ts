@@ -17,15 +17,17 @@ import oauthRoutes from "./routes/oauthRoutes";
 import { seedSampleWorkouts } from "./controllers/workoutController";
 
 // Connect to database (non-blocking)
-connectDB().then((connected) => {
-  if (connected) {
-    console.log('Database connection established');
-  } else {
-    console.log('Database connection failed, but server will continue');
-  }
-}).catch((error) => {
-  console.error('Database connection error:', error);
-});
+connectDB()
+  .then((connected) => {
+    if (connected) {
+      console.log("Database connection established");
+    } else {
+      console.log("Database connection failed, but server will continue");
+    }
+  })
+  .catch((error) => {
+    console.error("Database connection error:", error);
+  });
 
 const app = express();
 
@@ -40,6 +42,9 @@ app.use(
       "http://localhost:5177",
       "http://localhost:5178",
       process.env.FRONTEND_URL || "http://localhost:5173",
+      "https://waypoint-lemon.vercel.app", // Your actual Vercel domain
+      "https://waypoint-two.vercel.app",   // Backup domain
+      "https://waypoint.vercel.app",       // In case domain changes
     ],
     credentials: true,
   })
@@ -86,18 +91,18 @@ app.post("/api/seed-workouts", async (req, res) => {
 
 // Add this before error handling middleware
 app.get("/", (req, res) => {
-  res.json({ 
+  res.json({
     status: "success",
     message: "Waypoint API is running!",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 app.get("/health", (req, res) => {
-  res.json({ 
+  res.json({
     status: "healthy",
     uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -105,8 +110,8 @@ app.get("/health", (req, res) => {
 app.use(errorHandler);
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '3000');
-app.listen(PORT, '0.0.0.0', () => {
+const PORT = parseInt(process.env.PORT || "3000");
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
