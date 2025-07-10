@@ -84,9 +84,9 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 // Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+const PORT = parseInt(process.env.PORT || '3000');
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 console.log("JWT_SECRET at startup:", process.env.JWT_SECRET);
