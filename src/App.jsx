@@ -39,6 +39,8 @@ function App() {
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
 
+  console.log('App render - user:', user, 'loadingUser:', loadingUser, 'isAuthenticated:', !!user);
+
   // Handle window resize and set initial sidebar state
   useEffect(() => {
     const handleResize = () => {
@@ -78,9 +80,25 @@ function App() {
   }, [location]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("authToken");
+    console.log('Auth check - token found:', !!token, 'token preview:', token?.slice(0, 20));
+    
     if (!token) {
       setUser(null);
+      setLoadingUser(false);
+      return;
+    }
+
+    // Handle demo mode
+    if (token === "demo-token-for-ceo") {
+      console.log('Demo mode detected');
+      setUser({
+        id: 'demo-user-123',
+        email: 'demo@waypoint.com',
+        firstName: 'Demo',
+        lastName: 'User',
+        isVerified: true
+      });
       setLoadingUser(false);
       return;
     }
@@ -88,20 +106,24 @@ function App() {
     setLoadingUser(true);
     authFetch("/user/profile")
       .then((res) => {
+        console.log('Auth fetch response:', res.status, res.ok);
         if (res.ok) {
           return res.json();
         } else if (res.status === 401) {
           // Token is invalid, remove it
           localStorage.removeItem("token");
+          localStorage.removeItem("authToken");
           return null;
         }
         return null;
       })
       .then((data) => {
+        console.log('Auth data received:', data);
         setUser(data);
         setLoadingUser(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log('Auth error:', error);
         setUser(null);
         setLoadingUser(false);
       });

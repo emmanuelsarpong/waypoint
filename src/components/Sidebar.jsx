@@ -5,6 +5,8 @@ import Logo from "./Logo";
 function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   const [isMobile, setIsMobile] = useState(false);
 
+  console.log('Sidebar render - isAuthenticated:', isAuthenticated, 'isMobile:', isMobile, 'isOpen:', isOpen);
+
   const navItems = [
     { name: "Home", path: "/" },
     ...(isAuthenticated
@@ -19,6 +21,8 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+
+  console.log('Sidebar navItems count:', navItems.length, 'items:', navItems.map(i => i.name));
 
   useEffect(() => {
     const handleResize = () => {
@@ -147,9 +151,11 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{
-              height: "50vh",
+              height: isMobile ? "auto" : "50vh",
+              maxHeight: isMobile ? "calc(100vh - 200px)" : "50vh",
               paddingTop: "20px",
               paddingBottom: "20px",
+              overflowY: isMobile ? "auto" : "visible",
             }}
           >
             {navItems.map((item) => (
