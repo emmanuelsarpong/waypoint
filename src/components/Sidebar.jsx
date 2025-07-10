@@ -32,6 +32,23 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     };
   }, []);
 
+  // Prevent body scroll on mobile when sidebar is open
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      document.body.classList.add('sidebar-open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.classList.remove('sidebar-open');
+      document.body.style.overflow = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('sidebar-open');
+      document.body.style.overflow = '';
+    };
+  }, [isMobile, isOpen]);
+
   // Auto-close on mobile when navigation item is clicked
   const handleNavClick = () => {
     if (isMobile && isOpen) {
@@ -44,8 +61,13 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       {/* Mobile Dark Overlay - Mobile only */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 z-50 transition-all duration-300"
+          className="fixed inset-0 z-50 transition-all duration-300 sidebar-overlay"
           onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+          }}
+          onTouchEnd={(e) => {
             e.preventDefault();
             e.stopPropagation();
             toggleSidebar();
@@ -54,6 +76,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             backdropFilter: "blur(4px)",
             pointerEvents: "auto",
+            touchAction: "none",
           }}
         />
       )}
@@ -79,13 +102,16 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
             background: "rgba(255, 255, 255, 0.1)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
             borderRadius: "8px",
-            width: "36px",
-            height: "36px",
+            width: isMobile ? "40px" : "36px",
+            height: isMobile ? "40px" : "36px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
             transition: "all 0.2s ease-in-out",
+            touchAction: "manipulation",
+            minHeight: isMobile ? "44px" : "36px",
+            minWidth: isMobile ? "44px" : "36px",
           }}
           onMouseEnter={(e) => {
             e.target.style.background = "rgba(255, 255, 255, 0.2)";
@@ -132,7 +158,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                 to={item.path}
                 onClick={handleNavClick}
                 className={({ isActive }) =>
-                  `group text-sm font-medium flex items-center justify-between px-4 py-2 rounded-lg transition-all duration-200 ${
+                  `group text-sm font-medium flex items-center justify-between px-4 py-2 rounded-lg transition-all duration-200 sidebar-nav-item ${
                     isActive
                       ? "bg-neutral-900 text-white"
                       : "text-neutral-400 hover:bg-gradient-to-br hover:from-[#2C2C2C] hover:to-[#111111] hover:text-white"
@@ -141,14 +167,15 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                 style={{
                   textDecoration: "none",
                   margin: "2px 8px",
-                  padding: "12px 16px",
+                  padding: isMobile ? "16px" : "12px 16px",
                   height: "auto",
                   borderRadius: "8px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  minHeight: "44px",
+                  minHeight: isMobile ? "48px" : "44px",
                   fontSize: "14px",
+                  touchAction: "manipulation",
                 }}
               >
                 <span style={{ flex: 1 }}>{item.name}</span>

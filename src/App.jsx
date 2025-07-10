@@ -33,10 +33,28 @@ import PageSpinner from "./components/PageSpinner";
 import MapPage from "./pages/MapPage";
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Initialize sidebar state - always closed on mobile, open on desktop
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
+
+  // Handle window resize and set initial sidebar state
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        setSidebarOpen(false); // Always close on mobile
+      }
+      // On desktop, we don't auto-open anymore - let user control it
+    };
+
+    window.addEventListener('resize', handleResize);
+    // Initial check on mount
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const path = location.pathname;
@@ -128,26 +146,14 @@ function App() {
             className="w-full transition-all duration-300 relative flex flex-col h-full"
             style={{
               marginLeft:
-                window.innerWidth <= 768
+                typeof window !== 'undefined' && window.innerWidth <= 768
                   ? "0px"
                   : sidebarOpen
                   ? "250px"
                   : "0px",
-              filter:
-                window.innerWidth <= 768 && sidebarOpen ? "blur(4px)" : "none",
               transition: "all 0.3s ease-in-out",
             }}
           >
-            {/* Invisible overlay for closing sidebar on mobile when content is blurred */}
-            {window.innerWidth <= 768 && sidebarOpen && (
-              <div
-                className="fixed inset-0 z-20 cursor-pointer"
-                onClick={() => setSidebarOpen(false)}
-                style={{
-                  backgroundColor: "transparent",
-                }}
-              />
-            )}
             <main className="mt-[70px] flex-1 flex flex-col">
               {/* Special handling for map route - no container constraints */}
               {location.pathname === "/map" ? (
