@@ -7,7 +7,7 @@ const connectDB = async () => {
     return true;
   } catch (error) {
     console.error(`MongoDB Connection Error: ${(error as Error).message}`);
-    console.error('Server will continue without database connection');
+    console.error("Server will continue without database connection");
     return false;
   }
 };

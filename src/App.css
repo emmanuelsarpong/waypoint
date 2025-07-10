@@ -5,6 +5,25 @@
   text-align: center;
 }
 
+/* Mobile-first responsive fixes */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+    max-width: 100%;
+  }
+}
+
+/* Fix for mobile touch events */
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure all interactive elements are properly sized for mobile */
+button, input, select, textarea {
+  min-height: 44px; /* Apple's recommended touch target size */
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

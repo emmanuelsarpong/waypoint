@@ -18,39 +18,41 @@ if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
         callbackURL: "http://localhost:3000/auth/microsoft/callback",
         scope: ["user.read"],
       },
-    async (
-      accessToken: string,
-      refreshToken: string,
-      profile: any,
-      done: (error: any, user?: any) => void
-    ) => {
-      try {
-        const email = profile.emails?.[0]?.value?.toLowerCase();
-        let user = await User.findOne({
-          $or: [{ microsoftId: profile.id }, { email }],
-        });
-
-        if (!user) {
-          user = await User.create({
-            microsoftId: profile.id,
-            email,
-            firstName: profile.displayName?.split(" ")[0] || "",
-            isVerified: true,
+      async (
+        accessToken: string,
+        refreshToken: string,
+        profile: any,
+        done: (error: any, user?: any) => void
+      ) => {
+        try {
+          const email = profile.emails?.[0]?.value?.toLowerCase();
+          let user = await User.findOne({
+            $or: [{ microsoftId: profile.id }, { email }],
           });
-        } else if (!user.microsoftId) {
-          user.microsoftId = profile.id;
-          await user.save();
-        }
 
-        return done(null, user);
-      } catch (err) {
-        return done(err, undefined);
+          if (!user) {
+            user = await User.create({
+              microsoftId: profile.id,
+              email,
+              firstName: profile.displayName?.split(" ")[0] || "",
+              isVerified: true,
+            });
+          } else if (!user.microsoftId) {
+            user.microsoftId = profile.id;
+            await user.save();
+          }
+
+          return done(null, user);
+        } catch (err) {
+          return done(err, undefined);
+        }
       }
-    }
-  )
-);
+    )
+  );
 } else {
-  console.log("Microsoft OAuth disabled - Missing MICROSOFT_CLIENT_ID or MICROSOFT_CLIENT_SECRET");
+  console.log(
+    "Microsoft OAuth disabled - Missing MICROSOFT_CLIENT_ID or MICROSOFT_CLIENT_SECRET"
+  );
 }
 
 // Start Google OAuth
@@ -113,7 +115,7 @@ if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
   router.get("/microsoft", (req, res) => {
     res.status(503).json({ error: "Microsoft OAuth not configured" });
   });
-  
+
   router.get("/microsoft/callback", (req, res) => {
     res.status(503).json({ error: "Microsoft OAuth not configured" });
   });
