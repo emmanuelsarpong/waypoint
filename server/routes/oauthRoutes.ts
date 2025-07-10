@@ -8,15 +8,16 @@ const MicrosoftStrategy = require("passport-microsoft").Strategy;
 
 const router = express.Router();
 
-// Microsoft OAuth strategy
-passport.use(
-  new MicrosoftStrategy(
-    {
-      clientID: process.env.MICROSOFT_CLIENT_ID!,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
-      callbackURL: "http://localhost:3000/auth/microsoft/callback",
-      scope: ["user.read"],
-    },
+// Microsoft OAuth strategy - only initialize if credentials are available
+if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
+  passport.use(
+    new MicrosoftStrategy(
+      {
+        clientID: process.env.MICROSOFT_CLIENT_ID!,
+        clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
+        callbackURL: "http://localhost:3000/auth/microsoft/callback",
+        scope: ["user.read"],
+      },
     async (
       accessToken: string,
       refreshToken: string,
@@ -48,6 +49,9 @@ passport.use(
     }
   )
 );
+} else {
+  console.log("Microsoft OAuth disabled - Missing MICROSOFT_CLIENT_ID or MICROSOFT_CLIENT_SECRET");
+}
 
 // Start Google OAuth
 router.get(
@@ -76,31 +80,43 @@ router.get(
   }
 );
 
-// Start Microsoft OAuth
-router.get(
-  "/microsoft",
-  passport.authenticate("microsoft", { scope: ["user.read"] })
-);
+// Microsoft OAuth routes - only available if credentials are configured
+if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
+  // Start Microsoft OAuth
+  router.get(
+    "/microsoft",
+    passport.authenticate("microsoft", { scope: ["user.read"] })
+  );
 
-// Microsoft OAuth callback
-router.get(
-  "/microsoft/callback",
-  passport.authenticate("microsoft", {
-    session: false,
-    failureRedirect: "/login",
-  }),
-  (req, res) => {
-    const user = req.user as any;
-    if (!user) {
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);
+  // Microsoft OAuth callback
+  router.get(
+    "/microsoft/callback",
+    passport.authenticate("microsoft", {
+      session: false,
+      failureRedirect: "/login",
+    }),
+    (req, res) => {
+      const user = req.user as any;
+      if (!user) {
+        return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);
+      }
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET!,
+        { expiresIn: "7d" }
+      );
+      res.redirect(`${process.env.FRONTEND_URL}/oauth/callback?token=${token}`);
     }
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}/oauth/callback?token=${token}`);
-  }
-);
+  );
+} else {
+  // Provide fallback routes for Microsoft OAuth when not configured
+  router.get("/microsoft", (req, res) => {
+    res.status(503).json({ error: "Microsoft OAuth not configured" });
+  });
+  
+  router.get("/microsoft/callback", (req, res) => {
+    res.status(503).json({ error: "Microsoft OAuth not configured" });
+  });
+}
 
 export default router;
