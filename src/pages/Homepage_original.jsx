@@ -125,11 +125,9 @@ function Homepage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Link to="/signup">
-              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
-                Get Started
-              </Button>
-            </Link>
+            <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+              Get Started
+            </Button>
           </motion.div>
         </div>
       </motion.section>
@@ -359,7 +357,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="mb-40" // Added larger bottom margin (150px+) for spacing before footer
+        className="mb-32" // Added bottom margin for spacing before footer
       >
         <Card cards={bottomCards} />
       </motion.div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import styles from "./AuthForm.module.css";
 import ProgressBar from "./ProgressBar";
 import Spinner from "./ButtonSpinner";
@@ -56,13 +56,13 @@ function Header() {
 function FooterLinks() {
   return (
     <div className={styles.footerLinks}>
-      <a href="#" className="link">
+      <Link to="/terms-of-use" className="link">
         Terms of Use
-      </a>
+      </Link>
       <span>|</span>
-      <a href="#" className="link">
+      <Link to="/privacy-policy" className="link">
         Privacy Policy
-      </a>
+      </Link>
     </div>
   );
 }
@@ -212,11 +212,14 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
               }
               console.log("RESET PASSWORD TOKEN:", token);
               try {
-                const res = await fetch("/auth/reset-password", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ password, token }),
-                });
+                const res = await fetch(
+                  "https://waypoint-production-5b75.up.railway.app/auth/reset-password",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password, token }),
+                  }
+                );
                 const data = await res.json();
                 setLoading(false);
                 if (res.ok) {

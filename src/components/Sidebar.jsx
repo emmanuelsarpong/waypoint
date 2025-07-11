@@ -7,18 +7,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   const [localAuth, setLocalAuth] = useState(false);
   const location = useLocation();
 
-  console.log(
-    "Sidebar render - isAuthenticated:",
-    isAuthenticated,
-    "isMobile:",
-    isMobile,
-    "isOpen:",
-    isOpen,
-    "localAuth:",
-    localAuth,
-    "location:",
-    location.pathname
-  );
+  // Debug logging removed for production
 
   // Additional mobile-specific auth check
   useEffect(() => {
@@ -32,12 +21,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       const hasAuth = !!token || isAuthenticated || isOnProtectedRoute;
       setLocalAuth(hasAuth);
 
-      console.log(
-        "Mobile auth check - token:",
-        !!token,
-        "isAuthenticated:",
-        isAuthenticated,
-        "protectedRoute:",
+      // Debug logging removed for production
         isOnProtectedRoute,
         "result:",
         hasAuth
@@ -83,9 +67,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   console.log(
     "Sidebar navItems count:",
     navItems.length,
-    "items:",
-    navItems.map((i) => i.name)
-  );
+    // Debug logging removed for production
 
   useEffect(() => {
     const handleResize = () => {

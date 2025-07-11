@@ -28,6 +28,8 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
+import TermsOfUse from "./pages/TermsOfUse";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
 import MapPage from "./pages/MapPage";
@@ -45,9 +47,7 @@ function App() {
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
 
-  console.log(
-    "App render - user:",
-    user,
+  // Debug logging removed for production
     "loadingUser:",
     loadingUser,
     "isAuthenticated:",
@@ -116,12 +116,8 @@ function App() {
   useEffect(() => {
     const token =
       localStorage.getItem("token") || localStorage.getItem("authToken");
-    console.log(
-      "Auth check - token found:",
-      !!token,
-      "token preview:",
-      token?.slice(0, 20)
-    );
+    
+    // Debug logging removed for production
 
     if (!token) {
       setUser(null);
@@ -131,7 +127,7 @@ function App() {
 
     // Handle demo mode
     if (token === "demo-token-for-ceo") {
-      console.log("Demo mode detected");
+      // Demo mode active
       setUser({
         id: "demo-user-123",
         email: "demo@waypoint.com",
@@ -146,7 +142,7 @@ function App() {
     setLoadingUser(true);
     authFetch("/user/profile")
       .then((res) => {
-        console.log("Auth fetch response:", res.status, res.ok);
+        // Debug logging removed for production
         if (res.ok) {
           return res.json();
         } else if (res.status === 401) {
@@ -158,12 +154,12 @@ function App() {
         return null;
       })
       .then((data) => {
-        console.log("Auth data received:", data);
+        // Auth data received
         setUser(data);
         setLoadingUser(false);
       })
       .catch((error) => {
-        console.log("Auth error:", error);
+        // Auth error occurred
         setUser(null);
         setLoadingUser(false);
       });
@@ -275,6 +271,8 @@ function App() {
                           path="/movement-analysis"
                           element={<MovementAnalysisPage />}
                         />
+                        <Route path="/terms-of-use" element={<TermsOfUse />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                         <Route path="*" element={<NotFound />} />
                         <Route
                           path="/oauth/callback"

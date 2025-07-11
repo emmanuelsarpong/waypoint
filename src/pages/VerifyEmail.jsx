@@ -19,16 +19,11 @@ export default function VerifyEmail() {
     const apiUrl =
       import.meta.env.VITE_API_URL ||
       "https://waypoint-production-5b75.up.railway.app";
-    console.log("Verification API URL:", apiUrl);
-    console.log(
-      "Full verification URL:",
-      `${apiUrl}/auth/verify-email?token=${token}`
-    );
+    // Debug logging removed for production
 
     fetch(`${apiUrl}/auth/verify-email?token=${token}`)
       .then((res) => {
-        console.log("Verification response status:", res.status);
-        console.log("Verification response ok:", res.ok);
+        // Debug logging removed for production
         return res.json();
       })
       .then((data) => {
