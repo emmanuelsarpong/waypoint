@@ -327,10 +327,10 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
     ) {
       setLoading(false);
       localStorage.setItem("token", "demo-token-for-ceo");
-      
+
       // Dispatch custom event to notify other components
-      window.dispatchEvent(new CustomEvent('authChange'));
-      
+      window.dispatchEvent(new CustomEvent("authChange"));
+
       navigate("/dashboard");
       return;
     }
@@ -372,10 +372,10 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       if (res.ok) {
         if (mode === "login" && data.token) {
           localStorage.setItem("token", data.token);
-          
+
           // Dispatch custom event to notify other components
-          window.dispatchEvent(new CustomEvent('authChange'));
-          
+          window.dispatchEvent(new CustomEvent("authChange"));
+
           navigate("/dashboard");
           return;
         }

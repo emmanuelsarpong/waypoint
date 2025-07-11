@@ -23,33 +23,42 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   // Additional mobile-specific auth check
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("token") || localStorage.getItem("authToken");
-      const protectedRoutes = ['/dashboard', '/billing', '/settings', '/map'];
+      const token =
+        localStorage.getItem("token") || localStorage.getItem("authToken");
+      const protectedRoutes = ["/dashboard", "/billing", "/settings", "/map"];
       const isOnProtectedRoute = protectedRoutes.includes(location.pathname);
-      
+
       // If user is on a protected route, they must be authenticated
       const hasAuth = !!token || isAuthenticated || isOnProtectedRoute;
       setLocalAuth(hasAuth);
-      
-      console.log("Mobile auth check - token:", !!token, "isAuthenticated:", isAuthenticated, 
-                  "protectedRoute:", isOnProtectedRoute, "result:", hasAuth);
+
+      console.log(
+        "Mobile auth check - token:",
+        !!token,
+        "isAuthenticated:",
+        isAuthenticated,
+        "protectedRoute:",
+        isOnProtectedRoute,
+        "result:",
+        hasAuth
+      );
     };
-    
+
     checkAuth();
-    
+
     // Re-check on focus for mobile browsers
-    window.addEventListener('focus', checkAuth);
-    
+    window.addEventListener("focus", checkAuth);
+
     // Listen for storage changes (in case token is set after component mounts)
-    window.addEventListener('storage', checkAuth);
-    
+    window.addEventListener("storage", checkAuth);
+
     // Also listen for custom events from login
-    window.addEventListener('authChange', checkAuth);
-    
+    window.addEventListener("authChange", checkAuth);
+
     return () => {
-      window.removeEventListener('focus', checkAuth);
-      window.removeEventListener('storage', checkAuth);
-      window.removeEventListener('authChange', checkAuth);
+      window.removeEventListener("focus", checkAuth);
+      window.removeEventListener("storage", checkAuth);
+      window.removeEventListener("authChange", checkAuth);
     };
   }, [isAuthenticated, location.pathname]);
 
@@ -82,10 +91,11 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     const handleResize = () => {
       const newIsMobile = window.innerWidth <= 768;
       setIsMobile(newIsMobile);
-      
+
       // Force auth recheck on mobile when orientation changes
       if (newIsMobile) {
-        const token = localStorage.getItem("token") || localStorage.getItem("authToken");
+        const token =
+          localStorage.getItem("token") || localStorage.getItem("authToken");
         setLocalAuth(!!token);
       }
     };
@@ -93,7 +103,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleResize);
     handleResize();
-    
+
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleResize);
@@ -214,20 +224,21 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
           {/* Debug info for mobile testing - remove after fixing */}
           {isMobile && (
-            <div style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              padding: '8px', 
-              margin: '8px',
-              borderRadius: '4px',
-              fontSize: '10px',
-              color: '#ccc'
-            }}>
-              Auth: {isAuthenticated ? '✓' : '✗'} | 
-              Local: {localAuth ? '✓' : '✗'} | 
-              Items: {navItems.length}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                padding: "8px",
+                margin: "8px",
+                borderRadius: "4px",
+                fontSize: "10px",
+                color: "#ccc",
+              }}
+            >
+              Auth: {isAuthenticated ? "✓" : "✗"} | Local:{" "}
+              {localAuth ? "✓" : "✗"} | Items: {navItems.length}
             </div>
           )}
-          
+
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{

@@ -36,7 +36,7 @@ function App() {
   // Initialize sidebar state - closed on mobile, open on desktop
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     // Check if window is available (client-side)
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return window.innerWidth > 768; // Open on desktop, closed on mobile
     }
     return true; // Default to open for SSR (desktop-first)
