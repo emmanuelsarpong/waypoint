@@ -321,9 +321,16 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
     setError("");
 
     // DEMO MODE for CEO presentation
-    if (window.location.search.includes('demo=true') || email === 'demo@waypoint.com') {
+    if (
+      window.location.search.includes("demo=true") ||
+      email === "demo@waypoint.com"
+    ) {
       setLoading(false);
       localStorage.setItem("token", "demo-token-for-ceo");
+      
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('authChange'));
+      
       navigate("/dashboard");
       return;
     }
@@ -347,9 +354,10 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       }
 
       // Use the correct API URL
-      const backendUrl = import.meta.env.VITE_API_URL || 
-                        import.meta.env.VITE_BACKEND_URL || 
-                        "http://localhost:3000";
+      const backendUrl =
+        import.meta.env.VITE_API_URL ||
+        import.meta.env.VITE_BACKEND_URL ||
+        "http://localhost:3000";
       const res = await fetch(`${backendUrl}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -364,6 +372,10 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       if (res.ok) {
         if (mode === "login" && data.token) {
           localStorage.setItem("token", data.token);
+          
+          // Dispatch custom event to notify other components
+          window.dispatchEvent(new CustomEvent('authChange'));
+          
           navigate("/dashboard");
           return;
         }

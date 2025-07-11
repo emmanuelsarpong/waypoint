@@ -11,12 +11,12 @@
     padding: 1rem;
     max-width: 100%;
   }
-  
+
   /* Prevent horizontal scrolling on mobile */
   body {
     overflow-x: hidden;
   }
-  
+
   /* Ensure proper mobile viewport handling */
   html {
     overflow-x: hidden;
@@ -30,7 +30,10 @@ button {
 }
 
 /* Ensure all interactive elements are properly sized for mobile */
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   min-height: 44px; /* Apple's recommended touch target size */
 }
 
@@ -79,13 +82,13 @@ button, input, select, textarea {
     width: 100%;
     height: 100%;
   }
-  
+
   /* Improve sidebar overlay performance */
   .sidebar-overlay {
     will-change: opacity;
     transform: translateZ(0);
   }
-  
+
   /* Better touch response for sidebar elements */
   .sidebar-nav-item {
     min-height: 48px;

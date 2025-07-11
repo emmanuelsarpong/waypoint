@@ -1,15 +1,64 @@
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import Logo from "./Logo";
 
 function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   const [isMobile, setIsMobile] = useState(false);
+  const [localAuth, setLocalAuth] = useState(false);
+  const location = useLocation();
 
-  console.log('Sidebar render - isAuthenticated:', isAuthenticated, 'isMobile:', isMobile, 'isOpen:', isOpen);
+  console.log(
+    "Sidebar render - isAuthenticated:",
+    isAuthenticated,
+    "isMobile:",
+    isMobile,
+    "isOpen:",
+    isOpen,
+    "localAuth:",
+    localAuth,
+    "location:",
+    location.pathname
+  );
+
+  // Additional mobile-specific auth check
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token") || localStorage.getItem("authToken");
+      const protectedRoutes = ['/dashboard', '/billing', '/settings', '/map'];
+      const isOnProtectedRoute = protectedRoutes.includes(location.pathname);
+      
+      // If user is on a protected route, they must be authenticated
+      const hasAuth = !!token || isAuthenticated || isOnProtectedRoute;
+      setLocalAuth(hasAuth);
+      
+      console.log("Mobile auth check - token:", !!token, "isAuthenticated:", isAuthenticated, 
+                  "protectedRoute:", isOnProtectedRoute, "result:", hasAuth);
+    };
+    
+    checkAuth();
+    
+    // Re-check on focus for mobile browsers
+    window.addEventListener('focus', checkAuth);
+    
+    // Listen for storage changes (in case token is set after component mounts)
+    window.addEventListener('storage', checkAuth);
+    
+    // Also listen for custom events from login
+    window.addEventListener('authChange', checkAuth);
+    
+    return () => {
+      window.removeEventListener('focus', checkAuth);
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('authChange', checkAuth);
+    };
+  }, [isAuthenticated, location.pathname]);
+
+  // Use both authentication states - fallback to localAuth if isAuthenticated fails on mobile
+  const shouldShowAuthItems = isAuthenticated || (isMobile && localAuth);
 
   const navItems = [
     { name: "Home", path: "/" },
-    ...(isAuthenticated
+    ...(shouldShowAuthItems
       ? [
           { name: "Dashboard", path: "/dashboard" },
           { name: "Map", path: "/map" },
@@ -22,34 +71,49 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     { name: "Contact", path: "/contact" },
   ];
 
-  console.log('Sidebar navItems count:', navItems.length, 'items:', navItems.map(i => i.name));
+  console.log(
+    "Sidebar navItems count:",
+    navItems.length,
+    "items:",
+    navItems.map((i) => i.name)
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const newIsMobile = window.innerWidth <= 768;
+      setIsMobile(newIsMobile);
+      
+      // Force auth recheck on mobile when orientation changes
+      if (newIsMobile) {
+        const token = localStorage.getItem("token") || localStorage.getItem("authToken");
+        setLocalAuth(!!token);
+      }
     };
 
     window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
     handleResize();
+    
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
   // Prevent body scroll on mobile when sidebar is open
   useEffect(() => {
     if (isMobile && isOpen) {
-      document.body.classList.add('sidebar-open');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add("sidebar-open");
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.classList.remove('sidebar-open');
-      document.body.style.overflow = '';
+      document.body.classList.remove("sidebar-open");
+      document.body.style.overflow = "";
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.classList.remove('sidebar-open');
-      document.body.style.overflow = '';
+      document.body.classList.remove("sidebar-open");
+      document.body.style.overflow = "";
     };
   }, [isMobile, isOpen]);
 
@@ -148,6 +212,22 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
 
         {/* Navigation content */}
         <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
+          {/* Debug info for mobile testing - remove after fixing */}
+          {isMobile && (
+            <div style={{ 
+              background: 'rgba(255,255,255,0.1)', 
+              padding: '8px', 
+              margin: '8px',
+              borderRadius: '4px',
+              fontSize: '10px',
+              color: '#ccc'
+            }}>
+              Auth: {isAuthenticated ? '✓' : '✗'} | 
+              Local: {localAuth ? '✓' : '✗'} | 
+              Items: {navItems.length}
+            </div>
+          )}
+          
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{

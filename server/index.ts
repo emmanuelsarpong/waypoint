@@ -43,8 +43,8 @@ app.use(
       "http://localhost:5178",
       process.env.FRONTEND_URL || "http://localhost:5173",
       "https://waypoint-lemon.vercel.app", // Your actual Vercel domain
-      "https://waypoint-two.vercel.app",   // Backup domain
-      "https://waypoint.vercel.app",       // In case domain changes
+      "https://waypoint-two.vercel.app", // Backup domain
+      "https://waypoint.vercel.app", // In case domain changes
     ],
     credentials: true,
   })
