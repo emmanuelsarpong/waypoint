@@ -242,6 +242,12 @@ export default function Dashboard({ user }) {
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
           {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
         </h1>
+        {/* Debug info */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-xs text-gray-500 text-center mb-4">
+            Debug: user = {JSON.stringify(user)}
+          </div>
+        )}
 
         {/* Responsive Card Grid */}
         <div

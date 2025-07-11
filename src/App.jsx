@@ -150,6 +150,7 @@ function App() {
       })
       .then((data) => {
         // Auth data received
+        console.log("User data received:", data);
         setUser(data);
         setLoadingUser(false);
       })
