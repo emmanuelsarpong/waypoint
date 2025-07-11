@@ -26,7 +26,7 @@ function Logo({ isScrolled, size = "h-8 w-8" }) {
           alt="Waypoint"
           className="transition-all duration-300"
           style={{
-            height: "32px",
+            height: "40px", // Increased from 32px to 40px
             width: "auto",
             transition: "all 0.3s ease-in-out",
           }}
@@ -40,7 +40,7 @@ function Logo({ isScrolled, size = "h-8 w-8" }) {
           style={{
             color: "white",
             fontWeight: "400", // Normal weight, not bold
-            fontSize: "20px",
+            fontSize: "16px", // Reduced from 20px to 16px
             transition: "all 0.3s ease-in-out",
           }}
         >

@@ -28,37 +28,17 @@ function Header() {
   return (
     <header className={styles.fixedHeader}>
       <a href="/" className={styles.logo}>
-        <div 
+        <img
+          src={logoBlack}
+          alt="Waypoint"
+          className={styles.icon}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            textDecoration: "none",
+            height: "40px", // Same size as main website logo
+            width: "auto",
+            transition: "transform 0.2s ease-in-out",
+            cursor: "pointer",
           }}
-        >
-          <img
-            src={logoBlack}
-            alt="Waypoint"
-            className={styles.icon}
-            style={{
-              height: "40px", // Made bigger from 32px
-              width: "auto",
-              maxWidth: "160px", // Made bigger from 120px
-              transition: "transform 0.2s ease-in-out",
-              cursor: "pointer",
-            }}
-          />
-          <span
-            style={{
-              color: "#000000",
-              fontWeight: "bold",
-              fontSize: "20px",
-              textDecoration: "none",
-            }}
-          >
-            Waypoint
-          </span>
-        </div>
+        />
       </a>
     </header>
   );
