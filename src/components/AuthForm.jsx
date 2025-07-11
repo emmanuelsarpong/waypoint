@@ -396,15 +396,16 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       const backendUrl =
         import.meta.env.VITE_API_URL ||
         import.meta.env.VITE_BACKEND_URL ||
-        "http://localhost:3000";
+        "https://waypoint-production-5b75.up.railway.app";
+      
       const res = await fetch(`${backendUrl}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      // Login response processed (debug removed for production)
-      // Login data processed (debug removed for production)
-
+      
+      const data = await res.json();
+      
       setLoading(false);
 
       if (res.ok) {
@@ -424,7 +425,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
       } else {
         setError(data.error || "Authentication failed.");
       }
-    } catch {
+    } catch (error) {
       setLoading(false);
       setError("Network error.");
     }
