@@ -41,12 +41,14 @@ class EmailService {
 
   async sendVerificationEmail(
     email: string,
-    verificationToken: string
+    verificationToken: string,
+    firstName?: string
   ): Promise<void> {
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
 
     const html = emailTemplate({
       mode: "verify",
+      username: firstName,
       email,
       actionUrl: verificationUrl,
     });
@@ -60,12 +62,14 @@ class EmailService {
 
   async sendPasswordResetEmail(
     email: string,
-    resetToken: string
+    resetToken: string,
+    firstName?: string
   ): Promise<void> {
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
     const html = emailTemplate({
       mode: "reset",
+      username: firstName,
       email,
       actionUrl: resetUrl,
     });
