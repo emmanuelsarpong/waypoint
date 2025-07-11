@@ -16,14 +16,17 @@ export default function VerifyEmail() {
       return;
     }
     // Use the correct API URL for verification
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
-    console.log('Verification API URL:', apiUrl);
-    console.log('Full verification URL:', `${apiUrl}/auth/verify-email?token=${token}`);
-    
+    const apiUrl = import.meta.env.VITE_API_URL || "https://waypoint-production-5b75.up.railway.app";
+    console.log("Verification API URL:", apiUrl);
+    console.log(
+      "Full verification URL:",
+      `${apiUrl}/auth/verify-email?token=${token}`
+    );
+
     fetch(`${apiUrl}/auth/verify-email?token=${token}`)
       .then((res) => {
-        console.log('Verification response status:', res.status);
-        console.log('Verification response ok:', res.ok);
+        console.log("Verification response status:", res.status);
+        console.log("Verification response ok:", res.ok);
         return res.json();
       })
       .then((data) => {
