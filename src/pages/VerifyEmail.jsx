@@ -16,7 +16,9 @@ export default function VerifyEmail() {
       return;
     }
     // Use the correct API URL for verification
-    const apiUrl = import.meta.env.VITE_API_URL || "https://waypoint-production-5b75.up.railway.app";
+    const apiUrl =
+      import.meta.env.VITE_API_URL ||
+      "https://waypoint-production-5b75.up.railway.app";
     console.log("Verification API URL:", apiUrl);
     console.log(
       "Full verification URL:",
