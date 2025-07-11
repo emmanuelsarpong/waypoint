@@ -22,10 +22,6 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       setLocalAuth(hasAuth);
 
       // Debug logging removed for production
-        isOnProtectedRoute,
-        "result:",
-        hasAuth
-      );
     };
 
     checkAuth();
@@ -64,10 +60,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     { name: "Contact", path: "/contact" },
   ];
 
-  console.log(
-    "Sidebar navItems count:",
-    navItems.length,
-    // Debug logging removed for production
+  // Debug logging removed for production
 
   useEffect(() => {
     const handleResize = () => {

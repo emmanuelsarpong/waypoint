@@ -48,11 +48,6 @@ function App() {
   const location = useLocation();
 
   // Debug logging removed for production
-    "loadingUser:",
-    loadingUser,
-    "isAuthenticated:",
-    !!user
-  );
 
   // Handle window resize and set initial sidebar state
   useEffect(() => {
