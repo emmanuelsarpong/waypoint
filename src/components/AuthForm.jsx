@@ -4,12 +4,16 @@ import styles from "./AuthForm.module.css";
 import ProgressBar from "./ProgressBar";
 import Spinner from "./ButtonSpinner";
 import StatusNotice from "./StatusNotice";
+import Modal from "./Modal";
+import TermsOfUseModal from "./TermsOfUseModal";
+import PrivacyPolicyModal from "./PrivacyPolicyModal";
 
 // Icons
 import GoogleIcon from "../assets/google.svg";
 import MicrosoftIcon from "../assets/microsoft.svg";
 import AppleIcon from "../assets/apple.svg";
 import PhoneIcon from "../assets/phone.svg";
+import logoBlack from "../assets/logo-black.png";
 
 function OAuthButton({ icon, text, onClick }) {
   return (
@@ -24,46 +28,98 @@ function Header() {
   return (
     <header className={styles.fixedHeader}>
       <a href="/" className={styles.logo}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 100 100"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className={styles.icon}
+        <div 
           style={{
-            transition: "transform 0.2s ease-in-out",
-            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            textDecoration: "none",
           }}
         >
-          <circle
-            cx="50"
-            cy="50"
-            r="43"
-            stroke="currentColor"
-            strokeWidth="8"
+          <img
+            src={logoBlack}
+            alt="Waypoint"
+            className={styles.icon}
+            style={{
+              height: "40px", // Made bigger from 32px
+              width: "auto",
+              maxWidth: "160px", // Made bigger from 120px
+              transition: "transform 0.2s ease-in-out",
+              cursor: "pointer",
+            }}
           />
-          <path
-            d="M50 20C36 20 28 31 28 43C28 58 50 82 50 82C50 82 72 58 72 43C72 31 64 20 50 20ZM50 48C44.4772 48 40 43.5228 40 38C40 32.4772 44.4772 28 50 28C55.5228 28 60 32.4772 60 38C60 43.5228 55.5228 48 50 48Z"
-            fill="currentColor"
-          />
-        </svg>
+          <span
+            style={{
+              color: "#000000",
+              fontWeight: "bold",
+              fontSize: "20px",
+              textDecoration: "none",
+            }}
+          >
+            Waypoint
+          </span>
+        </div>
       </a>
     </header>
   );
 }
 
 function FooterLinks() {
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+
   return (
-    <div className={styles.footerLinks}>
-      <Link to="/terms-of-use" className="link">
-        Terms of Use
-      </Link>
-      <span>|</span>
-      <Link to="/privacy-policy" className="link">
-        Privacy Policy
-      </Link>
-    </div>
+    <>
+      <div className={styles.footerLinks}>
+        <button 
+          onClick={() => setShowTermsModal(true)}
+          className="link"
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'inherit', 
+            fontSize: 'inherit',
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}
+        >
+          Terms of Use
+        </button>
+        <span>|</span>
+        <button 
+          onClick={() => setShowPrivacyModal(true)}
+          className="link"
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'inherit', 
+            fontSize: 'inherit',
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}
+        >
+          Privacy Policy
+        </button>
+      </div>
+
+      {/* Terms of Use Modal */}
+      <Modal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        title="Terms of Use"
+      >
+        <TermsOfUseModal />
+      </Modal>
+
+      {/* Privacy Policy Modal */}
+      <Modal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        title="Privacy Policy"
+      >
+        <PrivacyPolicyModal />
+      </Modal>
+    </>
   );
 }
 

@@ -28,8 +28,6 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import OAuthCallback from "./pages/OAuthCallback";
-import TermsOfUse from "./pages/TermsOfUse";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
 import MapPage from "./pages/MapPage";
@@ -267,8 +265,6 @@ function App() {
                           path="/movement-analysis"
                           element={<MovementAnalysisPage />}
                         />
-                        <Route path="/terms-of-use" element={<TermsOfUse />} />
-                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                         <Route path="*" element={<NotFound />} />
                         <Route
                           path="/oauth/callback"
