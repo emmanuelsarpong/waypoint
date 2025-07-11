@@ -83,14 +83,33 @@ function App() {
       path === "/verify-email" ||
       path === "/password-email-sent" ||
       path === "/reset-password";
+    
     if (isAuth) {
       document.body.style.backgroundColor = "#f9f9f9";
       document.body.style.color = "#000000";
       document.body.classList.add("auth-page");
+      
+      // Set mobile status bar to light theme for auth pages
+      const themeColor = document.getElementById("theme-color");
+      const statusBarStyle = document.getElementById("status-bar-style");
+      const msNavColor = document.getElementById("ms-nav-color");
+      
+      if (themeColor) themeColor.content = "#f9f9f9";
+      if (statusBarStyle) statusBarStyle.content = "default";
+      if (msNavColor) msNavColor.content = "#f9f9f9";
     } else {
       document.body.style.backgroundColor = "#000000";
       document.body.style.color = "#ffffff";
       document.body.classList.remove("auth-page");
+      
+      // Set mobile status bar to dark theme for main pages
+      const themeColor = document.getElementById("theme-color");
+      const statusBarStyle = document.getElementById("status-bar-style");
+      const msNavColor = document.getElementById("ms-nav-color");
+      
+      if (themeColor) themeColor.content = "#000000";
+      if (statusBarStyle) statusBarStyle.content = "black-translucent";
+      if (msNavColor) msNavColor.content = "#000000";
     }
   }, [location]);
 

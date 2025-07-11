@@ -5,6 +5,21 @@
   text-align: center;
 }
 
+/* Mobile viewport and status bar handling */
+@supports (padding: max(0px)) {
+  .auth-page {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Ensure proper mobile viewport */
+html {
+  /* Handle mobile viewport properly */
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Mobile-first responsive fixes */
 @media (max-width: 768px) {
   #root {
