@@ -125,9 +125,11 @@ function Homepage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
-              Get Started
-            </Button>
+            <Link to="/signup">
+              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+                Get Started
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </motion.section>
