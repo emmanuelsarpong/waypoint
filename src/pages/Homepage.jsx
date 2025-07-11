@@ -233,8 +233,8 @@ function Homepage() {
                 className="text-neutral-400 text-left"
               >
                 Get insights on your performance, trends, and distances. Whether
-                you&#39;re a casual jogger or a serious athlete, our analytics help
-                you stay on track.
+                you&#39;re a casual jogger or a serious athlete, our analytics
+                help you stay on track.
               </motion.p>
             </div>
           </motion.div>

@@ -15,7 +15,9 @@ export default function VerifyEmail() {
       setStatus("Invalid or missing verification token.");
       return;
     }
-    fetch(`/auth/verify-email?token=${token}`)
+    // Use the correct API URL for verification
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    fetch(`${apiUrl}/auth/verify-email?token=${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.message) {
