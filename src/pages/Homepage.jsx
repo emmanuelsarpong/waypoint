@@ -95,19 +95,19 @@ function Homepage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full h-[500px] relative mb-[200px] rounded-lg overflow-hidden px-6"
+        className="w-full h-[500px] relative mb-16 sm:mb-32 lg:mb-[200px] rounded-lg overflow-hidden px-4 sm:px-6"
       >
         <img
           src={heroImage}
           alt="Hero"
           className="absolute inset-0 w-full h-full object-cover z-[-1]"
         />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center bg-black bg-opacity-50 rounded-lg">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center bg-black bg-opacity-50 rounded-lg px-4 sm:px-6">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl font-extrabold mb-4 text-white"
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 text-white leading-tight"
           >
             Track the Path. Master the Journey.
           </motion.h1>
@@ -115,7 +115,7 @@ function Homepage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg text-neutral-300 mb-6 max-w-xl"
+            className="text-base sm:text-lg text-neutral-300 mb-6 max-w-xl px-4"
           >
             Waypoint helps you log your outdoor runs, walks, and rides—so you
             can move with purpose.
@@ -126,7 +126,7 @@ function Homepage() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Link to="/signup">
-              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+              <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200 text-base sm:text-lg">
                 Get Started
               </Button>
             </Link>
@@ -140,7 +140,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full bg-black py-20 px-6 mb-[200px]"
+        className="w-full bg-black py-12 sm:py-20 px-4 sm:px-6 mb-16 sm:mb-32 lg:mb-[200px]"
       >
         <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto">
           {/* How It Works */}
@@ -151,19 +151,19 @@ function Homepage() {
             viewport={{ once: true }}
             className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[65%] min-w-[300px]"
           >
-            <div className="relative h-[250px] w-full">
+            <div className="relative h-[200px] sm:h-[250px] w-full">
               <img
                 src={howItWorksImage}
                 alt="How it works"
                 className="absolute inset-0 w-full h-full object-cover z-[-1]"
               />
-              <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
+              <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center px-4">
                 <motion.h2
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
-                  className="text-3xl font-bold leading-tight"
+                  className="text-2xl sm:text-3xl font-bold leading-tight text-white"
                 >
                   How It
                   <br />
@@ -171,13 +171,13 @@ function Homepage() {
                 </motion.h2>
               </div>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
                 viewport={{ once: true }}
-                className="text-neutral-400 mb-4"
+                className="text-neutral-400 mb-4 text-sm sm:text-base"
               >
                 Log your journey with our intuitive map interface. Track your
                 path, set goals, and visualize your progress in real-time.
@@ -187,7 +187,7 @@ function Homepage() {
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
                 viewport={{ once: true }}
-                className="list-disc list-inside text-neutral-500 space-y-2 mt-6"
+                className="list-disc list-inside text-neutral-500 space-y-2 mt-6 text-sm sm:text-base"
               >
                 <li>Mark your running, biking, or walking paths</li>
                 <li>Sync with your GPS for real-time updates</li>
@@ -204,19 +204,19 @@ function Homepage() {
             viewport={{ once: true }}
             className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[30%] min-w-[300px]"
           >
-            <div className="relative h-[250px] w-full">
+            <div className="relative h-[200px] sm:h-[250px] w-full">
               <img
                 src={dashboardPreview}
                 alt="Dashboard preview"
                 className="absolute inset-0 w-full h-full object-cover z-[-1]"
               />
-              <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
+              <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center px-4">
                 <motion.h2
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                   viewport={{ once: true }}
-                  className="text-2xl font-bold leading-tight"
+                  className="text-xl sm:text-2xl font-bold leading-tight text-white"
                 >
                   Interactive
                   <br />
@@ -224,13 +224,13 @@ function Homepage() {
                 </motion.h2>
               </div>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
                 viewport={{ once: true }}
-                className="text-neutral-400 text-left"
+                className="text-neutral-400 text-left text-sm sm:text-base"
               >
                 Get insights on your performance, trends, and distances. Whether
                 you&#39;re a casual jogger or a serious athlete, our analytics
@@ -247,7 +247,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.2 }}
-        className="w-full px-6 py-20 mb-[200px] bg-neutral-900"
+        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-16 sm:mb-32 lg:mb-[200px] bg-neutral-900"
       >
         <div className="max-w-[1200px] mx-auto text-center">
           <motion.h2
@@ -255,11 +255,11 @@ function Homepage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold mb-10"
+            className="text-2xl sm:text-3xl font-bold mb-10 text-white"
           >
             What Our Users Are Saying
           </motion.h2>
-          <div className="flex flex-wrap justify-center gap-10">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
             {testimonials.map((t, idx) => (
               <motion.div
                 key={idx}
@@ -268,12 +268,12 @@ function Homepage() {
                 transition={{ duration: 0.6, delay: 0.1 * idx }}
                 viewport={{ once: true }}
                 whileHover={{ y: -5 }}
-                className="w-[250px] flex flex-col items-center text-center"
+                className="w-[200px] sm:w-[250px] flex flex-col items-center text-center"
               >
                 <motion.img
                   src={t.image}
                   alt={t.name}
-                  className="w-[200px] h-[200px] object-cover rounded-lg mb-4"
+                  className="w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] object-cover rounded-lg mb-4"
                   whileHover={{
                     scale: 1.05,
                     transition: { duration: 0.3 },
@@ -284,7 +284,7 @@ function Homepage() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.2 + 0.1 * idx }}
                   viewport={{ once: true }}
-                  className="italic text-neutral-200 mb-2"
+                  className="italic text-neutral-200 mb-2 text-sm sm:text-base px-2"
                 >
                   &quot;{t.quote}&quot;
                 </motion.blockquote>
@@ -293,7 +293,7 @@ function Homepage() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.3 + 0.1 * idx }}
                   viewport={{ once: true }}
-                  className="text-neutral-500"
+                  className="text-neutral-500 text-sm sm:text-base"
                 >
                   — {t.name}
                 </motion.p>
@@ -309,22 +309,22 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full px-6 py-20 mb-[200px]"
+        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-16 sm:mb-32 lg:mb-[200px]"
       >
-        <div className="relative h-[300px] max-w-[1200px] mx-auto rounded-lg overflow-hidden">
+        <div className="relative h-[250px] sm:h-[300px] max-w-[1200px] mx-auto rounded-lg overflow-hidden">
           <img
             src={heroImage}
             alt="Call to Action"
             className="absolute inset-0 w-full h-full object-cover z-[-1]"
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 z-0" />
-          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 sm:px-6">
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-3xl font-bold mb-4"
+              className="text-2xl sm:text-3xl font-bold mb-4 leading-tight"
             >
               Ready to Master Your Journey?
             </motion.h2>
@@ -333,7 +333,7 @@ function Homepage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
-              className="text-neutral-300 mb-6"
+              className="text-neutral-300 mb-6 text-base sm:text-lg"
             >
               Sign up and start tracking your movement today.
             </motion.p>
@@ -344,7 +344,7 @@ function Homepage() {
               viewport={{ once: true }}
             >
               <Link to="/signup">
-                <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
+                <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200 text-base sm:text-lg">
                   Create Account
                 </Button>
               </Link>
@@ -359,7 +359,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="mb-32" // Added bottom margin for spacing before footer
+        className="mb-16 sm:mb-24 lg:mb-32" // Added bottom margin for spacing before footer
       >
         <Card cards={bottomCards} />
       </motion.div>

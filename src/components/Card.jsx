@@ -40,8 +40,8 @@ function Card({ cards }) {
   const cardsToRender = cards || defaultCards;
 
   return (
-    <section className="w-full bg-black py-20">
-      <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto px-6 pb-12">
+    <section className="w-full bg-black py-12 sm:py-20">
+      <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto px-4 sm:px-6 pb-12">
         {cardsToRender.map((card, index) => (
           <motion.a
             key={card.id}
@@ -54,21 +54,25 @@ function Card({ cards }) {
             whileTap={{ scale: 0.98 }}
             className="relative flex-1 min-w-[300px] max-w-[400px] bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg flex flex-col transform transition-transform duration-300 hover:shadow-xl will-change-transform no-underline"
           >
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-full h-[200px] object-cover"
-            />
+            <div className="relative h-[200px] w-full">
+              <img
+                src={card.image}
+                alt={card.title}
+                className="absolute inset-0 w-full h-full object-cover z-[-1]"
+              />
+              <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
+                <motion.h3
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-lg sm:text-xl font-bold text-white leading-tight px-4"
+                >
+                  {card.title}
+                </motion.h3>
+              </div>
+            </div>
             <div className="p-4 flex flex-col flex-1">
-              <motion.h3
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-xl font-semibold mb-2"
-              >
-                {card.title}
-              </motion.h3>
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
