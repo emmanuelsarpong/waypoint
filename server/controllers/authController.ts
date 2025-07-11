@@ -71,7 +71,11 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     await newUser.save();
 
     try {
-      await emailService.sendVerificationEmail(email, verificationToken, firstName);
+      await emailService.sendVerificationEmail(
+        email,
+        verificationToken,
+        firstName
+      );
     } catch (emailErr) {
       logger.error("Email sending failed:", emailErr);
       await User.deleteOne({ _id: newUser._id });
@@ -206,7 +210,11 @@ export const forgotPassword = catchAsync(
 
     // Send email
     try {
-      await emailService.sendPasswordResetEmail(email, resetToken, user.firstName);
+      await emailService.sendPasswordResetEmail(
+        email,
+        resetToken,
+        user.firstName
+      );
     } catch (emailErr) {
       logger.error("Password reset email failed:", emailErr);
       // Optionally clear the token if email fails

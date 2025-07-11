@@ -109,7 +109,7 @@ function App() {
   useEffect(() => {
     const token =
       localStorage.getItem("token") || localStorage.getItem("authToken");
-    
+
     // Debug logging removed for production
 
     if (!token) {

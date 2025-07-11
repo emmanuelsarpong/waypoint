@@ -9,7 +9,7 @@ function Logo({ isScrolled, size = "h-8 w-8" }) {
   };
 
   return (
-    <div 
+    <div
       className="flex items-center cursor-pointer transition-all duration-300 ease-in-out"
       onClick={handleClick}
       style={{
@@ -32,7 +32,7 @@ function Logo({ isScrolled, size = "h-8 w-8" }) {
           }}
         />
       )}
-      
+
       {/* Show text only when NOT scrolled (at top) */}
       {!isScrolled && (
         <span

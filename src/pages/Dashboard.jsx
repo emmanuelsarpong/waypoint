@@ -243,7 +243,7 @@ export default function Dashboard({ user }) {
           {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
         </h1>
         {/* Debug info */}
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <div className="text-xs text-gray-500 text-center mb-4">
             Debug: user = {JSON.stringify(user)}
           </div>

@@ -359,7 +359,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="mb-40" // Added larger bottom margin (150px+) for spacing before footer
+        className="mb-60" // Increased bottom margin (240px) for better spacing before footer
       >
         <Card cards={bottomCards} />
       </motion.div>

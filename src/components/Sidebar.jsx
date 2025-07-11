@@ -206,7 +206,6 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
 
         {/* Navigation content */}
         <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
-
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{

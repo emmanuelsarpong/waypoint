@@ -51,31 +51,31 @@ function FooterLinks() {
   return (
     <>
       <div className={styles.footerLinks}>
-        <button 
+        <button
           onClick={() => setShowTermsModal(true)}
           className="link"
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'inherit', 
-            fontSize: 'inherit',
-            cursor: 'pointer',
-            textDecoration: 'underline'
+          style={{
+            background: "none",
+            border: "none",
+            color: "inherit",
+            fontSize: "inherit",
+            cursor: "pointer",
+            textDecoration: "underline",
           }}
         >
           Terms of Use
         </button>
         <span>|</span>
-        <button 
+        <button
           onClick={() => setShowPrivacyModal(true)}
           className="link"
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'inherit', 
-            fontSize: 'inherit',
-            cursor: 'pointer',
-            textDecoration: 'underline'
+          style={{
+            background: "none",
+            border: "none",
+            color: "inherit",
+            fontSize: "inherit",
+            cursor: "pointer",
+            textDecoration: "underline",
           }}
         >
           Privacy Policy
