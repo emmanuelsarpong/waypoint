@@ -139,7 +139,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       {/* Mobile Dark Overlay - Mobile only */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 z-50 transition-all duration-300 sidebar-overlay"
+          className="fixed inset-0 z-40 transition-all duration-300 sidebar-overlay"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -153,8 +153,15 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
             pointerEvents: "auto",
             touchAction: "none",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 40,
           }}
         />
       )}
@@ -170,6 +177,8 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           paddingTop: "24px",
           backgroundColor: "#000000 !important",
           background: "#000000",
+          zIndex: 50,
+          position: "fixed",
         }}
       >
         {/* Close button - Top right corner */}
