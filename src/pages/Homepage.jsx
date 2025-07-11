@@ -95,7 +95,7 @@ function Homepage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full h-[500px] relative mb-16 sm:mb-32 lg:mb-[200px] rounded-lg overflow-hidden px-4 sm:px-6"
+        className="w-full h-[500px] relative mb-32 sm:mb-40 lg:mb-[200px] rounded-lg overflow-hidden px-4 sm:px-6"
       >
         <img
           src={heroImage}
@@ -140,7 +140,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full bg-black py-12 sm:py-20 px-4 sm:px-6 mb-16 sm:mb-32 lg:mb-[200px]"
+        className="w-full bg-black py-12 sm:py-20 px-4 sm:px-6 mb-32 sm:mb-40 lg:mb-[200px]"
       >
         <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto">
           {/* How It Works */}
@@ -247,7 +247,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.2 }}
-        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-16 sm:mb-32 lg:mb-[200px] bg-neutral-900"
+        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-32 sm:mb-40 lg:mb-[200px] bg-neutral-900"
       >
         <div className="max-w-[1200px] mx-auto text-center">
           <motion.h2
@@ -309,7 +309,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-16 sm:mb-32 lg:mb-[200px]"
+        className="w-full px-4 sm:px-6 py-12 sm:py-20 mb-32 sm:mb-40 lg:mb-[200px]"
       >
         <div className="relative h-[250px] sm:h-[300px] max-w-[1200px] mx-auto rounded-lg overflow-hidden">
           <img
@@ -359,7 +359,7 @@ function Homepage() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="mb-16 sm:mb-24 lg:mb-32" // Added bottom margin for spacing before footer
+        className="mb-32 sm:mb-40 lg:mb-48" // Added bottom margin for spacing before footer
       >
         <Card cards={bottomCards} />
       </motion.div>
