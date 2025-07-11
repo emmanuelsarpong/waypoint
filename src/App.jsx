@@ -33,8 +33,14 @@ import PageSpinner from "./components/PageSpinner";
 import MapPage from "./pages/MapPage";
 
 function App() {
-  // Initialize sidebar state - always closed on mobile, open on desktop
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Initialize sidebar state - closed on mobile, open on desktop
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    // Check if window is available (client-side)
+    if (typeof window !== 'undefined') {
+      return window.innerWidth > 768; // Open on desktop, closed on mobile
+    }
+    return true; // Default to open for SSR (desktop-first)
+  });
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const location = useLocation();
@@ -54,8 +60,10 @@ function App() {
       const isMobile = window.innerWidth <= 768;
       if (isMobile) {
         setSidebarOpen(false); // Always close on mobile
+      } else {
+        // On desktop, open by default
+        setSidebarOpen(true);
       }
-      // On desktop, we don't auto-open anymore - let user control it
     };
 
     window.addEventListener("resize", handleResize);
