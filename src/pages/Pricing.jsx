@@ -110,9 +110,7 @@ function Pricing({ user }) {
   };
 
   const handleSubscribe = async (planName) => {
-    console.log("handleSubscribe called with:", planName);
-    console.log("User:", user);
-    console.log("Price IDs:", priceIds);
+    // Debug logs removed for production
 
     if (!priceIds[planName]) {
       alert(
@@ -123,43 +121,42 @@ function Pricing({ user }) {
 
     // Check if user is logged in
     if (!user) {
-      console.log("No user found, redirecting to login");
+      // No user found, redirecting to login
       alert("Please log in to subscribe to a plan.");
       window.location.href = "/login";
       return;
     }
 
-    console.log("Starting subscription process...");
+    // Starting subscription process
     setLoading(true);
     try {
-      console.log("Making API call to create checkout session");
+      // Making API call to create checkout session
       const res = await authFetch("/api/billing/create-checkout-session", {
         method: "POST",
         body: JSON.stringify({ priceId: priceIds[planName] }),
       });
 
-      console.log("Response status:", res.status);
-      console.log("Response ok:", res.ok);
+      // Response processing (debug logs removed)
 
       if (!res.ok) {
         if (res.status === 401) {
-          console.log("401 Unauthorized - redirecting to login");
+          // 401 Unauthorized - redirecting to login
           alert("Please log in to subscribe to a plan.");
           window.location.href = "/login";
           return;
         }
         const errorData = await res.json();
-        console.log("Error data:", errorData);
+        // Error data processed (debug removed)
         throw new Error(errorData.error || "Failed to create checkout session");
       }
 
       const data = await res.json();
-      console.log("Success data:", data);
+      // Success data processed (debug removed)
       if (data.url) {
-        console.log("Redirecting to Stripe Checkout:", data.url);
+        // Redirecting to Stripe Checkout
         window.location.href = data.url; // Redirect to Stripe Checkout
       } else {
-        console.log("No URL in response");
+        // No URL in response
         alert("Failed to create checkout session. Please try again.");
       }
     } catch (err) {

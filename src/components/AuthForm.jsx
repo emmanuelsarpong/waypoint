@@ -210,7 +210,7 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
                 setLoading(false);
                 return;
               }
-              console.log("RESET PASSWORD TOKEN:", token);
+              // Reset password token processing (debug removed for production)
               try {
                 const res = await fetch(
                   "https://waypoint-production-5b75.up.railway.app/auth/reset-password",
@@ -366,9 +366,8 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      console.log("Login response:", res);
-      const data = await res.json();
-      console.log("Login data:", data);
+      // Login response processed (debug removed for production)
+      // Login data processed (debug removed for production)
 
       setLoading(false);
 

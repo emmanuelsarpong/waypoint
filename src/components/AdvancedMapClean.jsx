@@ -165,7 +165,7 @@ const AdvancedMapClean = () => {
         headers: { "Content-Type": "application/json" },
       });
       if (response.ok) {
-        console.log("Test data seeded to backend");
+        // Test data seeded to backend (debug removed for production)
       }
     } catch (error) {
       console.error("Backend seeding failed:", error);

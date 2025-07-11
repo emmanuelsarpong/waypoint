@@ -206,22 +206,6 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
 
         {/* Navigation content */}
         <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
-          {/* Debug info for mobile testing - remove after fixing */}
-          {isMobile && (
-            <div
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                padding: "8px",
-                margin: "8px",
-                borderRadius: "4px",
-                fontSize: "10px",
-                color: "#ccc",
-              }}
-            >
-              Auth: {isAuthenticated ? "✓" : "✗"} | Local:{" "}
-              {localAuth ? "✓" : "✗"} | Items: {navItems.length}
-            </div>
-          )}
 
           <nav
             className="flex flex-col gap-2 justify-center"

@@ -62,7 +62,7 @@ export default function Dashboard({ user }) {
     if (user?.id) {
       fetchUserStats(user.id)
         .then((data) => {
-          console.log("Fetched user stats:", data); // Debug log
+          // Debug log removed for production
           setUserStats(data);
           setRecentRoutes(data.recentRoutes || []);
           setFriendActivities(data.friendActivities || []);
