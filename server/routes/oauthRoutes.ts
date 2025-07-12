@@ -15,9 +15,7 @@ if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
       {
         clientID: process.env.MICROSOFT_CLIENT_ID!,
         clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
-        callbackURL:
-          process.env.MICROSOFT_CALLBACK_URL ||
-          "http://localhost:3000/auth/microsoft/callback",
+        callbackURL: "http://localhost:3000/auth/microsoft/callback",
         scope: ["user.read"],
       },
       async (

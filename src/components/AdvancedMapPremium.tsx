@@ -409,9 +409,7 @@ const glow = keyframes`
 // Main Container
 const MapWrapper = styled.div`
   width: 100%;
-  height: calc(
-    100vh - 70px - 60px
-  ); /* Subtract topbar (70px) and footer (60px) */
+  height: 89.5vh;
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
@@ -482,7 +480,7 @@ const SuccessAlert = styled(motion.div)<{ $visible: boolean }>`
 // Smart Controls Panel
 const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
-  top: 120px;
+  top: 118px; 
   left: 20px;
   right: 20px;
   z-index: 1001;
@@ -499,11 +497,10 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   justify-content: center;
 
   @media (max-width: 768px) {
-    left: 12px;
-    right: 12px;
-    top: 100px;
-    padding: 12px;
-    gap: 8px;
+    top: 140px; // Also increase for mobile
+    left: 8px;
+    right: 8px;
+    max-width: 100vw;
   }
 `;
 
@@ -1769,10 +1766,34 @@ const AdvancedMapPremium: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Title>Waypoint Premium</Title>
-          <Subtitle>
-            Professional route tracking with intelligent path optimization
-          </Subtitle>
+          <div
+            style={{
+              textAlign: "center",
+              // Removed paddingTop and background for a cleaner header
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "700",
+                color: "#fff",
+                margin: "0 0 8px 0",
+                letterSpacing: "-1px",
+              }}
+            >
+              Waypoint Premium
+            </h1>
+            <p
+              style={{
+                color: "#d1d5db",
+                fontSize: "1.1rem",
+                margin: 0,
+                fontWeight: "400",
+              }}
+            >
+              Professional route tracking with intelligent path optimization
+            </p>
+          </div>
         </Header>
 
         <ControlsPanel
@@ -1947,6 +1968,7 @@ const AdvancedMapPremium: React.FC = () => {
                         </div>
                         <div style={{ fontSize: "0.75rem", color: "#a0a0a0" }}>
                           Distance
+
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -2108,7 +2130,7 @@ const AdvancedMapPremium: React.FC = () => {
                           <YAxis hide />
                           <Tooltip
                             labelFormatter={(value) => `${value.toFixed(1)}km`}
-                            formatter={(value: number) => [
+                            formatter={( value: number) => [
                               `${value}m`,
                               "Elevation",
                             ]}

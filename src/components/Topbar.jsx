@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "./Logo";
+import logoWhite from "../assets/logo-white.png";
 import Button from "./Button";
 import showIcon from "../assets/hide.svg";
 import closeIcon from "../assets/show.svg";
@@ -12,16 +12,19 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 20); // Show logo after scrolling 20px
     };
 
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
+    // Initial check on mount
+    handleScroll();
+    handleResize();
+
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -41,7 +44,7 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   return (
     <>
-      {/* Mobile Overlay - blur removed */}
+      {/* Mobile Overlay */}
       {isMobile && sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-all duration-300"
@@ -67,7 +70,24 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <Logo isScrolled={isScrolled} />
+          {isScrolled ? (
+            <img
+              src={logoWhite}
+              alt="Waypoint Logo"
+              style={{ height: "32px", width: "auto" }}
+            />
+          ) : (
+            <span
+              style={{
+                fontWeight: 400,
+                fontSize: "1rem",
+                color: "white",
+              }}
+            >
+              Waypoint
+            </span>
+          )}
+
           <button
             onClick={handleToggle}
             className="focus:outline-none group"

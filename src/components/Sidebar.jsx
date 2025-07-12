@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import Logo from "./Logo";
 
 function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
   const [isMobile, setIsMobile] = useState(false);
