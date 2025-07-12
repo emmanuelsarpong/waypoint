@@ -408,14 +408,26 @@ const glow = keyframes`
 
 // Main Container
 const MapWrapper = styled.div`
-  width: 100%;
-  height: 89.5vh;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+  @media (max-width: 768px) {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
 `;
 
 // Header with blur and transparency
@@ -497,10 +509,12 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   justify-content: center;
 
   @media (max-width: 768px) {
-    top: 140px; // Also increase for mobile
-    left: 8px;
-    right: 8px;
+    top: 140px;
+    left: 4px;
+    right: 4px;
     max-width: 100vw;
+    padding: 8px;
+    gap: 8px;
   }
 `;
 
@@ -654,9 +668,10 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   flex-direction: column;
 
   @media (max-width: 768px) {
-    left: 12px;
-    width: calc(100% - 24px);
+    left: 4px;
+    width: calc(100% - 8px);
     max-height: calc(100vh - 120px);
+    padding: 8px;
   }
 `;
 
@@ -759,10 +774,11 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   flex-direction: column;
 
   @media (max-width: 768px) {
-    right: 12px;
-    width: calc(100% - 24px);
+    right: 4px;
+    width: calc(100% - 8px);
     max-height: calc(100vh - 120px);
     top: 500px;
+    padding: 8px;
   }
 `;
 

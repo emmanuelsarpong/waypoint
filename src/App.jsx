@@ -43,6 +43,13 @@ function App() {
   });
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => {
+    // Check if window is available (client-side)
+    if (typeof window !== "undefined") {
+      return window.innerWidth <= 768; // True if mobile, false if desktop
+    }
+    return false; // Default to false for SSR (desktop-first)
+  });
   const location = useLocation();
 
   // Debug logging removed for production
@@ -50,8 +57,9 @@ function App() {
   // Handle window resize and set initial sidebar state
   useEffect(() => {
     const handleResize = () => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
+      setIsMobile(window.innerWidth <= 768);
+      const isMobileNow = window.innerWidth <= 768;
+      if (isMobileNow) {
         setSidebarOpen(false); // Always close on mobile
       } else {
         // On desktop, open by default
@@ -196,7 +204,9 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className="w-full transition-all duration-300 relative flex flex-col h-full"
+            className={`w-full transition-all duration-300 relative flex flex-col h-full${
+              isMobile && sidebarOpen ? " blur-sm opacity-60 pointer-events-none" : ""
+            }`}
             style={{
               marginLeft:
                 typeof window !== "undefined" && window.innerWidth <= 768
