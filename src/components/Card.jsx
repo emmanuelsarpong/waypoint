@@ -66,7 +66,7 @@ function Card({ cards }) {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
                   viewport={{ once: true }}
-                  className="text-3xl font-bold leading-tight"
+                  className="text-3xl font-normal leading-tight"
                 >
                   {card.title}
                 </motion.h3>

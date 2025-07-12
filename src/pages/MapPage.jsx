@@ -1,4 +1,4 @@
-import AdvancedMapPremium from "../components/AdvancedMapPremium";
+import AdvancedMapClean from "../components/AdvancedMapClean";
 
 export default function MapPage() {
   return (
@@ -9,7 +9,7 @@ export default function MapPage() {
         height: "calc(100vh - 140px)",
       }}
     >
-      <AdvancedMapPremium />
+      <AdvancedMapClean />
     </div>
   );
 }

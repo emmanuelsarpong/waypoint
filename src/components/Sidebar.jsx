@@ -111,38 +111,12 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
 
   return (
     <>
-      {/* Mobile Dark Overlay - Mobile only */}
-      {isMobile && isOpen && (
-        <div
-          className="fixed inset-0 z-40 transition-all duration-300 sidebar-overlay"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleSidebar();
-          }}
-          onTouchEnd={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleSidebar();
-          }}
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            pointerEvents: "auto",
-            touchAction: "none",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 40,
-          }}
-        />
-      )}
+      {/* Mobile overlay - removed */}
+
+      {/* Desktop/All devices overlay when sidebar is open - removed */}
 
       <aside
-        className={`bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-50 shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`sidebar bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-[9999] shadow-lg transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{

@@ -21,6 +21,7 @@ body,
 #root {
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -30,6 +31,7 @@ body {
   color: var(--text-light);
   background-color: var(--bg-dark);
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Only apply this class to your auth page wrapper */
@@ -104,11 +106,54 @@ img.logo {
 
 .auth-page a,
 .auth-page a:visited {
-  color: #2563eb !important; 
+  color: #2563eb !important;
   text-decoration: underline;
 }
 
 .auth-page a:hover,
 .auth-page a:focus {
-  color: #1d4ed8 !important; 
+  color: #1d4ed8 !important;
+}
+
+/* Ensure map stays below sidebar */
+.map-container-below-sidebar {
+  z-index: 1 !important;
+}
+
+.map-container-below-sidebar .leaflet-container {
+  z-index: 1 !important;
+}
+
+.map-container-below-sidebar .leaflet-control-container {
+  z-index: 2 !important;
+}
+
+/* Prevent horizontal scrolling on mobile */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Ensure no elements extend beyond viewport */
+  .w-full,
+  .max-w-\[1200px\] {
+    max-width: 100vw !important;
+  }
+}
+
+/* Mobile sidebar overlay effects */
+.mobile-sidebar-blur {
+  filter: blur(4px);
+  opacity: 0.3;
+  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+/* Ensure sidebar and topbar are always clear */
+.sidebar,
+.topbar {
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }

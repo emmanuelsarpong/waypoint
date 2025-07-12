@@ -397,15 +397,15 @@ export default function AuthForm({ mode = "login", onSuccess, token }) {
         import.meta.env.VITE_API_URL ||
         import.meta.env.VITE_BACKEND_URL ||
         "https://waypoint-production-5b75.up.railway.app";
-      
+
       const res = await fetch(`${backendUrl}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      
+
       const data = await res.json();
-      
+
       setLoading(false);
 
       if (res.ok) {

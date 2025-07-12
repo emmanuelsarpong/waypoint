@@ -172,6 +172,10 @@ function App() {
     location.pathname === "/password-email-sent" ||
     location.pathname === "/reset-password";
 
+  // Check if we're on mobile and sidebar is open
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const shouldBlurMainContent = isMobile && sidebarOpen;
+
   return (
     <div
       className={`h-screen flex flex-col ${
@@ -186,7 +190,9 @@ function App() {
             isAuthenticated={!!user}
           />
 
+          {/* Topbar - outside of blurred content */}
           <Topbar
+            className="topbar"
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
             isAuthenticated={!!user}
             onLogout={() => setUser(null)}
@@ -195,7 +201,9 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className="w-full transition-all duration-300 relative flex flex-col h-full"
+            className={`w-full transition-all duration-300 relative flex flex-col h-full ${
+              shouldBlurMainContent ? "mobile-sidebar-blur" : ""
+            }`}
             style={{
               marginLeft:
                 typeof window !== "undefined" && window.innerWidth <= 768
@@ -215,8 +223,8 @@ function App() {
                       <Route path="/map" element={<MapPage />} />
                     </Routes>
                   </div>
-                  {/* Footer for map page */}
-                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-80 backdrop-blur-sm">
+                  {/* Footer for map page - blur removed */}
+                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-80">
                     <SocialMediaBar />
                   </div>
                 </div>

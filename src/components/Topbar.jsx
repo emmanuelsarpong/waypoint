@@ -5,7 +5,7 @@ import Button from "./Button";
 import showIcon from "../assets/hide.svg";
 import closeIcon from "../assets/show.svg";
 
-function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
+function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen, className = "" }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -41,18 +41,16 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   return (
     <>
-      {/* Mobile Blur Overlay */}
+      {/* Mobile Overlay - blur removed */}
       {isMobile && sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-30 transition-all duration-300"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-all duration-300"
           onClick={toggleSidebar}
-          style={{
-            backdropFilter: "blur(8px)",
-          }}
         />
       )}
 
       <header
+        className={className}
         style={{
           position: "fixed",
           top: 0,

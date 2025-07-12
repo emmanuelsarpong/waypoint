@@ -967,13 +967,15 @@ const AdvancedMapClean = () => {
             borderRadius: "16px",
             overflow: "hidden",
             position: "relative",
+            zIndex: 1,
           }}
         >
           <MapContainer
             center={[45.5017, -73.5673]}
             zoom={14}
             scrollWheelZoom
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "100%", zIndex: 1 }}
+            className="map-container-below-sidebar"
           >
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
