@@ -141,19 +141,20 @@ img.logo {
   }
 }
 
-/* Mobile sidebar overlay effects */
-.mobile-sidebar-blur {
-  filter: blur(4px);
-  opacity: 0.3;
-  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  pointer-events: none;
+/* Force full opacity and remove any unwanted filters */
+body,
+#root,
+.main-content {
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
 }
 
-/* Ensure sidebar and topbar are always clear */
-.sidebar,
-.topbar {
+/* Remove any blur or filter from main elements */
+main,
+.container,
+.content {
   filter: none !important;
   backdrop-filter: none !important;
   opacity: 1 !important;
-  pointer-events: auto !important;
 }

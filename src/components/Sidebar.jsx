@@ -116,7 +116,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       {/* Desktop/All devices overlay when sidebar is open - removed */}
 
       <aside
-        className={`sidebar bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-[9999] shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`bg-black text-white h-screen flex flex-col justify-between fixed top-0 left-0 z-[9999] shadow-lg transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{

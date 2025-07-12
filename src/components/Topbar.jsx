@@ -5,7 +5,7 @@ import Button from "./Button";
 import showIcon from "../assets/hide.svg";
 import closeIcon from "../assets/show.svg";
 
-function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen, className = "" }) {
+function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -50,12 +50,11 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen, classNa
       )}
 
       <header
-        className={className}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          zIndex: 50, 
+          zIndex: 50,
           width: "100%",
           height: "70px",
           padding: "0 24px",

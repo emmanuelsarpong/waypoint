@@ -172,10 +172,6 @@ function App() {
     location.pathname === "/password-email-sent" ||
     location.pathname === "/reset-password";
 
-  // Check if we're on mobile and sidebar is open
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
-  const shouldBlurMainContent = isMobile && sidebarOpen;
-
   return (
     <div
       className={`h-screen flex flex-col ${
@@ -192,7 +188,6 @@ function App() {
 
           {/* Topbar - outside of blurred content */}
           <Topbar
-            className="topbar"
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
             isAuthenticated={!!user}
             onLogout={() => setUser(null)}
@@ -201,9 +196,7 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className={`w-full transition-all duration-300 relative flex flex-col h-full ${
-              shouldBlurMainContent ? "mobile-sidebar-blur" : ""
-            }`}
+            className="w-full transition-all duration-300 relative flex flex-col h-full"
             style={{
               marginLeft:
                 typeof window !== "undefined" && window.innerWidth <= 768
