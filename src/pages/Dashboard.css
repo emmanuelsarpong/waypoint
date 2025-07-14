@@ -8,7 +8,7 @@
   max-width: 1144px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 10px;
+  padding: 0;
 }
 
 @media (min-width: 640px) {
@@ -86,7 +86,7 @@
 
 /* Goals Grid Specific Styling */
 .goals-section .grid {
-  gap: 1.5rem !important; 
+  gap: 1.5rem !important;
 }
 
 /* Achievements Section */
