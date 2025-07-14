@@ -452,6 +452,7 @@ const Header = styled(motion.div)`
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
 `;
 
 const Title = styled.h1`
@@ -502,11 +503,11 @@ const SuccessAlert = styled(motion.div)<{ $visible: boolean }>`
 // Smart Controls Panel
 const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
-  top: 118px;
+  top: 133px;
   left: 20px;
   right: 20px;
   z-index: 1001;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -519,11 +520,10 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   justify-content: center;
 
   @media (max-width: 768px) {
-    top: 140px;
+    top: 150px;
     max-width: 100vw;
     padding: 8px;
     gap: 8px;
-    margin-top: 60px;
   }
 `;
 
@@ -662,7 +662,7 @@ const SmartButton = styled(motion.button)<{
 // Smart Sidebar
 const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
-  top: 200px;
+  top: ${(props) => (props.$isMobile ? "190px" : "130px")};
   left: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
   // max-height: calc(100vh - 360px);
@@ -681,6 +681,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
     right: 20px;
     width: auto;
     padding: 8px;
+    top: 150px;
   }
 `;
 
@@ -768,7 +769,7 @@ const SidebarContent = styled.div`
 // Route Analytics Panel
 const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
-  top: 200px;
+  top: ${(props) => (props.$isMobile ? "190px" : "230px")};
   right: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
   max-height: calc(100vh - 360px);
@@ -787,7 +788,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
     right: 20px;
     width: auto;
     max-height: calc(100vh - 120px);
-    top: 200px;
+    top: 150px;
     padding: 8px;
   }
 `;
