@@ -205,7 +205,7 @@ function App() {
           {/* Main content wrapper */}
           <div
             className={`w-full transition-all duration-300 relative flex flex-col h-full${
-              isMobile && sidebarOpen ? " opacity-60 pointer-events-none" : ""
+              isMobile && sidebarOpen ? " opacity-60" : ""
             }`}
             style={{
               marginLeft:
@@ -220,6 +220,9 @@ function App() {
               WebkitBackdropFilter:
                 isMobile && sidebarOpen ? "blur(8px)" : "none",
             }}
+            onClick={
+              isMobile && sidebarOpen ? () => setSidebarOpen(false) : undefined
+            }
           >
             <main className="mt-[70px] flex-1 flex flex-col">
               {/* Special handling for map route - no container constraints */}
