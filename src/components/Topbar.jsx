@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logoWhite from "../assets/logo-white.png";
 import Button from "./Button";
 import showIcon from "../assets/hide.svg";
 import closeIcon from "../assets/show.svg";
@@ -12,18 +11,18 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20); // Show logo after scrolling 20px
+      setIsScrolled(window.scrollY > 0);
     };
 
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    // Initial check on mount
+    // Initial check
     handleScroll();
     handleResize();
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -72,7 +71,7 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           {isScrolled ? (
             <img
-              src={logoWhite}
+              src="/favicon.svg"
               alt="Waypoint Logo"
               style={{ height: "32px", width: "auto" }}
             />

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import logoWhite from "../assets/logo-white.png";
 
-function Logo({ isScrolled, size = "h-8 w-8" }) {
+function Logo({ isScrolled }) {
   const navigate = useNavigate();
 
   const handleClick = () => {

@@ -13,7 +13,6 @@ import GoogleIcon from "../assets/google.svg";
 import MicrosoftIcon from "../assets/microsoft.svg";
 import AppleIcon from "../assets/apple.svg";
 import PhoneIcon from "../assets/phone.svg";
-import logoBlack from "../assets/logo-black.png";
 
 function OAuthButton({ icon, text, onClick }) {
   return (
@@ -29,7 +28,7 @@ function Header() {
     <header className={styles.fixedHeader}>
       <a href="/" className={styles.logo}>
         <img
-          src={logoBlack}
+          src="/logo-black.svg"
           alt="Waypoint"
           className={styles.icon}
           style={{
