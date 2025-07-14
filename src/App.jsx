@@ -206,7 +206,7 @@ function App() {
           <div
             className={`w-full transition-all duration-300 relative flex flex-col h-full${
               isMobile && sidebarOpen
-                ? " blur-sm opacity-60 pointer-events-none"
+                ? " opacity-60 pointer-events-none"
                 : ""
             }`}
             style={{
@@ -217,6 +217,9 @@ function App() {
                   ? "250px"
                   : "0px",
               transition: "all 0.3s ease-in-out",
+              filter: isMobile && sidebarOpen ? "blur(4px)" : "none",
+              backdropFilter: isMobile && sidebarOpen ? "blur(8px)" : "none",
+              WebkitBackdropFilter: isMobile && sidebarOpen ? "blur(8px)" : "none",
             }}
           >
             <main className="mt-[70px] flex-1 flex flex-col">
