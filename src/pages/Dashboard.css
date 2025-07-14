@@ -1,3 +1,10 @@
+/* Fix widget/modal overlap for mobile views */
+@media (max-width: 768px) {
+  .dashboard-widget-grid,
+  .widget-modal {
+    margin-top: 90px !important;
+  }
+}
 .profile-card-grid,
 .dashboard-widget-grid {
   display: grid;

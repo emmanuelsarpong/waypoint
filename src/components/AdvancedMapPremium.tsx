@@ -30,8 +30,6 @@ import {
   Area,
 } from "recharts";
 
-const SIDEBAR_WIDTH = 360; // px
-
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -200,8 +198,10 @@ const LoadingSpinner = styled.div`
 const RouteDistanceIndicator = styled(motion.div)<{ $visible: boolean }>`
   position: absolute;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 20px;
+  right: 20px;
+  margin: 0 auto;
+  max-width: 300px;
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -411,20 +411,20 @@ const glow = keyframes`
 // Main Container
 const MapWrapper = styled.div`
   width: 100vw;
-width: 100vw;
-min-width: 0;
-height: 100vh;
-background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-position: relative;
-overflow: hidden;
-border: 1px solid rgba(255, 255, 255, 0.1);
-box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  max-width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 
-@media (max-width: 768px) {
-  width: 100vw;
-  min-width: 0;
-}
+  @media (max-width: 768px) {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
     min-height: 100vh;
     border-radius: 0;
     box-shadow: none;
@@ -498,7 +498,7 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   left: 20px;
   right: 20px;
   z-index: 1001;
-  background: rgba(15, 15, 15, 0.95);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -512,11 +512,10 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
 
   @media (max-width: 768px) {
     top: 140px;
-    left: 4px;
-    right: 4px;
     max-width: 100vw;
     padding: 8px;
     gap: 8px;
+    margin-top: 60px;
   }
 `;
 
@@ -658,7 +657,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   top: 200px;
   left: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
-  max-height: calc(100vh - 360px);
+  // max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -670,9 +669,9 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   flex-direction: column;
 
   @media (max-width: 768px) {
-    left: 4px;
-    width: calc(100% - 8px);
-    max-height: calc(100vh - 120px);
+    left: 20px;
+    right: 20px;
+    width: auto;
     padding: 8px;
   }
 `;
@@ -776,10 +775,11 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   flex-direction: column;
 
   @media (max-width: 768px) {
-    right: 4px;
-    width: calc(100% - 8px);
+    left: 20px;
+    right: 20px;
+    width: auto;
     max-height: calc(100vh - 120px);
-    top: 500px;
+    top: 200px;
     padding: 8px;
   }
 `;
@@ -1576,7 +1576,9 @@ const AdvancedMapPremium: React.FC = () => {
   const [sportFilter, setSportFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
   const [locationLoading, setLocationLoading] = useState(true);
   const [alertMessage, setAlertMessage] = useState<string>("");
   const [showAlert, setShowAlert] = useState(false);
@@ -1585,16 +1587,6 @@ const AdvancedMapPremium: React.FC = () => {
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "© OpenStreetMap contributors",
   });
-  // Header scroll state
-  const [showLogo, setShowLogo] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowLogo(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Available map styles with reliable tile sources
   const mapStyles: MapStyle[] = [
@@ -1786,45 +1778,39 @@ const AdvancedMapPremium: React.FC = () => {
       >
         {alertMessage}
       </SuccessAlert>
-      <MapWrapper
-        style={{
-          width: showSidebar ? `calc(100vw - ${SIDEBAR_WIDTH}px)` : "100vw",
-          minWidth: 0,
-        }}
-      >
+      <MapWrapper>
         <Header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div style={{ textAlign: "center" }}>
-            {showLogo ? (
-              <img src="/logo-black.png" alt="Waypoint Logo" style={{ height: 40 }} />
-            ) : (
-              <h1
-                style={{
-                  fontSize: "2.5rem",
-                  fontWeight: "700",
-                  color: "#fff",
-                  margin: "0 0 8px 0",
-                  letterSpacing: "-1px",
-                }}
-              >
-                Waypoint Premium
-              </h1>
-            )}
-            {!showLogo && (
-              <p
-                style={{
-                  color: "#d1d5db",
-                  fontSize: "1.1rem",
-                  margin: 0,
-                  fontWeight: "400",
-                }}
-              >
-                Professional route tracking with intelligent path optimization
-              </p>
-            )}
+          <div
+            style={{
+              textAlign: "center",
+              // Removed paddingTop and background for a cleaner header
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "700",
+                color: "#fff",
+                margin: "0 0 8px 0",
+                letterSpacing: "-1px",
+              }}
+            >
+              Waypoint Premium
+            </h1>
+            <p
+              style={{
+                color: "#d1d5db",
+                fontSize: "1.1rem",
+                margin: 0,
+                fontWeight: "400",
+              }}
+            >
+              Professional route tracking with intelligent path optimization
+            </p>
           </div>
         </Header>
 
@@ -2199,18 +2185,6 @@ const AdvancedMapPremium: React.FC = () => {
             y: mode === "create" && routeGeometry.length > 1 ? 0 : 20,
           }}
           transition={{ duration: 0.3 }}
-          style={isMobile ? {
-            bottom: "50%",
-            left: "50%",
-            transform: "translate(-50%, 50%)",
-            background: "rgba(0,0,0,0.7)",
-            borderRadius: 20,
-            padding: "20px 32px",
-            fontSize: "1.2rem",
-            zIndex: 3000,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
-            textAlign: "center"
-          } : {}}
         >
           📏 Distance: {calculateDistance(routeGeometry).toFixed(2)} km
         </RouteDistanceIndicator>
@@ -2234,163 +2208,154 @@ const AdvancedMapPremium: React.FC = () => {
         </AnimatePresence>
 
         <MapErrorBoundary>
-          <div
+          <MapContainer
+            center={userLocation || [40.7829, -73.9654]}
+            zoom={13}
             style={{
-              flex: 1,
-              minWidth: 0,
-              display: "flex",
-              flexDirection: "column",
+              width: "100%",
               height: "100%",
             }}
+            scrollWheelZoom={true}
           >
-            <MapContainer
-              center={userLocation || [40.7829, -73.9654]}
-              zoom={13}
-              style={{ width: "100%", height: "100%" }}
-              scrollWheelZoom={true}
-            >
-              <DynamicTileLayer mapStyle={mapStyle} />
-              <MapCenter location={userLocation} />
+            <DynamicTileLayer mapStyle={mapStyle} />
+            <MapCenter location={userLocation} />
 
-              {/* Show current location marker */}
-              {userLocation && !locationLoading && (
-                <CurrentLocationMarker position={userLocation} />
-              )}
+            {/* Show current location marker */}
+            {userLocation && !locationLoading && (
+              <CurrentLocationMarker position={userLocation} />
+            )}
 
-              <RouteCreator
-                mode={mode}
-                waypoints={waypoints}
-                setWaypoints={setWaypoints}
-                setRouteGeometry={setRouteGeometry}
-                setIsLoading={setIsLoading}
+            <RouteCreator
+              mode={mode}
+              waypoints={waypoints}
+              setWaypoints={setWaypoints}
+              setRouteGeometry={setRouteGeometry}
+              setIsLoading={setIsLoading}
+            />
+
+            {/* Current route being created */}
+            {mode === "create" && routeGeometry.length > 1 && (
+              <Polyline
+                positions={routeGeometry}
+                color="#ff6b35"
+                weight={5}
+                opacity={0.9}
+                className="creating-route"
+                pathOptions={{
+                  lineCap: "round",
+                  lineJoin: "round",
+                }}
               />
+            )}
 
-              {/* Current route being created */}
-              {mode === "create" && routeGeometry.length > 1 && (
-                <Polyline
-                  positions={routeGeometry}
-                  color="#ff6b35"
-                  weight={5}
-                  opacity={0.9}
-                  className="creating-route"
-                  pathOptions={{
-                    lineCap: "round",
-                    lineJoin: "round",
-                  }}
-                />
-              )}
+            {/* Waypoint markers */}
+            {waypoints.map((waypoint, index) => (
+              <Marker
+                key={index}
+                position={[waypoint.lat, waypoint.lng]}
+                icon={createPremiumMarker(
+                  index === 0
+                    ? "start"
+                    : index === waypoints.length - 1 && waypoints.length > 1
+                    ? "end"
+                    : "waypoint"
+                )}
+              >
+                <Popup>
+                  <div style={{ textAlign: "center", color: "white" }}>
+                    <strong>
+                      {index === 0
+                        ? "Start"
+                        : index === waypoints.length - 1
+                        ? "End"
+                        : `Waypoint ${index + 1}`}
+                    </strong>
+                    <br />
+                    <small>
+                      {waypoint.lat.toFixed(6)}, {waypoint.lng.toFixed(6)}
+                    </small>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
 
-              {/* Waypoint markers */}
-              {waypoints.map((waypoint, index) => (
+            {/* Saved routes */}
+            {filteredRoutes.map((route) => (
+              <Polyline
+                key={route.id}
+                positions={route.coordinates.map((coord) => [
+                  coord.lat,
+                  coord.lng,
+                ])}
+                color={
+                  selectedRoute?.id === route.id
+                    ? "#ff6b35"
+                    : getSportColor(route.sport)
+                }
+                weight={selectedRoute?.id === route.id ? 5 : 3}
+                opacity={selectedRoute?.id === route.id ? 0.9 : 0.6}
+                pathOptions={{
+                  lineCap: "round",
+                  lineJoin: "round",
+                }}
+                eventHandlers={{
+                  click: () => handleRouteClick(route),
+                }}
+              />
+            ))}
+
+            {/* Selected route markers */}
+            {selectedRoute && selectedRoute.coordinates.length > 0 && (
+              <>
                 <Marker
-                  key={index}
-                  position={[waypoint.lat, waypoint.lng]}
+                  position={[
+                    selectedRoute.coordinates[0].lat,
+                    selectedRoute.coordinates[0].lng,
+                  ]}
                   icon={createPremiumMarker(
-                    index === 0
-                      ? "start"
-                      : index === waypoints.length - 1 && waypoints.length > 1
-                      ? "end"
-                      : "waypoint"
+                    "start",
+                    getSportColor(selectedRoute.sport)
                   )}
                 >
                   <Popup>
                     <div style={{ textAlign: "center", color: "white" }}>
-                      <strong>
-                        {index === 0
-                          ? "Start"
-                          : index === waypoints.length - 1
-                          ? "End"
-                          : `Waypoint ${index + 1}`}
-                      </strong>
+                      <div style={{ fontSize: "20px", marginBottom: "8px" }}>
+                        🚀
+                      </div>
+                      <strong>Start</strong>
                       <br />
-                      <small>
-                        {waypoint.lat.toFixed(6)}, {waypoint.lng.toFixed(6)}
-                      </small>
+                      <small>{selectedRoute.name}</small>
                     </div>
                   </Popup>
                 </Marker>
-              ))}
-
-              {/* Saved routes */}
-              {filteredRoutes.map((route) => (
-                <Polyline
-                  key={route.id}
-                  positions={route.coordinates.map((coord) => [
-                    coord.lat,
-                    coord.lng,
-                  ])}
-                  color={
-                    selectedRoute?.id === route.id
-                      ? "#ff6b35"
-                      : getSportColor(route.sport)
-                  }
-                  weight={selectedRoute?.id === route.id ? 5 : 3}
-                  opacity={selectedRoute?.id === route.id ? 0.9 : 0.6}
-                  pathOptions={{
-                    lineCap: "round",
-                    lineJoin: "round",
-                  }}
-                  eventHandlers={{
-                    click: () => handleRouteClick(route),
-                  }}
-                />
-              ))}
-
-              {/* Selected route markers */}
-              {selectedRoute && selectedRoute.coordinates.length > 0 && (
-                <>
-                  <Marker
-                    position={[
-                      selectedRoute.coordinates[0].lat,
-                      selectedRoute.coordinates[0].lng,
-                    ]}
-                    icon={createPremiumMarker(
-                      "start",
-                      getSportColor(selectedRoute.sport)
-                    )}
-                  >
-                    <Popup>
-                      <div style={{ textAlign: "center", color: "white" }}>
-                        <div style={{ fontSize: "20px", marginBottom: "8px" }}>
-                          🚀
-                        </div>
-                        <strong>Start</strong>
-                        <br />
-                        <small>{selectedRoute.name}</small>
+                <Marker
+                  position={[
+                    selectedRoute.coordinates[
+                      selectedRoute.coordinates.length - 1
+                    ].lat,
+                    selectedRoute.coordinates[
+                      selectedRoute.coordinates.length - 1
+                    ].lng,
+                  ]}
+                  icon={createPremiumMarker(
+                    "end",
+                    getSportColor(selectedRoute.sport)
+                  )}
+                >
+                  <Popup>
+                    <div style={{ textAlign: "center", color: "white" }}>
+                      <div style={{ fontSize: "20px", marginBottom: "8px" }}>
+                        🏁
                       </div>
-                    </Popup>
-                  </Marker>
-                  <Marker
-                    position={[
-                      selectedRoute.coordinates[
-                        selectedRoute.coordinates.length - 1
-                      ].lat,
-                      selectedRoute.coordinates[
-                        selectedRoute.coordinates.length - 1
-                      ].lng,
-                    ]}
-                    icon={createPremiumMarker(
-                      "end",
-                      getSportColor(selectedRoute.sport)
-                    )}
-                  >
-                    <Popup>
-                      <div style={{ textAlign: "center", color: "white" }}>
-                        <div style={{ fontSize: "20px", marginBottom: "8px" }}>
-                          🏁
-                        </div>
-                        <strong>Finish</strong>
-                        <br />
-                        <small>
-                          Distance: {selectedRoute.stats.distance}km
-                        </small>
-                      </div>
-                    </Popup>
-                  </Marker>
-                </>
-              )}
-            </MapContainer>
-          </div>
+                      <strong>Finish</strong>
+                      <br />
+                      <small>Distance: {selectedRoute.stats.distance}km</small>
+                    </div>
+                  </Popup>
+                </Marker>
+              </>
+            )}
+          </MapContainer>
         </MapErrorBoundary>
       </MapWrapper>
     </>
