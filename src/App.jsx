@@ -227,10 +227,13 @@ function App() {
             <main className="mt-[70px] flex-1 flex flex-col">
               {/* Special handling for map route - no container constraints */}
               {location.pathname === "/map" ? (
-                <div className="flex-1 w-full h-full flex flex-col">
+                <div className="flex-1 w-full h-full flex flex-col min-h-0">
                   <div
-                    className="flex-1"
-                    style={{ height: "calc(100vh - 140px)" }}
+                    className="flex-1 overflow-hidden"
+                    style={{
+                      height: isMobile ? "auto" : "calc(100vh - 140px)",
+                      minHeight: isMobile ? "60vh" : "calc(100vh - 140px)",
+                    }}
                   >
                     <Routes>
                       <Route

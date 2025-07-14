@@ -11,11 +11,20 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Disable scroll effect on mobile devices
+      if (window.innerWidth <= 768) {
+        setIsScrolled(false);
+        return;
+      }
       setIsScrolled(window.scrollY > 0);
     };
 
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
+      // Reset scroll state when switching to mobile
+      if (window.innerWidth <= 768) {
+        setIsScrolled(false);
+      }
     };
 
     // Initial check

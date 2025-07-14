@@ -5,8 +5,11 @@ export default function MapPage({ sidebarOpen, isMobile }) {
     <div
       style={{
         width: "100%",
+        height: "100%",
         position: "relative",
-        overflow: "hidden",
+        overflow: isMobile ? "visible" : "hidden",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <AdvancedMapPremium sidebarOpen={sidebarOpen} isMobile={isMobile} />
