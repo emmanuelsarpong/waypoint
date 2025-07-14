@@ -182,12 +182,12 @@ function App() {
 
   return (
     <div
-      className={`h-screen flex flex-col ${
+      className={`min-h-screen flex flex-col ${
         isAuthPage ? "bg-white text-black" : "bg-black text-white"
       }`}
     >
       {!isAuthPage && (
-        <div className="flex h-full">
+        <div className="flex">
           <Sidebar
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
@@ -204,7 +204,7 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className={`w-full transition-all duration-300 relative flex flex-col h-full${
+            className={`w-full transition-all duration-300 relative${
               isMobile && sidebarOpen
                 ? " blur-sm opacity-60 pointer-events-none"
                 : ""
@@ -219,10 +219,10 @@ function App() {
               transition: "all 0.3s ease-in-out",
             }}
           >
-            <main className="mt-[70px] flex-1 flex flex-col">
+            <main className="mt-[70px]">
               {/* Special handling for map route - no container constraints */}
               {location.pathname === "/map" ? (
-                <div className="flex-1 w-full h-full flex flex-col">
+                <div className="min-h-screen w-full flex flex-col">
                   <div className="flex-1">
                     <Routes>
                       <Route path="/map" element={<MapPage />} />
@@ -237,13 +237,13 @@ function App() {
                 <>
                   {/* This container centers all content with responsive padding */}
                   <div
-                    className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
+                    className="w-full max-w-[1200px] mx-auto"
                     style={{
                       paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
                       paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
                     }}
                   >
-                    <div className="flex-1 pb-24">
+                    <div className="pb-24">
                       <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/about" element={<About />} />

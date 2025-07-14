@@ -12,7 +12,13 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20); // Show logo after scrolling 20px
+      // Get scroll position from multiple sources
+      const windowScrollY = window.pageYOffset;
+      const documentScrollTop = document.documentElement.scrollTop;
+      const bodyScrollTop = document.body.scrollTop;
+      
+      const scrollTop = windowScrollY || documentScrollTop || bodyScrollTop || 0;
+      setIsScrolled(scrollTop > 0);
     };
 
     const handleResize = () => {
@@ -23,7 +29,8 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
     handleScroll();
     handleResize();
 
-    window.addEventListener("scroll", handleScroll);
+    // Add scroll listeners
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
 
     return () => {
