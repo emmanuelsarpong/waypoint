@@ -160,7 +160,7 @@ function App() {
         setUser(data);
         setLoadingUser(false);
       })
-      .catch((error) => {
+      .catch((_error) => {
         // Auth error occurred
         setUser(null);
         setLoadingUser(false);
@@ -182,12 +182,12 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${
+      className={`h-screen flex flex-col ${
         isAuthPage ? "bg-white text-black" : "bg-black text-white"
       }`}
     >
       {!isAuthPage && (
-        <div className="flex">
+        <div className="flex h-full">
           <Sidebar
             isOpen={sidebarOpen}
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
@@ -204,7 +204,7 @@ function App() {
 
           {/* Main content wrapper */}
           <div
-            className={`w-full transition-all duration-300 relative${
+            className={`w-full transition-all duration-300 relative flex flex-col h-full${
               isMobile && sidebarOpen
                 ? " blur-sm opacity-60 pointer-events-none"
                 : ""
@@ -219,13 +219,21 @@ function App() {
               transition: "all 0.3s ease-in-out",
             }}
           >
-            <main className="mt-[70px]">
+            <main className="mt-[70px] flex-1 flex flex-col">
               {/* Special handling for map route - no container constraints */}
               {location.pathname === "/map" ? (
-                <div className="min-h-screen w-full flex flex-col">
+                <div className="flex-1 w-full h-full flex flex-col">
                   <div className="flex-1">
                     <Routes>
-                      <Route path="/map" element={<MapPage />} />
+                      <Route
+                        path="/map"
+                        element={
+                          <MapPage
+                            sidebarOpen={sidebarOpen}
+                            isMobile={isMobile}
+                          />
+                        }
+                      />
                     </Routes>
                   </div>
                   {/* Footer for map page - blur removed */}
@@ -237,13 +245,13 @@ function App() {
                 <>
                   {/* This container centers all content with responsive padding */}
                   <div
-                    className="w-full max-w-[1200px] mx-auto"
+                    className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
                     style={{
                       paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
                       paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
                     }}
                   >
-                    <div className="pb-24">
+                    <div className="flex-1 pb-24">
                       <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/about" element={<About />} />

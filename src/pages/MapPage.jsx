@@ -1,6 +1,6 @@
 import AdvancedMapPremium from "../components/AdvancedMapPremium";
 
-export default function MapPage() {
+export default function MapPage({ sidebarOpen, isMobile }) {
   return (
     <div
       style={{
@@ -9,7 +9,7 @@ export default function MapPage() {
         overflow: "hidden",
       }}
     >
-      <AdvancedMapPremium />
+      <AdvancedMapPremium sidebarOpen={sidebarOpen} isMobile={isMobile} />
     </div>
   );
 }

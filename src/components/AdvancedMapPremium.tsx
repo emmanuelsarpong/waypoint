@@ -409,23 +409,31 @@ const glow = keyframes`
 `;
 
 // Main Container
-const MapWrapper = styled.div`
-  width: 100vw;
-  max-width: 100vw;
-  height: 100vh;
-  min-height: 100vh;
+const MapWrapper = styled.div<{ $sidebarOpen: boolean; $isMobile: boolean }>`
+  position: fixed;
+  top: 70px;
+  left: ${(props) =>
+    props.$isMobile ? "0px" : props.$sidebarOpen ? "250px" : "0px"};
+  right: 0;
+  bottom: 0;
+  width: ${(props) =>
+    props.$isMobile
+      ? "100vw"
+      : props.$sidebarOpen
+      ? "calc(100vw - 250px)"
+      : "100vw"};
+  height: calc(100vh - 70px);
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+  z-index: 1;
 
   @media (max-width: 768px) {
+    left: 0px;
     width: 100vw;
-    max-width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
@@ -1564,8 +1572,17 @@ const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({
   );
 };
 
+// Main Component Props Interface
+interface AdvancedMapPremiumProps {
+  sidebarOpen?: boolean;
+  isMobile?: boolean;
+}
+
 // Main Component
-const AdvancedMapPremium: React.FC = () => {
+const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
+  sidebarOpen = false,
+  isMobile = false,
+}) => {
   const [mode, setMode] = useState<"create" | "view">("view");
   const [waypoints, setWaypoints] = useState<RouteWaypoint[]>([]);
   const [routeGeometry, setRouteGeometry] = useState<[number, number][]>([]);
@@ -1575,7 +1592,6 @@ const AdvancedMapPremium: React.FC = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [sportFilter, setSportFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
@@ -1617,17 +1633,6 @@ const AdvancedMapPremium: React.FC = () => {
     setAlertMessage(message);
     setShowAlert(true);
     setTimeout(() => setShowAlert(false), 4000); // Hide after 4 seconds
-  }, []);
-
-  // Mobile detection
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Get user's current location
@@ -1778,7 +1783,7 @@ const AdvancedMapPremium: React.FC = () => {
       >
         {alertMessage}
       </SuccessAlert>
-      <MapWrapper>
+      <MapWrapper $sidebarOpen={sidebarOpen} $isMobile={isMobile}>
         <Header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
