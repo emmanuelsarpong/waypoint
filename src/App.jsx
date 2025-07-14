@@ -205,7 +205,9 @@ function App() {
           {/* Main content wrapper */}
           <div
             className={`w-full transition-all duration-300 relative flex flex-col h-full${
-              isMobile && sidebarOpen ? " blur-sm opacity-60 pointer-events-none" : ""
+              isMobile && sidebarOpen
+                ? " blur-sm opacity-60 pointer-events-none"
+                : ""
             }`}
             style={{
               marginLeft:

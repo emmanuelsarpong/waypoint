@@ -57,7 +57,7 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
           position: "fixed",
           top: 0,
           left: 0,
-          zIndex: 50,
+          zIndex: 10000,
           width: "100%",
           height: "70px",
           padding: "0 24px",

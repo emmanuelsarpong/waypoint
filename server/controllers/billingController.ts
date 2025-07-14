@@ -263,8 +263,8 @@ export const createCheckoutSession = async (
       payment_method_types: ["card"],
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.FRONTEND_URL}/billing?success=1`,
-      cancel_url: `${process.env.FRONTEND_URL}/billing?canceled=1`,
+      success_url: `https://waypoint-lemon.vercel.app/billing?success=1&email_sent=1`,
+      cancel_url: `https://waypoint-lemon.vercel.app/billing?canceled=1`,
       metadata: { userId: user._id.toString() },
     });
 
