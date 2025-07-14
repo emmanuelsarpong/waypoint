@@ -415,14 +415,14 @@ const MapWrapper = styled.div<{ $sidebarOpen: boolean; $isMobile: boolean }>`
   left: ${(props) =>
     props.$isMobile ? "0px" : props.$sidebarOpen ? "250px" : "0px"};
   right: 0;
-  bottom: 0;
+  bottom: 70px;
   width: ${(props) =>
     props.$isMobile
       ? "100vw"
       : props.$sidebarOpen
       ? "calc(100vw - 250px)"
       : "100vw"};
-  height: calc(100vh - 70px);
+  height: calc(100vh - 140px);
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   overflow: hidden;
@@ -437,6 +437,7 @@ const MapWrapper = styled.div<{ $sidebarOpen: boolean; $isMobile: boolean }>`
     border-radius: 0;
     box-shadow: none;
     padding: 0;
+    bottom: 70px;
   }
 `;
 
@@ -522,8 +523,6 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   @media (max-width: 768px) {
     top: 150px;
     max-width: 100vw;
-    padding: 8px;
-    gap: 8px;
   }
 `;
 
@@ -662,7 +661,7 @@ const SmartButton = styled(motion.button)<{
 // Smart Sidebar
 const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
-  top: ${(props) => (props.$isMobile ? "190px" : "130px")};
+  top: ${(props) => (props.$isMobile ? "190px" : "230px")};
   left: 20px;
   width: ${(props) => (props.$isMobile ? "280px" : "360px")};
   // max-height: calc(100vh - 360px);

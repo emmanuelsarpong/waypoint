@@ -205,9 +205,7 @@ function App() {
           {/* Main content wrapper */}
           <div
             className={`w-full transition-all duration-300 relative flex flex-col h-full${
-              isMobile && sidebarOpen
-                ? " opacity-60 pointer-events-none"
-                : ""
+              isMobile && sidebarOpen ? " opacity-60 pointer-events-none" : ""
             }`}
             style={{
               marginLeft:
@@ -219,14 +217,18 @@ function App() {
               transition: "all 0.3s ease-in-out",
               filter: isMobile && sidebarOpen ? "blur(4px)" : "none",
               backdropFilter: isMobile && sidebarOpen ? "blur(8px)" : "none",
-              WebkitBackdropFilter: isMobile && sidebarOpen ? "blur(8px)" : "none",
+              WebkitBackdropFilter:
+                isMobile && sidebarOpen ? "blur(8px)" : "none",
             }}
           >
             <main className="mt-[70px] flex-1 flex flex-col">
               {/* Special handling for map route - no container constraints */}
               {location.pathname === "/map" ? (
                 <div className="flex-1 w-full h-full flex flex-col">
-                  <div className="flex-1">
+                  <div
+                    className="flex-1"
+                    style={{ height: "calc(100vh - 140px)" }}
+                  >
                     <Routes>
                       <Route
                         path="/map"
@@ -239,8 +241,8 @@ function App() {
                       />
                     </Routes>
                   </div>
-                  {/* Footer for map page - blur removed */}
-                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-80">
+                  {/* Footer for map page */}
+                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-90 backdrop-blur-sm border-t border-gray-800">
                     <SocialMediaBar />
                   </div>
                 </div>
