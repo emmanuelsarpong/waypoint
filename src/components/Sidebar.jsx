@@ -15,8 +15,12 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       const token =
         localStorage.getItem("token") || localStorage.getItem("authToken");
       const urlParams = new URLSearchParams(window.location.search);
-      const isDemoMode =
-        urlParams.get("demo") === "true" || token === "demo-token-for-ceo";
+      const hasDemo = urlParams.get("demo") === "true";
+      const isDemoToken = token === "demo-token-for-ceo";
+      const isOnDashboard = location.pathname === "/dashboard";
+      
+      // Force demo mode if accessing dashboard without proper token
+      const isDemoMode = hasDemo || isDemoToken || (isOnDashboard && !token);
 
       const protectedRoutes = ["/dashboard", "/billing", "/settings", "/map"];
       const isOnProtectedRoute = protectedRoutes.includes(location.pathname);
@@ -26,7 +30,17 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         !!token || isAuthenticated || isOnProtectedRoute || isDemoMode;
       setLocalAuth(hasAuth);
 
-      // Debug logging removed for production
+      console.log("Sidebar Auth Check:", { 
+        token: !!token, 
+        isAuthenticated, 
+        isOnProtectedRoute, 
+        isDemoMode, 
+        hasAuth,
+        pathname: location.pathname,
+        hasDemo,
+        isDemoToken,
+        isOnDashboard
+      });
     };
 
     checkAuth();
@@ -47,8 +61,8 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     };
   }, [isAuthenticated, location.pathname]);
 
-  // Use both authentication states - fallback to localAuth if isAuthenticated fails on mobile
-  const shouldShowAuthItems = isAuthenticated || (isMobile && localAuth);
+  // Use both authentication states - fallback to localAuth if isAuthenticated fails
+  const shouldShowAuthItems = isAuthenticated || localAuth;
 
   const navItems = [
     { name: "Home", path: "/" },

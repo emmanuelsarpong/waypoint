@@ -118,12 +118,23 @@ function App() {
     const token =
       localStorage.getItem("token") || localStorage.getItem("authToken");
 
-    // Check for demo mode via URL parameter
+    // Check for demo mode via URL parameter or if we're on dashboard without token
     const urlParams = new URLSearchParams(window.location.search);
-    const isDemoMode =
-      urlParams.get("demo") === "true" || token === "demo-token-for-ceo";
+    const hasDemo = urlParams.get("demo") === "true";
+    const isDemoToken = token === "demo-token-for-ceo";
+    const isOnDashboard = location.pathname === "/dashboard";
+    
+    // Force demo mode if accessing dashboard without proper token
+    const isDemoMode = hasDemo || isDemoToken || (isOnDashboard && !token);
 
-    // Debug logging removed for production
+    console.log("Auth Debug:", { 
+      token, 
+      hasDemo, 
+      isDemoToken, 
+      isOnDashboard, 
+      isDemoMode,
+      pathname: location.pathname
+    });
 
     if (!token && !isDemoMode) {
       setUser(null);
@@ -134,18 +145,20 @@ function App() {
     // Handle demo mode
     if (isDemoMode) {
       // Set demo token if not already set
-      if (!token) {
+      if (!token || token !== "demo-token-for-ceo") {
         localStorage.setItem("authToken", "demo-token-for-ceo");
       }
 
       // Demo mode active
-      setUser({
+      const demoUser = {
         id: "demo-user-123",
         email: "demo@waypoint.com",
         firstName: "CEO",
         lastName: "Demo",
         isVerified: true,
-      });
+      };
+      console.log("Setting demo user:", demoUser);
+      setUser(demoUser);
       setLoadingUser(false);
       return;
     }
