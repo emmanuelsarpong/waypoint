@@ -715,7 +715,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   top: ${(props) => (props.$isMobile ? "190px" : "230px")};
   left: 20px;
   width: ${(props) => (props.$isMobile ? "260px" : "320px")};
-  // max-height: calc(100vh - 360px);
+  max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -732,6 +732,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
     width: auto;
     padding: 8px;
     top: 130px;
+    max-height: calc(100vh - 180px);
   }
 `;
 
@@ -837,7 +838,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
     left: 20px;
     right: 20px;
     width: auto;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 180px);
     top: 130px;
     padding: 8px;
   }

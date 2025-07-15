@@ -23,6 +23,7 @@ function Homepage() {
       image: heroImage,
       excerpt:
         "Discover the best trails near you for running, hiking, and biking.",
+      link: "/explore-trails",
     },
     {
       id: 2,
@@ -30,6 +31,7 @@ function Homepage() {
       image: dashboardPreview,
       excerpt:
         "Monitor your performance and stay motivated with detailed analytics.",
+      link: "/track-progress",
     },
     {
       id: 3,
@@ -37,6 +39,7 @@ function Homepage() {
       image: howItWorksImage,
       excerpt:
         "Achieve your fitness milestones with personalized goal tracking.",
+      link: "/set-goals",
     },
   ];
 

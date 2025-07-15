@@ -44,7 +44,8 @@ const SAMPLE_FRIEND_ACTIVITIES = [
   {
     user: {
       name: "Sarah Johnson",
-      avatar: "https://via.placeholder.com/48/fb2576/ffffff?text=SJ",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
     },
     distance: 8.2,
     sport: "running",
@@ -53,7 +54,8 @@ const SAMPLE_FRIEND_ACTIVITIES = [
   {
     user: {
       name: "Mike Chen",
-      avatar: "https://via.placeholder.com/48/22d3ee/ffffff?text=MC",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
     },
     distance: 12.5,
     sport: "cycling",

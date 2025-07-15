@@ -69,10 +69,15 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     ...(shouldShowAuthItems
       ? [
           { name: "Dashboard", path: "/dashboard" },
+          // Core Features - Main user journey
           { name: "Map", path: "/map" },
+          { name: "Explore Trails", path: "/explore-trails" },
+          { name: "Track Progress", path: "/track-progress" },
+          { name: "Set Goals", path: "/set-goals" },
+          // Account & Support
           { name: "Settings", path: "/settings" },
           { name: "Billing", path: "/billing" },
-          { name: "Pricing", path: "/pricing" },
+          // Information Pages
           { name: "About", path: "/about" },
           { name: "Contact", path: "/contact" },
         ]
@@ -202,13 +207,13 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         </button>
 
         {/* Navigation content */}
-        <div className="flex flex-col h-full" style={{ paddingTop: "60px" }}>
+        <div className="flex flex-col h-full" style={{ paddingTop: "80px" }}>
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{
               height: isMobile ? "auto" : "50vh",
               maxHeight: isMobile ? "calc(100vh - 200px)" : "50vh",
-              paddingTop: "20px",
+              paddingTop: "32px",
               paddingBottom: "20px",
               overflowY: isMobile ? "auto" : "visible",
             }}

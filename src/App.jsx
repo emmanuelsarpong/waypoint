@@ -31,6 +31,9 @@ import OAuthCallback from "./pages/OAuthCallback";
 import { authFetch } from "./utils/authFetch";
 import PageSpinner from "./components/PageSpinner";
 import MapPage from "./pages/MapPage";
+import ExploreTrailsPage from "./pages/ExploreTrailsPage";
+import TrackProgressPage from "./pages/TrackProgressPage";
+import SetGoalsPage from "./pages/SetGoalsPage";
 
 function App() {
   // Initialize sidebar state - closed on mobile, open on desktop
@@ -333,6 +336,15 @@ function App() {
                       }
                     />
                     <Route path="/trails" element={<TrailsPage />} />
+                    <Route
+                      path="/explore-trails"
+                      element={<ExploreTrailsPage />}
+                    />
+                    <Route
+                      path="/track-progress"
+                      element={<TrackProgressPage />}
+                    />
+                    <Route path="/set-goals" element={<SetGoalsPage />} />
                     <Route path="/gps-goals" element={<GPSGoalsPage />} />
                     <Route
                       path="/movement-analysis"
