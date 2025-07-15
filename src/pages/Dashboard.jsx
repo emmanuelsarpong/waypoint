@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import StatWidget from "../components/StatWidget";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -62,33 +62,40 @@ export default function Dashboard({ user }) {
 
   // Check for demo mode and create fallback user if needed
   const token = localStorage.getItem("authToken");
+  const urlParams = new URLSearchParams(window.location.search);
   const isDemoMode =
     token === "demo-token-for-ceo" ||
-    window.location.search.includes("demo=true");
+    urlParams.get("demo") === "true" ||
+    window.location.pathname === "/dashboard";
 
-  const displayUser =
-    user ||
-    (isDemoMode
-      ? {
-          id: "demo-user-123",
-          email: "demo@waypoint.com",
-          firstName: "CEO",
-          lastName: "Demo",
-          isVerified: true,
-        }
-      : null);
+  const displayUser = useMemo(
+    () =>
+      user ||
+      (isDemoMode
+        ? {
+            id: "demo-user-123",
+            email: "demo@waypoint.com",
+            firstName: "CEO",
+            lastName: "Demo",
+            isVerified: true,
+          }
+        : null),
+    [user, isDemoMode]
+  );
 
   console.log(
     "Dashboard - displayUser:",
     displayUser,
     "isDemoMode:",
-    isDemoMode
+    isDemoMode,
+    "user prop:",
+    user
   );
 
   useEffect(() => {
     // Fetch user's actual route data
-    if (user?.id) {
-      fetchUserStats(user.id)
+    if (displayUser?.id) {
+      fetchUserStats(displayUser.id)
         .then((data) => {
           // Debug log removed for production
           setUserStats(data);
@@ -116,7 +123,7 @@ export default function Dashboard({ user }) {
         weeklyData: weeklyData,
       });
     }
-  }, [user]);
+  }, [displayUser]);
 
   const getChartData = () => {
     if (range === "weekly") {

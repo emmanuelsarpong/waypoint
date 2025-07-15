@@ -141,13 +141,7 @@ function App() {
       pathname: location.pathname,
     });
 
-    if (!token && !isDemoMode) {
-      setUser(null);
-      setLoadingUser(false);
-      return;
-    }
-
-    // Handle demo mode
+    // Handle demo mode FIRST
     if (isDemoMode) {
       // Set demo token if not already set
       if (!token || token !== "demo-token-for-ceo") {
@@ -164,6 +158,12 @@ function App() {
       };
       console.log("Setting demo user:", demoUser);
       setUser(demoUser);
+      setLoadingUser(false);
+      return;
+    }
+
+    if (!token) {
+      setUser(null);
       setLoadingUser(false);
       return;
     }
@@ -226,7 +226,12 @@ function App() {
           <Topbar
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
             isAuthenticated={!!user}
-            onLogout={() => setUser(null)}
+            onLogout={() => {
+              console.log("Logout called");
+              localStorage.removeItem("token");
+              localStorage.removeItem("authToken");
+              setUser(null);
+            }}
             sidebarOpen={sidebarOpen}
           />
 

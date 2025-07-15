@@ -9,6 +9,9 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
+  // Debug authentication state
+  console.log("Topbar - isAuthenticated:", isAuthenticated);
+
   useEffect(() => {
     const handleScroll = () => {
       // Disable scroll effect on mobile devices
