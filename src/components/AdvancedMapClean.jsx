@@ -160,7 +160,8 @@ const AdvancedMapClean = () => {
     setIsLoading(false);
 
     try {
-      const response = await fetch("http://localhost:3000/api/seed-workouts", {
+      const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${backendUrl}/api/seed-workouts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -183,7 +184,8 @@ const AdvancedMapClean = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:3000/api/workouts", {
+      const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${backendUrl}/api/workouts`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -270,7 +272,8 @@ const AdvancedMapClean = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:3000/api/workouts", {
+      const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${backendUrl}/api/workouts`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

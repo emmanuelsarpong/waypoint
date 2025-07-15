@@ -106,7 +106,7 @@ function DividerOAuth() {
   const handleOAuth = (provider) => {
     // Use backend URL for OAuth
     const backendUrl =
-      import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      import.meta.env.VITE_API_URL || "http://localhost:3000";
     window.location.href = `${backendUrl}/auth/${provider}`;
   };
 

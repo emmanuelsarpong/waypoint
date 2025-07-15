@@ -86,9 +86,10 @@ function Contact() {
     e.preventDefault();
     setStatus("Sending...");
     try {
-      const API_BASE = import.meta.env.PROD
-        ? "https://waypoint-production-5b75.up.railway.app"
-        : "http://localhost:3000";
+      const API_BASE = import.meta.env.VITE_API_URL || 
+        (import.meta.env.PROD
+          ? "https://waypoint-production-5b75.up.railway.app"
+          : "http://localhost:3000");
 
       if (import.meta.env.DEV) {
         console.log(`Contact form API call: ${API_BASE}/email/send`);
