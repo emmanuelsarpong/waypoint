@@ -57,6 +57,34 @@ export default function Dashboard({ user }) {
   const [recentRoutes, setRecentRoutes] = useState([]);
   const [friendActivities, setFriendActivities] = useState([]);
 
+  // Debug user prop
+  console.log("Dashboard - user prop:", user);
+
+  // Check for demo mode and create fallback user if needed
+  const token = localStorage.getItem("authToken");
+  const isDemoMode =
+    token === "demo-token-for-ceo" ||
+    window.location.search.includes("demo=true");
+
+  const displayUser =
+    user ||
+    (isDemoMode
+      ? {
+          id: "demo-user-123",
+          email: "demo@waypoint.com",
+          firstName: "CEO",
+          lastName: "Demo",
+          isVerified: true,
+        }
+      : null);
+
+  console.log(
+    "Dashboard - displayUser:",
+    displayUser,
+    "isDemoMode:",
+    isDemoMode
+  );
+
   useEffect(() => {
     // Fetch user's actual route data
     if (user?.id) {
@@ -240,7 +268,9 @@ export default function Dashboard({ user }) {
     <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-32">
       <div className="w-full max-w-screen-2xl mx-auto px-4">
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
-          {user?.firstName ? `Welcome, ${user.firstName}!` : "Your Dashboard"}
+          {displayUser?.firstName
+            ? `Welcome, ${displayUser.firstName}!`
+            : "Your Dashboard"}
         </h1>
         {/* Responsive Card Grid */}
         <div

@@ -52,6 +52,11 @@ function App() {
   });
   const location = useLocation();
 
+  // Debug user changes
+  useEffect(() => {
+    console.log("App.jsx - User state changed:", user);
+  }, [user]);
+
   // Debug logging removed for production
 
   // Handle window resize and set initial sidebar state
@@ -123,17 +128,17 @@ function App() {
     const hasDemo = urlParams.get("demo") === "true";
     const isDemoToken = token === "demo-token-for-ceo";
     const isOnDashboard = location.pathname === "/dashboard";
-    
+
     // Force demo mode if accessing dashboard without proper token
     const isDemoMode = hasDemo || isDemoToken || (isOnDashboard && !token);
 
-    console.log("Auth Debug:", { 
-      token, 
-      hasDemo, 
-      isDemoToken, 
-      isOnDashboard, 
+    console.log("Auth Debug:", {
+      token,
+      hasDemo,
+      isDemoToken,
+      isOnDashboard,
       isDemoMode,
-      pathname: location.pathname
+      pathname: location.pathname,
     });
 
     if (!token && !isDemoMode) {
@@ -296,7 +301,13 @@ function App() {
                         />
                         <Route
                           path="/dashboard"
-                          element={<Dashboard user={user} />}
+                          element={(() => {
+                            console.log(
+                              "App.jsx - Passing user to Dashboard:",
+                              user
+                            );
+                            return <Dashboard user={user} />;
+                          })()}
                         />
                         <Route
                           path="/billing"

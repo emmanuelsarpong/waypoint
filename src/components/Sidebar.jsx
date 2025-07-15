@@ -18,7 +18,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
       const hasDemo = urlParams.get("demo") === "true";
       const isDemoToken = token === "demo-token-for-ceo";
       const isOnDashboard = location.pathname === "/dashboard";
-      
+
       // Force demo mode if accessing dashboard without proper token
       const isDemoMode = hasDemo || isDemoToken || (isOnDashboard && !token);
 
@@ -30,16 +30,16 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         !!token || isAuthenticated || isOnProtectedRoute || isDemoMode;
       setLocalAuth(hasAuth);
 
-      console.log("Sidebar Auth Check:", { 
-        token: !!token, 
-        isAuthenticated, 
-        isOnProtectedRoute, 
-        isDemoMode, 
+      console.log("Sidebar Auth Check:", {
+        token: !!token,
+        isAuthenticated,
+        isOnProtectedRoute,
+        isDemoMode,
         hasAuth,
         pathname: location.pathname,
         hasDemo,
         isDemoToken,
-        isOnDashboard
+        isOnDashboard,
       });
     };
 
