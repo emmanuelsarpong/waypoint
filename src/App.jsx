@@ -295,7 +295,7 @@ function App() {
                   </div>
                   {/* Footer for map page - enhanced mobile visibility */}
                   <div
-                    className="w-full flex justify-center py-4 bg-black bg-opacity-95 backdrop-blur-sm border-t border-gray-800"
+                    className="w-full flex justify-center py-4"
                     style={{
                       position: "fixed",
                       bottom: 0,
@@ -306,6 +306,9 @@ function App() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      backgroundColor: "#000000", // Solid black background
+                      borderTop: "0.5px solid rgba(255, 255, 255, 0.3)", // Thinner border with slightly higher opacity
+                      backdropFilter: "blur(10px)",
                     }}
                   >
                     <SocialMediaBar />
@@ -384,11 +387,11 @@ function App() {
                         width: isMobile ? "100%" : "auto",
                         zIndex: isMobile ? 1999 : "auto",
                         backgroundColor: isMobile
-                          ? "rgba(0, 0, 0, 0.95)"
+                          ? "#000000" // Solid black background instead of transparent
                           : "transparent",
                         backdropFilter: isMobile ? "blur(10px)" : "none",
                         borderTop: isMobile
-                          ? "1px solid rgba(255, 255, 255, 0.1)"
+                          ? "0.5px solid rgba(255, 255, 255, 0.3)" // Thinner border with slightly higher opacity
                           : "none",
                         height: isMobile ? "70px" : "auto",
                         display: "flex",
