@@ -52,9 +52,11 @@ function App() {
   });
   const location = useLocation();
 
-  // Debug user changes
+  // Debug user changes (remove in production)
   useEffect(() => {
-    console.log("App.jsx - User state changed:", user);
+    if (import.meta.env.DEV) {
+      console.log("App.jsx - User state changed:", user);
+    }
   }, [user]);
 
   // Debug logging removed for production
@@ -128,18 +130,30 @@ function App() {
     const hasDemo = urlParams.get("demo") === "true";
     const isDemoToken = token === "demo-token-for-ceo";
     const isOnDashboard = location.pathname === "/dashboard";
+    const isOnSettings = location.pathname === "/settings";
+    const isOnProtectedRoute = [
+      "/dashboard",
+      "/settings",
+      "/billing",
+      "/map",
+    ].includes(location.pathname);
 
-    // Force demo mode if accessing dashboard without proper token
-    const isDemoMode = hasDemo || isDemoToken || (isOnDashboard && !token);
+    // Force demo mode if accessing protected routes without proper token
+    const isDemoMode = hasDemo || isDemoToken || (isOnProtectedRoute && !token);
 
-    console.log("Auth Debug:", {
-      token,
-      hasDemo,
-      isDemoToken,
-      isOnDashboard,
-      isDemoMode,
-      pathname: location.pathname,
-    });
+    if (import.meta.env.DEV) {
+      console.log("Auth Debug:", {
+        token,
+        hasDemo,
+        isDemoToken,
+        isOnDashboard,
+        isOnSettings,
+        isOnProtectedRoute,
+        isDemoMode,
+        pathname: location.pathname,
+        nodeEnv: import.meta.env.MODE,
+      });
+    }
 
     // Handle demo mode FIRST
     if (isDemoMode) {
@@ -156,7 +170,9 @@ function App() {
         lastName: "Demo",
         isVerified: true,
       };
-      console.log("Setting demo user:", demoUser);
+      if (import.meta.env.DEV) {
+        console.log("Setting demo user:", demoUser);
+      }
       setUser(demoUser);
       setLoadingUser(false);
       return;
@@ -227,7 +243,9 @@ function App() {
             toggleSidebar={() => setSidebarOpen((prev) => !prev)}
             isAuthenticated={!!user}
             onLogout={() => {
-              console.log("Logout called");
+              if (import.meta.env.DEV) {
+                console.log("Logout called");
+              }
               localStorage.removeItem("token");
               localStorage.removeItem("authToken");
               setUser(null);
@@ -307,10 +325,12 @@ function App() {
                         <Route
                           path="/dashboard"
                           element={(() => {
-                            console.log(
-                              "App.jsx - Passing user to Dashboard:",
-                              user
-                            );
+                            if (import.meta.env.DEV) {
+                              console.log(
+                                "App.jsx - Passing user to Dashboard:",
+                                user
+                              );
+                            }
                             return <Dashboard user={user} />;
                           })()}
                         />

@@ -9,8 +9,26 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
-  // Debug authentication state
-  console.log("Topbar - isAuthenticated:", isAuthenticated);
+  // Additional check for demo mode or token presence
+  const token =
+    localStorage.getItem("authToken") || localStorage.getItem("token");
+  const isDemoMode =
+    token === "demo-token-for-ceo" ||
+    window.location.search.includes("demo=true");
+  const shouldShowLogout = isAuthenticated || isDemoMode || !!token;
+
+  // Debug authentication state (dev only)
+  if (import.meta.env.DEV) {
+    console.log("Topbar - isAuthenticated:", isAuthenticated);
+    console.log(
+      "Topbar - token:",
+      !!token,
+      "isDemoMode:",
+      isDemoMode,
+      "shouldShowLogout:",
+      shouldShowLogout
+    );
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -122,7 +140,7 @@ function Topbar({ toggleSidebar, isAuthenticated, onLogout, sidebarOpen }) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          {isAuthenticated ? (
+          {shouldShowLogout ? (
             <Button
               onClick={handleLogout}
               className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition"

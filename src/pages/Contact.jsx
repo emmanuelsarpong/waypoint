@@ -86,7 +86,15 @@ function Contact() {
     e.preventDefault();
     setStatus("Sending...");
     try {
-      const res = await fetch("http://localhost:3000/email/send", {
+      const API_BASE = import.meta.env.PROD
+        ? "https://waypoint-production-5b75.up.railway.app"
+        : "http://localhost:3000";
+
+      if (import.meta.env.DEV) {
+        console.log(`Contact form API call: ${API_BASE}/email/send`);
+      }
+
+      const res = await fetch(`${API_BASE}/email/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -122,7 +130,8 @@ function Contact() {
       <form style={containerStyle} onSubmit={handleSubmit}>
         <h1 style={headingStyle}>Contact Us</h1>
         <p style={subtextStyle}>
-          We&apos;d love to hear from you. Fill out the form below to get in touch.
+          We&apos;d love to hear from you. Fill out the form below to get in
+          touch.
         </p>
         <input
           type="text"

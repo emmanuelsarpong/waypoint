@@ -57,40 +57,18 @@ export default function Dashboard({ user }) {
   const [recentRoutes, setRecentRoutes] = useState([]);
   const [friendActivities, setFriendActivities] = useState([]);
 
-  // Debug user prop
-  console.log("Dashboard - user prop:", user);
-
-  // Check for demo mode and create fallback user if needed
-  const token = localStorage.getItem("authToken");
-  const urlParams = new URLSearchParams(window.location.search);
-  const isDemoMode =
-    token === "demo-token-for-ceo" ||
-    urlParams.get("demo") === "true" ||
-    window.location.pathname === "/dashboard";
-
-  const displayUser = useMemo(
-    () =>
-      user ||
-      (isDemoMode
-        ? {
-            id: "demo-user-123",
-            email: "demo@waypoint.com",
-            firstName: "CEO",
-            lastName: "Demo",
-            isVerified: true,
-          }
-        : null),
-    [user, isDemoMode]
-  );
-
-  console.log(
-    "Dashboard - displayUser:",
-    displayUser,
-    "isDemoMode:",
-    isDemoMode,
-    "user prop:",
-    user
-  );
+  // Debug user prop (dev only)
+  if (import.meta.env.DEV) {
+    console.log("Dashboard - user prop:", user);
+    console.log(
+      "Dashboard - displayUser:",
+      displayUser,
+      "isDemoMode:",
+      isDemoMode,
+      "user prop:",
+      user
+    );
+  }
 
   useEffect(() => {
     // Fetch user's actual route data
