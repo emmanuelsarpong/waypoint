@@ -3,23 +3,28 @@
 ## 🔧 FIXES APPLIED
 
 ### 1. Fixed Frontend Environment Variables
+
 **Problem**: Frontend was looking for `VITE_BACKEND_URL` but your env file has `VITE_API_URL`
 
 **Fixed files**:
+
 - ✅ `src/components/AuthForm.jsx` - OAuth button URLs
 - ✅ `src/pages/Login.jsx` - Login endpoint
-- ✅ `src/pages/Contact.jsx` - Contact form endpoint  
+- ✅ `src/pages/Contact.jsx` - Contact form endpoint
 - ✅ `src/components/AdvancedMapClean.jsx` - Map API calls
 - ✅ `src/utils/authFetch.js` - Authentication utility
 
 ### 2. Updated Backend OAuth Configuration
+
 **Fixed files**:
+
 - ✅ `server/config/passportSetup.ts` - Google OAuth callback URL
 - ✅ `server/routes/oauthRoutes.ts` - Microsoft OAuth callback URL
 
 ## 🚀 DEPLOYMENT STEPS
 
 ### Step 1: Deploy Updated Code
+
 ```bash
 # Commit and push your changes
 git add .
@@ -28,7 +33,9 @@ git push origin main
 ```
 
 ### Step 2: Set Railway Environment Variables
+
 Add these to your Railway backend:
+
 ```bash
 BACKEND_URL=https://waypoint-production-5b75.up.railway.app
 FRONTEND_URL=https://waypoint-lemon.vercel.app
@@ -38,6 +45,7 @@ NODE_ENV=production
 ### Step 3: Update OAuth Provider Settings
 
 #### Google OAuth Configuration:
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. **APIs & Services** → **Credentials** → Your OAuth 2.0 Client ID
 3. **Authorized redirect URIs** - Add:
@@ -46,6 +54,7 @@ NODE_ENV=production
    ```
 
 #### Microsoft OAuth Configuration:
+
 1. Go to [Azure Portal](https://portal.azure.com)
 2. **Azure Active Directory** → **App registrations** → Your app
 3. **Authentication** → **Redirect URIs** - Add:
@@ -73,7 +82,7 @@ NODE_ENV=production
 Check these in order:
 
 1. **Railway Environment Variables**: Ensure all variables are set
-2. **OAuth Provider Callback URLs**: Must match exactly  
+2. **OAuth Provider Callback URLs**: Must match exactly
 3. **Railway Deployment**: Check if latest code is deployed
 4. **Browser Console**: Look for error messages
 5. **Railway Logs**: Check for OAuth errors

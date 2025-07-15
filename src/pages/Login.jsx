@@ -20,7 +20,7 @@ export default function Login() {
 
     if (res.ok && data.token) {
       localStorage.setItem("token", data.token);
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } else {
       setError(data.error || "Login failed");
     }
