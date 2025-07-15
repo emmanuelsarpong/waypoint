@@ -245,6 +245,16 @@ const GlobalMapStyles = createGlobalStyle<{ $mapStyle?: string }>`
   .leaflet-control-zoom {
     border: none !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    left: auto !important;
+    z-index: 1500 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
   }
   
   .leaflet-control-zoom a {
@@ -259,18 +269,34 @@ const GlobalMapStyles = createGlobalStyle<{ $mapStyle?: string }>`
         ? "rgba(0, 0, 0, 0.1)"
         : "rgba(255, 255, 255, 0.1)"} !important;
     backdrop-filter: blur(20px) !important;
-    font-weight: 600 !important;
-    font-size: 16px !important;
-    border-radius: 8px !important;
-    margin: 2px !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    border-radius: 10px !important;
+    margin: 0 !important;
     transition: all 0.2s ease !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
   }
   
   .leaflet-control-zoom a:hover {
     background: rgba(59, 130, 246, 0.9) !important;
     border-color: rgba(59, 130, 246, 0.3) !important;
     color: #ffffff !important;
-    transform: scale(1.05) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4) !important;
+  }
+
+  .leaflet-control-zoom a:first-child {
+    border-radius: 10px 10px 10px 10px !important;
+  }
+
+  .leaflet-control-zoom a:last-child {
+    border-radius: 10px 10px 10px 10px !important;
   }
   
   .leaflet-popup-content-wrapper {
@@ -552,8 +578,14 @@ const ModeButton = styled(motion.button)<{ $active?: boolean }>`
   }
 `;
 
-// Enhanced Map Style Dropdown with blue selection indicator
-const MapStyleDropdown = styled.select`
+// Custom dropdown container for better positioning
+const DropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+// Dropdown trigger button
+const DropdownTrigger = styled(motion.button)<{ $isOpen?: boolean }>`
   position: relative;
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -563,31 +595,23 @@ const MapStyleDropdown = styled.select`
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23ffffff' d='M6 8l6-8H0z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 35px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  justify-content: space-between;
 
-  option {
-    background: #1a1a1a;
-    color: #ffffff;
-    padding: 10px 15px;
-    position: relative;
-  }
-
-  option:checked,
-  option[selected] {
-    background: linear-gradient(
-      90deg,
-      #3b82f6 0px,
-      #3b82f6 4px,
-      #2563eb 4px,
-      #2563eb 100%
-    );
-    color: #ffffff;
-    font-weight: 600;
+  &:after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #ffffff;
+    transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+    transition: transform 0.2s ease;
   }
 
   &:focus {
@@ -597,6 +621,44 @@ const MapStyleDropdown = styled.select`
 
   &:hover {
     border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+  }
+`;
+
+// Dropdown menu that appears directly below trigger
+const DropdownMenu = styled(motion.div)<{ $isOpen?: boolean }>`
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  overflow: hidden;
+  display: ${props => props.$isOpen ? 'block' : 'none'};
+`;
+
+// Individual dropdown option
+const DropdownOption = styled(motion.div)<{ $selected?: boolean }>`
+  padding: 12px 16px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: ${props => props.$selected ? 'rgba(59, 130, 246, 0.2)' : 'transparent'};
+  border-left: ${props => props.$selected ? '3px solid #3b82f6' : '3px solid transparent'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.15);
+    border-left-color: #3b82f6;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 `;
 
@@ -1604,6 +1666,24 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
     attribution: "© OpenStreetMap contributors",
   });
 
+  // Dropdown states
+  const [sportDropdownOpen, setSportDropdownOpen] = useState(false);
+  const [mapStyleDropdownOpen, setMapStyleDropdownOpen] = useState(false);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.sport-dropdown') && !target.closest('.mapstyle-dropdown')) {
+        setSportDropdownOpen(false);
+        setMapStyleDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Available map styles with reliable tile sources
   const mapStyles: MapStyle[] = [
     {
@@ -1844,41 +1924,93 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
             </ModeButton>
           </ModeToggle>
 
-          <select
-            value={sportFilter}
-            onChange={(e) => setSportFilter(e.target.value)}
-            style={{
-              padding: "10px 12px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              background: "rgba(255, 255, 255, 0.1)",
-              color: "#ffffff",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              outline: "none",
-              cursor: "pointer",
-            }}
-          >
-            <option value="all">🏃‍♂️ All Sports</option>
-            <option value="running">🏃‍♂️ Running</option>
-            <option value="cycling">🚴‍♂️ Cycling</option>
-            <option value="hiking">🥾 Hiking</option>
-            <option value="walking">🚶‍♂️ Walking</option>
-          </select>
+          <DropdownContainer className="sport-dropdown">
+            <DropdownTrigger
+              $isOpen={sportDropdownOpen}
+              onClick={() => setSportDropdownOpen(!sportDropdownOpen)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>
+                {sportFilter === "all" && "🏃‍♂️ All Sports"}
+                {sportFilter === "running" && "🏃‍♂️ Running"}
+                {sportFilter === "cycling" && "🚴‍♂️ Cycling"}
+                {sportFilter === "hiking" && "🥾 Hiking"}
+                {sportFilter === "walking" && "🚶‍♂️ Walking"}
+              </span>
+            </DropdownTrigger>
+            <DropdownMenu
+              $isOpen={sportDropdownOpen}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ 
+                opacity: sportDropdownOpen ? 1 : 0, 
+                y: sportDropdownOpen ? 0 : -10 
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              {[
+                { value: "all", label: "🏃‍♂️ All Sports" },
+                { value: "running", label: "🏃‍♂️ Running" },
+                { value: "cycling", label: "🚴‍♂️ Cycling" },
+                { value: "hiking", label: "🥾 Hiking" },
+                { value: "walking", label: "🚶‍♂️ Walking" }
+              ].map((option) => (
+                <DropdownOption
+                  key={option.value}
+                  $selected={sportFilter === option.value}
+                  onClick={() => {
+                    setSportFilter(option.value);
+                    setSportDropdownOpen(false);
+                  }}
+                  whileHover={{ x: 2 }}
+                >
+                  {option.label}
+                </DropdownOption>
+              ))}
+            </DropdownMenu>
+          </DropdownContainer>
 
-          <MapStyleDropdown
-            value={mapStyle.name}
-            onChange={(e) => {
-              const newStyle = mapStyles.find(
-                (style) => style.name === e.target.value
-              );
-              if (newStyle) setMapStyle(newStyle);
-            }}
-          >
-            <option value="Light">☀️ Light</option>
-            <option value="Dark">🌙 Dark</option>
-            <option value="Satellite">🛰️ Satellite</option>
-            <option value="Terrain">🏔️ Terrain</option>
-          </MapStyleDropdown>
+          <DropdownContainer className="mapstyle-dropdown">
+            <DropdownTrigger
+              $isOpen={mapStyleDropdownOpen}
+              onClick={() => setMapStyleDropdownOpen(!mapStyleDropdownOpen)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>
+                {mapStyle.name === "Light" && "☀️ Light"}
+                {mapStyle.name === "Dark" && "🌙 Dark"}
+                {mapStyle.name === "Satellite" && "🛰️ Satellite"}
+                {mapStyle.name === "Terrain" && "🏔️ Terrain"}
+              </span>
+            </DropdownTrigger>
+            <DropdownMenu
+              $isOpen={mapStyleDropdownOpen}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ 
+                opacity: mapStyleDropdownOpen ? 1 : 0, 
+                y: mapStyleDropdownOpen ? 0 : -10 
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              {mapStyles.map((style) => (
+                <DropdownOption
+                  key={style.name}
+                  $selected={mapStyle.name === style.name}
+                  onClick={() => {
+                    setMapStyle(style);
+                    setMapStyleDropdownOpen(false);
+                  }}
+                  whileHover={{ x: 2 }}
+                >
+                  {style.name === "Light" && "☀️ Light"}
+                  {style.name === "Dark" && "🌙 Dark"}
+                  {style.name === "Satellite" && "🛰️ Satellite"}
+                  {style.name === "Terrain" && "🏔️ Terrain"}
+                </DropdownOption>
+              ))}
+            </DropdownMenu>
+          </DropdownContainer>
 
           <SmartButton
             $variant="primary"
