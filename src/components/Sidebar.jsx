@@ -14,11 +14,16 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
     const checkAuth = () => {
       const token =
         localStorage.getItem("token") || localStorage.getItem("authToken");
+      const urlParams = new URLSearchParams(window.location.search);
+      const isDemoMode =
+        urlParams.get("demo") === "true" || token === "demo-token-for-ceo";
+
       const protectedRoutes = ["/dashboard", "/billing", "/settings", "/map"];
       const isOnProtectedRoute = protectedRoutes.includes(location.pathname);
 
       // If user is on a protected route, they must be authenticated
-      const hasAuth = !!token || isAuthenticated || isOnProtectedRoute;
+      const hasAuth =
+        !!token || isAuthenticated || isOnProtectedRoute || isDemoMode;
       setLocalAuth(hasAuth);
 
       // Debug logging removed for production
@@ -53,11 +58,15 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           { name: "Map", path: "/map" },
           { name: "Settings", path: "/settings" },
           { name: "Billing", path: "/billing" },
+          { name: "Pricing", path: "/pricing" },
+          { name: "About", path: "/about" },
+          { name: "Contact", path: "/contact" },
         ]
-      : []),
-    { name: "Pricing", path: "/pricing" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+      : [
+          { name: "Pricing", path: "/pricing" },
+          { name: "About", path: "/about" },
+          { name: "Contact", path: "/contact" },
+        ]),
   ];
 
   // Debug logging removed for production

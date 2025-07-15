@@ -118,22 +118,32 @@ function App() {
     const token =
       localStorage.getItem("token") || localStorage.getItem("authToken");
 
+    // Check for demo mode via URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDemoMode =
+      urlParams.get("demo") === "true" || token === "demo-token-for-ceo";
+
     // Debug logging removed for production
 
-    if (!token) {
+    if (!token && !isDemoMode) {
       setUser(null);
       setLoadingUser(false);
       return;
     }
 
     // Handle demo mode
-    if (token === "demo-token-for-ceo") {
+    if (isDemoMode) {
+      // Set demo token if not already set
+      if (!token) {
+        localStorage.setItem("authToken", "demo-token-for-ceo");
+      }
+
       // Demo mode active
       setUser({
         id: "demo-user-123",
         email: "demo@waypoint.com",
-        firstName: "Demo",
-        lastName: "User",
+        firstName: "CEO",
+        lastName: "Demo",
         isVerified: true,
       });
       setLoadingUser(false);
