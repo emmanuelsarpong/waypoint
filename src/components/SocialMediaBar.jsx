@@ -5,15 +5,16 @@ function SocialMediaBar() {
     <div
       className="w-full border-t"
       style={{
-        backgroundColor: "black",
-        borderTop: "1px solid #3F3F3F",
-        height: "70px",
+        backgroundColor: "transparent", // Let parent handle background
+        borderTop: "none", // Let parent handle border
+        height: "auto", // Let parent handle height
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "0", // Remove padding, let parent handle it
       }}
     >
-      <div className="flex ">
+      <div className="flex">
         <a
           href="https://www.instagram.com"
           target="_blank"

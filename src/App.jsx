@@ -259,12 +259,7 @@ function App() {
               isMobile && sidebarOpen ? " opacity-60" : ""
             }`}
             style={{
-              marginLeft:
-                typeof window !== "undefined" && window.innerWidth <= 768
-                  ? "0px"
-                  : sidebarOpen
-                  ? "250px"
-                  : "0px",
+              marginLeft: isMobile ? "0px" : sidebarOpen ? "250px" : "0px",
               transition: "all 0.3s ease-in-out",
               filter: isMobile && sidebarOpen ? "blur(4px)" : "none",
               backdropFilter: isMobile && sidebarOpen ? "blur(8px)" : "none",
@@ -298,8 +293,21 @@ function App() {
                       />
                     </Routes>
                   </div>
-                  {/* Footer for map page */}
-                  <div className="w-full flex justify-center py-4 bg-black bg-opacity-90 backdrop-blur-sm border-t border-gray-800">
+                  {/* Footer for map page - enhanced mobile visibility */}
+                  <div
+                    className="w-full flex justify-center py-4 bg-black bg-opacity-95 backdrop-blur-sm border-t border-gray-800"
+                    style={{
+                      position: "fixed",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      zIndex: 2000, // Higher z-index to ensure it's above map content
+                      height: "70px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <SocialMediaBar />
                   </div>
                 </div>
@@ -309,8 +317,9 @@ function App() {
                   <div
                     className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
                     style={{
-                      paddingLeft: window.innerWidth <= 768 ? "16px" : "24px",
-                      paddingRight: window.innerWidth <= 768 ? "16px" : "24px",
+                      paddingLeft: isMobile ? "16px" : "24px",
+                      paddingRight: isMobile ? "16px" : "24px",
+                      paddingBottom: isMobile ? "80px" : "0px", // Add bottom padding on mobile for fixed footer
                     }}
                   >
                     <div className="flex-1 pb-24">
@@ -364,8 +373,29 @@ function App() {
                       </Routes>
                     </div>
 
-                    {/* Footer always at bottom */}
-                    <div className="mt-auto pt-12 pb-8">
+                    {/* Footer always at bottom - enhanced mobile visibility */}
+                    <div
+                      className="mt-auto pt-12 pb-8"
+                      style={{
+                        position: isMobile ? "fixed" : "relative",
+                        bottom: isMobile ? 0 : "auto",
+                        left: isMobile ? 0 : "auto",
+                        right: isMobile ? 0 : "auto",
+                        width: isMobile ? "100%" : "auto",
+                        zIndex: isMobile ? 1999 : "auto",
+                        backgroundColor: isMobile
+                          ? "rgba(0, 0, 0, 0.95)"
+                          : "transparent",
+                        backdropFilter: isMobile ? "blur(10px)" : "none",
+                        borderTop: isMobile
+                          ? "1px solid rgba(255, 255, 255, 0.1)"
+                          : "none",
+                        height: isMobile ? "70px" : "auto",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <SocialMediaBar />
                     </div>
                   </div>

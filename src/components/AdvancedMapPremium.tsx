@@ -604,13 +604,14 @@ const DropdownTrigger = styled(motion.button)<{ $isOpen?: boolean }>`
   justify-content: space-between;
 
   &:after {
-    content: '';
+    content: "";
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-top: 4px solid #ffffff;
-    transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+    transform: ${(props) =>
+      props.$isOpen ? "rotate(180deg)" : "rotate(0deg)"};
     transition: transform 0.2s ease;
   }
 
@@ -638,7 +639,7 @@ const DropdownMenu = styled(motion.div)<{ $isOpen?: boolean }>`
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   z-index: 2000;
   overflow: hidden;
-  display: ${props => props.$isOpen ? 'block' : 'none'};
+  display: ${(props) => (props.$isOpen ? "block" : "none")};
 `;
 
 // Individual dropdown option
@@ -648,8 +649,10 @@ const DropdownOption = styled(motion.div)<{ $selected?: boolean }>`
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
-  background: ${props => props.$selected ? 'rgba(59, 130, 246, 0.2)' : 'transparent'};
-  border-left: ${props => props.$selected ? '3px solid #3b82f6' : '3px solid transparent'};
+  background: ${(props) =>
+    props.$selected ? "rgba(59, 130, 246, 0.2)" : "transparent"};
+  border-left: ${(props) =>
+    props.$selected ? "3px solid #3b82f6" : "3px solid transparent"};
   transition: all 0.2s ease;
 
   &:hover {
@@ -1674,14 +1677,17 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (!target.closest('.sport-dropdown') && !target.closest('.mapstyle-dropdown')) {
+      if (
+        !target.closest(".sport-dropdown") &&
+        !target.closest(".mapstyle-dropdown")
+      ) {
         setSportDropdownOpen(false);
         setMapStyleDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Available map styles with reliable tile sources
@@ -1942,9 +1948,9 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
             <DropdownMenu
               $isOpen={sportDropdownOpen}
               initial={{ opacity: 0, y: -10 }}
-              animate={{ 
-                opacity: sportDropdownOpen ? 1 : 0, 
-                y: sportDropdownOpen ? 0 : -10 
+              animate={{
+                opacity: sportDropdownOpen ? 1 : 0,
+                y: sportDropdownOpen ? 0 : -10,
               }}
               transition={{ duration: 0.2 }}
             >
@@ -1953,7 +1959,7 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
                 { value: "running", label: "🏃‍♂️ Running" },
                 { value: "cycling", label: "🚴‍♂️ Cycling" },
                 { value: "hiking", label: "🥾 Hiking" },
-                { value: "walking", label: "🚶‍♂️ Walking" }
+                { value: "walking", label: "🚶‍♂️ Walking" },
               ].map((option) => (
                 <DropdownOption
                   key={option.value}
@@ -1987,9 +1993,9 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
             <DropdownMenu
               $isOpen={mapStyleDropdownOpen}
               initial={{ opacity: 0, y: -10 }}
-              animate={{ 
-                opacity: mapStyleDropdownOpen ? 1 : 0, 
-                y: mapStyleDropdownOpen ? 0 : -10 
+              animate={{
+                opacity: mapStyleDropdownOpen ? 1 : 0,
+                y: mapStyleDropdownOpen ? 0 : -10,
               }}
               transition={{ duration: 0.2 }}
             >
