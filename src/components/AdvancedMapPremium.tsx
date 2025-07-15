@@ -197,7 +197,7 @@ const LoadingSpinner = styled.div`
 // Route Distance Indicator
 const RouteDistanceIndicator = styled(motion.div)<{ $visible: boolean }>`
   position: absolute;
-  bottom: 20px;
+  bottom: 90px;
   left: 20px;
   right: 20px;
   margin: 0 auto;
@@ -436,34 +436,20 @@ const glow = keyframes`
 
 // Main Container
 const MapWrapper = styled.div<{ $sidebarOpen: boolean; $isMobile: boolean }>`
-  position: fixed;
-  top: 70px;
-  left: ${(props) =>
-    props.$isMobile ? "0px" : props.$sidebarOpen ? "250px" : "0px"};
-  right: 0;
-  bottom: 70px;
-  width: ${(props) =>
-    props.$isMobile
-      ? "100vw"
-      : props.$sidebarOpen
-      ? "calc(100vw - 250px)"
-      : "100vw"};
+  position: relative;
+  width: 100%;
   height: calc(100vh - 140px);
   background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow: hidden;
+  overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
   z-index: 1;
 
   @media (max-width: 768px) {
-    left: 0px;
-    width: 100vw;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
-    bottom: 70px;
   }
 `;
 
@@ -547,7 +533,7 @@ const ControlsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   justify-content: center;
 
   @media (max-width: 768px) {
-    top: 150px;
+    top: 130px;
     max-width: 100vw;
   }
 `;
@@ -600,7 +586,7 @@ const DropdownTrigger = styled(motion.button)<{ $isOpen?: boolean }>`
   align-items: center;
   gap: 8px;
   transition: all 0.2s ease;
-  min-width: 140px;
+  min-width: 100px;
   justify-content: space-between;
 
   &:after {
@@ -728,7 +714,7 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
   top: ${(props) => (props.$isMobile ? "190px" : "230px")};
   left: 20px;
-  width: ${(props) => (props.$isMobile ? "280px" : "360px")};
+  width: ${(props) => (props.$isMobile ? "260px" : "320px")};
   // max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
@@ -745,12 +731,12 @@ const SmartSidebar = styled(motion.div)<{ $isMobile?: boolean }>`
     right: 20px;
     width: auto;
     padding: 8px;
-    top: 150px;
+    top: 130px;
   }
 `;
 
 const SidebarHeader = styled.div`
-  padding: 20px;
+  padding: 12px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
@@ -760,7 +746,7 @@ const SidebarHeader = styled.div`
 
 const SidebarTitle = styled.h3`
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #ffffff;
 `;
@@ -835,7 +821,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
   position: absolute;
   top: ${(props) => (props.$isMobile ? "190px" : "230px")};
   right: 20px;
-  width: ${(props) => (props.$isMobile ? "280px" : "360px")};
+  width: ${(props) => (props.$isMobile ? "260px" : "320px")};
   max-height: calc(100vh - 360px);
   background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(20px);
@@ -852,7 +838,7 @@ const AnalyticsPanel = styled(motion.div)<{ $isMobile?: boolean }>`
     right: 20px;
     width: auto;
     max-height: calc(100vh - 120px);
-    top: 150px;
+    top: 130px;
     padding: 8px;
   }
 `;
@@ -926,8 +912,8 @@ const AnalyticsContent = styled.div`
 const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 16px;
+  gap: 8px;
+  padding: 12px;
 `;
 
 const StatCard = styled(motion.div)<{ $color?: string }>`
@@ -938,7 +924,7 @@ const StatCard = styled(motion.div)<{ $color?: string }>`
   border: 1px solid
     ${(props) =>
       props.$color ? `${props.$color}40` : "rgba(255, 255, 255, 0.1)"};
-  padding: 16px;
+  padding: 12px;
   text-align: center;
   transition: all 0.2s ease;
 
@@ -949,14 +935,14 @@ const StatCard = styled(motion.div)<{ $color?: string }>`
 `;
 
 const StatValue = styled.div<{ $color?: string }>`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: ${(props) => props.$color || "#ffffff"};
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 `;
 
 const StatLabel = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: #a0a0a0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -964,8 +950,8 @@ const StatLabel = styled.div`
 `;
 
 const RouteCard = styled(motion.div)<{ $selected?: boolean; $color?: string }>`
-  margin: 12px 16px;
-  padding: 16px;
+  margin: 8px 12px;
+  padding: 12px;
   background: ${(props) =>
     props.$selected
       ? `linear-gradient(135deg, ${props.$color}20 0%, ${props.$color}10 100%)`
@@ -1883,7 +1869,7 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
           >
             <h1
               style={{
-                fontSize: "2.5rem",
+                fontSize: isMobile ? "1.5rem" : "2.5rem",
                 fontWeight: "700",
                 color: "#fff",
                 margin: "0 0 8px 0",

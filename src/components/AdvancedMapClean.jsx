@@ -132,17 +132,22 @@ const AddRoute = ({ setPath }) => {
   return null;
 };
 
-const AdvancedMapClean = () => {
+const AdvancedMapClean = ({ sidebarOpen, isMobile: isMobileProp }) => {
   const [path, setPath] = useState([]);
   const [savedRoutes, setSavedRoutes] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showRoutesList, setShowRoutesList] = useState(false);
   const [sportFilter, setSportFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(isMobileProp || false);
 
-  // Mobile detection
+  // Mobile detection - use prop if provided, otherwise detect
   useEffect(() => {
+    if (isMobileProp !== undefined) {
+      setIsMobile(isMobileProp);
+      return;
+    }
+
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
@@ -322,7 +327,7 @@ const AdvancedMapClean = () => {
     <div
       style={{
         width: "100%",
-        height: "calc(100vh - 140px)", // Account for topbar and padding
+        height: "100%", // Use 100% to fill parent container
         background: "#000000",
         fontFamily:
           "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -330,6 +335,7 @@ const AdvancedMapClean = () => {
         margin: "0",
         position: "relative",
         minHeight: "400px", // Ensure minimum height on mobile
+        overflow: "hidden", // Prevent overflow issues
       }}
     >
       {/* Dark Header - OpenAI Style */}

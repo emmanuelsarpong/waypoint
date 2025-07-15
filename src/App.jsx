@@ -271,139 +271,102 @@ function App() {
             }
           >
             <main className="mt-[70px] flex-1 flex flex-col">
-              {/* Special handling for map route - no container constraints */}
-              {location.pathname === "/map" ? (
-                <div className="flex-1 w-full h-full flex flex-col min-h-0">
-                  <div
-                    className="flex-1 overflow-hidden"
-                    style={{
-                      height: isMobile ? "auto" : "calc(100vh - 140px)",
-                      minHeight: isMobile ? "60vh" : "calc(100vh - 140px)",
-                    }}
-                  >
-                    <Routes>
-                      <Route
-                        path="/map"
-                        element={
+              {/* Unified container for all pages */}
+              <div
+                className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
+                style={{
+                  paddingLeft: isMobile ? "16px" : "24px",
+                  paddingRight: isMobile ? "16px" : "24px",
+                  paddingBottom: isMobile ? "80px" : "0px", // Add bottom padding on mobile for fixed footer
+                }}
+              >
+                <div className="flex-1 pb-24">
+                  <Routes>
+                    <Route path="/" element={<Homepage />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/pricing" element={<Pricing user={user} />} />
+                    <Route
+                      path="/dashboard"
+                      element={(() => {
+                        if (import.meta.env.DEV) {
+                          console.log(
+                            "App.jsx - Passing user to Dashboard:",
+                            user
+                          );
+                        }
+                        return <Dashboard user={user} />;
+                      })()}
+                    />
+                    <Route
+                      path="/billing"
+                      element={
+                        <ProtectedRoute>
+                          <Billing user={user} />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings"
+                      element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/map"
+                      element={
+                        <div
+                          className="w-full h-full flex flex-col -mx-4 sm:-mx-6"
+                          style={{
+                            height: "calc(100vh - 140px)",
+                            minHeight: "calc(100vh - 140px)",
+                            overflow: "hidden",
+                          }}
+                        >
                           <MapPage
                             sidebarOpen={sidebarOpen}
                             isMobile={isMobile}
                           />
-                        }
-                      />
-                    </Routes>
-                  </div>
-                  {/* Footer for map page - enhanced mobile visibility */}
-                  <div
-                    className="w-full flex justify-center py-4"
-                    style={{
-                      position: "fixed",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      zIndex: 2000, // Higher z-index to ensure it's above map content
-                      height: "70px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#000000", // Solid black background
-                      borderTop: "0.5px solid rgba(255, 255, 255, 0.3)", // Thinner border with slightly higher opacity
-                      backdropFilter: "blur(10px)",
-                    }}
-                  >
-                    <SocialMediaBar />
-                  </div>
+                        </div>
+                      }
+                    />
+                    <Route path="/trails" element={<TrailsPage />} />
+                    <Route path="/gps-goals" element={<GPSGoalsPage />} />
+                    <Route
+                      path="/movement-analysis"
+                      element={<MovementAnalysisPage />}
+                    />
+                    <Route path="*" element={<NotFound />} />
+                    <Route path="/oauth/callback" element={<OAuthCallback />} />
+                  </Routes>
                 </div>
-              ) : (
-                <>
-                  {/* This container centers all content with responsive padding */}
-                  <div
-                    className="w-full max-w-[1200px] mx-auto flex-1 flex flex-col"
-                    style={{
-                      paddingLeft: isMobile ? "16px" : "24px",
-                      paddingRight: isMobile ? "16px" : "24px",
-                      paddingBottom: isMobile ? "80px" : "0px", // Add bottom padding on mobile for fixed footer
-                    }}
-                  >
-                    <div className="flex-1 pb-24">
-                      <Routes>
-                        <Route path="/" element={<Homepage />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route
-                          path="/pricing"
-                          element={<Pricing user={user} />}
-                        />
-                        <Route
-                          path="/dashboard"
-                          element={(() => {
-                            if (import.meta.env.DEV) {
-                              console.log(
-                                "App.jsx - Passing user to Dashboard:",
-                                user
-                              );
-                            }
-                            return <Dashboard user={user} />;
-                          })()}
-                        />
-                        <Route
-                          path="/billing"
-                          element={
-                            <ProtectedRoute>
-                              <Billing user={user} />
-                            </ProtectedRoute>
-                          }
-                        />
-                        <Route
-                          path="/settings"
-                          element={
-                            <ProtectedRoute>
-                              <Settings />
-                            </ProtectedRoute>
-                          }
-                        />
-                        <Route path="/trails" element={<TrailsPage />} />
-                        <Route path="/gps-goals" element={<GPSGoalsPage />} />
-                        <Route
-                          path="/movement-analysis"
-                          element={<MovementAnalysisPage />}
-                        />
-                        <Route path="*" element={<NotFound />} />
-                        <Route
-                          path="/oauth/callback"
-                          element={<OAuthCallback />}
-                        />
-                      </Routes>
-                    </div>
 
-                    {/* Footer always at bottom - enhanced mobile visibility */}
-                    <div
-                      className="mt-auto pt-12 pb-8"
-                      style={{
-                        position: isMobile ? "fixed" : "relative",
-                        bottom: isMobile ? 0 : "auto",
-                        left: isMobile ? 0 : "auto",
-                        right: isMobile ? 0 : "auto",
-                        width: isMobile ? "100%" : "auto",
-                        zIndex: isMobile ? 1999 : "auto",
-                        backgroundColor: isMobile
-                          ? "#000000" // Solid black background instead of transparent
-                          : "transparent",
-                        backdropFilter: isMobile ? "blur(10px)" : "none",
-                        borderTop: isMobile
-                          ? "0.5px solid rgba(255, 255, 255, 0.3)" // Thinner border with slightly higher opacity
-                          : "none",
-                        height: isMobile ? "70px" : "auto",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <SocialMediaBar />
-                    </div>
-                  </div>
-                </>
-              )}
+                {/* Unified Footer for all pages - 70px height */}
+                <div
+                  className="mt-auto"
+                  style={{
+                    position: isMobile ? "fixed" : "relative",
+                    bottom: isMobile ? 0 : "auto",
+                    left: isMobile ? 0 : "auto",
+                    right: isMobile ? 0 : "auto",
+                    width: isMobile ? "100%" : "auto",
+                    zIndex: isMobile ? 1999 : "auto",
+                    backgroundColor: isMobile ? "#000000" : "transparent",
+                    backdropFilter: isMobile ? "blur(10px)" : "none",
+                    borderTop: "0.5px solid rgba(255, 255, 255, 0.3)",
+                    height: "70px",
+                    padding: "16px 24px",
+                    marginTop: isMobile ? "0" : "48px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <SocialMediaBar />
+                </div>
+              </div>
             </main>
           </div>
         </div>

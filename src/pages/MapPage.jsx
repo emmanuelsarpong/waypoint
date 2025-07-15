@@ -7,7 +7,7 @@ export default function MapPage({ sidebarOpen, isMobile }) {
         width: "100%",
         height: "100%",
         position: "relative",
-        overflow: isMobile ? "visible" : "hidden",
+        overflow: "auto",
         display: "flex",
         flexDirection: "column",
       }}
