@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import StatWidget from "../components/StatWidget";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -46,6 +46,7 @@ const yearlyData = [
 ];
 
 export default function Dashboard({ user }) {
+  const displayUser = user;
   const navigate = useNavigate();
   const [range, setRange] = useState("monthly");
   const [userStats, setUserStats] = useState({
@@ -63,8 +64,6 @@ export default function Dashboard({ user }) {
     console.log(
       "Dashboard - displayUser:",
       displayUser,
-      "isDemoMode:",
-      isDemoMode,
       "user prop:",
       user
     );
