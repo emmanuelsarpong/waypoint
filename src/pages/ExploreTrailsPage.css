@@ -563,4 +563,247 @@
     align-self: stretch;
     justify-content: space-between;
   }
+
+  /* Complete mobile layout overhaul */
+
+  /* Main page container - remove all padding */
+  .min-h-screen.bg-black {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 48px !important;
+  }
+
+  /* Page wrapper - minimal margins */
+  .w-full.max-w-screen-2xl {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Page title - add side margins */
+  .text-4xl.sm\\:text-5xl.font-bold {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-bottom: 32px !important;
+  }
+
+  /* Search section - full width with margins */
+  .w-full.max-w-4xl {
+    padding: 0 16px !important;
+    margin: 0 0 24px 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Search input styling */
+  input[placeholder*="Search trails"] {
+    padding: 16px 16px 16px 50px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Filters section - full width with margins */
+  .w-full.max-w-6xl.mx-auto.mb-8 {
+    margin: 0 16px 24px 16px !important;
+    padding: 0 !important;
+    max-width: calc(100% - 32px) !important;
+  }
+
+  /* Filters inner container */
+  .w-full.max-w-6xl.mx-auto.mb-8 > div {
+    padding: 16px !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  /* Trail cards container - full width with margins */
+  .dashboard-widget-grid {
+    padding: 0 16px !important;
+    margin: 0 0 32px 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Individual trail cards - full width within container */
+  .trail-card {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Trail card stats grid - improve mobile layout */
+  .trail-card .grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Enhanced button styling for mobile */
+  .trail-card button,
+  .view-trail-btn,
+  .start-trail-btn,
+  .get-recommendations-btn,
+  .search-button {
+    width: 100% !important;
+    margin: 12px 0 0 0 !important;
+    padding: 16px 20px !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Specific button hover effects on mobile */
+  .trail-card button:active,
+  .view-trail-btn:active,
+  .start-trail-btn:active,
+  .get-recommendations-btn:active {
+    transform: scale(0.98) !important;
+  }
+
+  /* Multiple buttons in same container */
+  .trail-footer {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  /* Filter buttons container styling */
+  .difficulty-filters,
+  .activity-filters {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Filter buttons - grow to fill space evenly */
+  .difficulty-filters button,
+  .activity-filters button {
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    margin: 0 !important;
+    border-radius: 22px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    flex: 1 1 auto !important;
+    min-width: 70px !important;
+    max-width: 120px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* For difficulty section - 4 buttons in 2 rows */
+  .difficulty-filters {
+    justify-content: space-evenly !important;
+  }
+
+  .difficulty-filters button {
+    flex: 0 1 calc(50% - 4px) !important;
+    max-width: calc(50% - 4px) !important;
+  }
+
+  /* For activity section - 5 buttons, 3 on first row, 2 on second */
+  .activity-filters {
+    justify-content: space-evenly !important;
+  }
+
+  .activity-filters button {
+    flex: 0 1 calc(33.333% - 6px) !important;
+    max-width: calc(33.333% - 6px) !important;
+  }
+
+  /* Make last 2 buttons in activity section wider */
+  .activity-filters button:nth-child(4),
+  .activity-filters button:nth-child(5) {
+    flex: 0 1 calc(50% - 4px) !important;
+    max-width: calc(50% - 4px) !important;
+  }
+
+  /* Filter sections spacing */
+  .filters-section .space-y-6 > div {
+    margin-bottom: 24px !important;
+  }
+
+  /* Filter labels */
+  .filters-section h3 {
+    text-align: center !important;
+    margin-bottom: 16px !important;
+    padding: 0 16px !important;
+  }
+
+  /* Search button specific styling */
+  .search-button {
+    margin: 16px 0 0 0 !important;
+    padding: 18px 24px !important;
+    font-size: 17px !important;
+    border-radius: 50px !important;
+  }
+
+  /* Action buttons container */
+  .nearby-trail-actions {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  /* Nearby trail buttons */
+  .nearby-trail-actions button {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
+  }
+
+  /* Recommendation cards - consistent with trail cards */
+  .recommendation-card {
+    padding: 20px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Recommendation card buttons */
+  .recommendation-card button {
+    width: 100% !important;
+    margin: 16px 0 0 0 !important;
+    padding: 16px 20px !important;
+    border-radius: 12px !important;
+    min-height: 48px !important;
+  }
+
+  /* Ensure no horizontal scroll */
+  body {
+    overflow-x: hidden !important;
+  }
+
+  /* Fix any overflow issues */
+  * {
+    max-width: 100% !important;
+  }
+
+  /* Remove any unexpected margins from containers - ONLY on explore trails page */
+  .explore-trails-page .container,
+  .explore-trails-page .mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }

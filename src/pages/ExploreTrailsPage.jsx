@@ -134,7 +134,7 @@ const ExploreTrailsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-32">
+    <div className="explore-trails-page min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 pb-32">
       <div className="w-full max-w-screen-2xl mx-auto px-4">
         <h1 className="text-4xl sm:text-5xl font-bold text-center mb-10 tracking-tight">
           Explore New Trails
