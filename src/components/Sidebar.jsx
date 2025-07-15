@@ -77,6 +77,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
           // Account & Support
           { name: "Settings", path: "/settings" },
           { name: "Billing", path: "/billing" },
+          { name: "Pricing", path: "/pricing" },
           // Information Pages
           { name: "About", path: "/about" },
           { name: "Contact", path: "/contact" },
