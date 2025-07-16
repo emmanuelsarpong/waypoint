@@ -210,10 +210,10 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         {/* Navigation content */}
         <div
           className="flex flex-col h-full"
-          style={{ 
+          style={{
             paddingTop: isMobile ? "80px" : "120px",
             position: "relative",
-            zIndex: "10"
+            zIndex: "10",
           }}
         >
           <nav
