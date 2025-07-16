@@ -47,14 +47,14 @@ export const sendEmailHandler = async (
       subscription_cancelled: "Your Waypoint Subscription Was Cancelled",
       payment_missed: "Payment Issue with Your Waypoint Subscription",
       login_alert: "New Login to Your Waypoint Account",
-      contact_us: "New Contact Us Message", 
+      contact_us: "New Contact Us Message",
     };
 
     const finalSubject = subjectMap[mode] || "Waypoint Notification";
 
     const html = emailTemplate({
       mode,
-      username: firstName, 
+      username: firstName,
       email,
       actionUrl,
       location,
@@ -62,9 +62,17 @@ export const sendEmailHandler = async (
       message,
     });
 
+    // Determine recipient based on mode
+    let recipient = email; // Default to user's email
+
+    // For contact_us, send to your email instead
+    if (mode === "contact_us") {
+      recipient = "emmanuel.sarpong12@gmail.com";
+    }
+
     await transporter.sendMail({
       from: `"Waypoint" <${process.env.SMTP_USER}>`,
-      to: email,
+      to: recipient,
       subject: finalSubject,
       html,
     });

@@ -208,13 +208,13 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         </button>
 
         {/* Navigation content */}
-        <div className="flex flex-col h-full" style={{ paddingTop: "80px" }}>
+        <div className="flex flex-col h-full" style={{ paddingTop: "120px" }}>
           <nav
             className="flex flex-col gap-2 justify-center"
             style={{
               height: isMobile ? "auto" : "50vh",
               maxHeight: isMobile ? "calc(100vh - 200px)" : "50vh",
-              paddingTop: "32px",
+              paddingTop: "48px",
               paddingBottom: "20px",
               overflowY: isMobile ? "auto" : "visible",
             }}

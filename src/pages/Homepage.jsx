@@ -139,19 +139,17 @@ function Homepage() {
 
       {/* How It Works + Dashboard */}
       <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.3 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full bg-black py-20 px-6 mb-[200px]"
       >
         <div className="flex flex-wrap gap-[25px] max-w-[1200px] mx-auto">
           {/* How It Works */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[65%] min-w-[300px]"
           >
             <div className="relative h-[250px] w-full">
@@ -162,10 +160,9 @@ function Homepage() {
               />
               <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
                 <motion.h2
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
                   className="text-3xl font-bold leading-tight"
                 >
                   How It
@@ -177,9 +174,8 @@ function Homepage() {
             <div className="p-6">
               <motion.p
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
                 className="text-neutral-400 mb-4"
               >
                 Log your journey with our intuitive map interface. Track your
@@ -187,9 +183,8 @@ function Homepage() {
               </motion.p>
               <motion.ul
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
                 className="list-disc list-inside text-neutral-500 space-y-2 mt-6"
               >
                 <li>Mark your running, biking, or walking paths</li>
@@ -201,10 +196,9 @@ function Homepage() {
 
           {/* Interactive Dashboard */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col bg-neutral-900 text-white rounded-lg overflow-hidden shadow-lg p-0 flex-grow basis-[30%] min-w-[300px]"
           >
             <div className="relative h-[250px] w-full">
@@ -215,10 +209,9 @@ function Homepage() {
               />
               <div className="flex items-center justify-center h-full w-full bg-black bg-opacity-50 text-center">
                 <motion.h2
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
                   className="text-2xl font-bold leading-tight"
                 >
                   Interactive
@@ -230,9 +223,8 @@ function Homepage() {
             <div className="p-6">
               <motion.p
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
                 className="text-neutral-400 text-left"
               >
                 Get insights on your performance, trends, and distances. Whether
@@ -246,18 +238,16 @@ function Homepage() {
 
       {/* Testimonials Section */}
       <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.2 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut", delay: 0.6 }}
         className="w-full px-6 py-20 mb-[200px] bg-neutral-900"
       >
         <div className="max-w-[1200px] mx-auto text-center">
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.7 }}
             className="text-3xl font-bold mb-10"
           >
             What Our Users Are Saying
@@ -266,10 +256,9 @@ function Homepage() {
             {testimonials.map((t, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * idx }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.8 + 0.05 * idx }}
                 whileHover={{ y: -5 }}
                 className="w-[250px] flex flex-col items-center text-center"
               >
@@ -284,18 +273,16 @@ function Homepage() {
                 />
                 <motion.blockquote
                   initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.2 + 0.1 * idx }}
-                  viewport={{ once: true }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.9 + 0.05 * idx }}
                   className="italic text-neutral-200 mb-2"
                 >
                   &quot;{t.quote}&quot;
                 </motion.blockquote>
                 <motion.p
                   initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 + 0.1 * idx }}
-                  viewport={{ once: true }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 1.0 + 0.05 * idx }}
                   className="text-neutral-500"
                 >
                   — {t.name}
@@ -308,10 +295,9 @@ function Homepage() {
 
       {/* Call to Action */}
       <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.3 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut", delay: 1.4 }}
         className="w-full px-6 py-20 mb-[200px]"
       >
         <div className="relative h-[300px] max-w-[1200px] mx-auto rounded-lg overflow-hidden">
@@ -323,28 +309,25 @@ function Homepage() {
           <div className="absolute inset-0 bg-black bg-opacity-50 z-0" />
           <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 1.5 }}
               className="text-3xl font-bold mb-4"
             >
               Ready to Master Your Journey?
             </motion.h2>
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 1.6 }}
               className="text-neutral-300 mb-6"
             >
               Sign up and start tracking your movement today.
             </motion.p>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 1.7 }}
             >
               <Link to="/signup">
                 <Button className="bg-white text-black px-6 py-3 rounded-md hover:bg-neutral-200">
@@ -358,10 +341,9 @@ function Homepage() {
 
       {/* Card Layout */}
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.3 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut", delay: 1.8 }}
         className="mb-[100px]" // Added 100px gap before footer
       >
         <Card cards={bottomCards} />

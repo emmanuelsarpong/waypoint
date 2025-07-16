@@ -1581,6 +1581,71 @@ const MapCenter: React.FC<{ location: [number, number] | null }> = ({
   return null;
 };
 
+// Route Bounds Fitter Component
+const FitRouteBounds: React.FC<{ route: Route | null }> = ({ route }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (route && route.coordinates && route.coordinates.length > 0) {
+      // Add a small delay to ensure map is ready
+      const timer = setTimeout(() => {
+        try {
+          console.log(
+            "Fitting bounds for route:",
+            route.name,
+            "with",
+            route.coordinates.length,
+            "coordinates"
+          );
+
+          // Create bounds from route coordinates
+          const latLngs = route.coordinates.map(
+            (coord) => [coord.lat, coord.lng] as [number, number]
+          );
+
+          // Log first and last coordinates for debugging
+          console.log("First coordinate:", latLngs[0]);
+          console.log("Last coordinate:", latLngs[latLngs.length - 1]);
+
+          // Only proceed if we have valid coordinates
+          if (latLngs.length > 0) {
+            const bounds = L.latLngBounds(latLngs);
+
+            console.log(
+              "Bounds:",
+              bounds.getSouthWest(),
+              "to",
+              bounds.getNorthEast()
+            );
+
+            // Check if bounds are valid
+            if (bounds.isValid()) {
+              // Fit the map to the route bounds with padding
+              map.fitBounds(bounds, {
+                padding: [50, 50], // Increased padding for better view
+                maxZoom: 14, // Prevent zooming in too much
+                animate: true,
+                duration: 1.2, // Smooth animation duration
+              });
+              console.log("Successfully fitted bounds for route:", route.name);
+            } else {
+              console.warn("Invalid bounds for route:", route.name);
+            }
+          }
+        } catch (error) {
+          console.error("Error fitting route bounds:", error);
+        }
+      }, 100); // 100ms delay
+
+      return () => clearTimeout(timer);
+    } else {
+      console.log("No route or coordinates to fit bounds for");
+    }
+  }, [route, map]);
+
+  return null;
+};
+
 // Current Location Marker Component
 const CurrentLocationMarker: React.FC<{ position: [number, number] }> = ({
   position,
@@ -2349,6 +2414,7 @@ const AdvancedMapPremium: React.FC<AdvancedMapPremiumProps> = ({
           >
             <DynamicTileLayer mapStyle={mapStyle} />
             <MapCenter location={userLocation} />
+            <FitRouteBounds route={selectedRoute} />
 
             {/* Show current location marker */}
             {userLocation && !locationLoading && (
