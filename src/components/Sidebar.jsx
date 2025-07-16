@@ -210,7 +210,11 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
         {/* Navigation content */}
         <div
           className="flex flex-col h-full"
-          style={{ paddingTop: isMobile ? "80px" : "120px" }}
+          style={{ 
+            paddingTop: isMobile ? "80px" : "120px",
+            position: "relative",
+            zIndex: "10"
+          }}
         >
           <nav
             className="flex flex-col gap-2 justify-center"
@@ -218,7 +222,7 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
               height: isMobile ? "auto" : "50vh",
               maxHeight: isMobile ? "calc(100vh - 200px)" : "50vh",
               paddingTop: isMobile ? "32px" : "48px",
-              paddingBottom: "20px",
+              paddingBottom: isMobile ? "80px" : "20px", // Different bottom padding for mobile vs desktop
               overflowY: isMobile ? "auto" : "visible",
             }}
           >
@@ -246,6 +250,9 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
                   minHeight: isMobile ? "48px" : "44px",
                   fontSize: "14px",
                   touchAction: "manipulation",
+                  position: "relative",
+                  zIndex: "20",
+                  cursor: "pointer",
                 }}
               >
                 <span style={{ flex: 1 }}>{item.name}</span>
@@ -276,9 +283,11 @@ function Sidebar({ isOpen, toggleSidebar, isAuthenticated }) {
               textAlign: "left",
               marginTop: "auto",
               position: "absolute",
-              bottom: "24px",
+              bottom: isMobile ? "24px" : "8px", // Match exact level of social media icons
               left: "0",
               right: "0",
+              zIndex: "1",
+              pointerEvents: "none",
             }}
           >
             © 2025 Waypoint. All rights reserved.
